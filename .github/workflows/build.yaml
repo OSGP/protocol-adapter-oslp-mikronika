@@ -28,8 +28,7 @@ jobs:
         with:
           dependency-graph: generate-and-submit
       - name: Build with Gradle
-        run: ./gradlew build
-#        run: ./gradlew build testCodeCoverageReport sonar
+        run: ./gradlew build testCodeCoverageReport sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

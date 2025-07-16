@@ -18,7 +18,7 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 sonar {
     properties {
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.projectKey", "OSGP_protocol-adapter-oslp-mikronika") // TODO FIX, NOT CORRECT, PROJECT IS LEGACY
+        property("sonar.projectKey", "OSGP_protocol-adapter-oslp-mikronika")
         property("sonar.organization", "gxf")
     }
 }
