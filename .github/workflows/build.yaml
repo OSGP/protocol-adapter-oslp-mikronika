@@ -32,4 +32,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        #TODO BUILD THE DOCKER IMAGE WITH OWN IMAGE?
+      - name: Extract version from Gradle
+        id: version
+        run: |
+          VERSION=$(grep '^version\s*=' build.gradle.kts | sed -E 's/version\s*=\s*"([^"]+)"/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      #add if statements
+      - name: Build Docker image
+        run: docker build -t ghcr.io/oslp/protocol-adapter-oslp-mikronika:${{ steps.version.outputs.version }} .
+      - name: Push Docker image
+        run: docker push ghcr.io/oslp/protocol-adapter-oslp-mikronika:${{ steps.version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
