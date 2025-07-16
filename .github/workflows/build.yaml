@@ -33,14 +33,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Extract version from Gradle
+        if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         id: version
         run: |
           VERSION=$(grep '^version\s*=' build.gradle.kts | sed -E 's/version\s*=\s*"([^"]+)"/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-      #add if statements
       - name: Build Docker image
         run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.version.outputs.version }} .
       - name: Log in to GitHub Container Registry
+        if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Push Docker image
+        if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         run: docker push ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.version.outputs.version }}
