@@ -1,5 +1,4 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
-import java.net.URI
 
 plugins {
     alias(libs.plugins.kotlinJvm)
@@ -27,23 +26,11 @@ sonar {
     }
 }
 
-repositories {
-    mavenCentral()
-
-    maven {
-        name = "GitHubPackages"
-        url = URI("https://maven.pkg.github.com/osgp/open-smart-grid-platform")
-        credentials {
-            username = System.getenv("GITHUB_ACTOR")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
-}
+repositories { mavenCentral() }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.opensmartgridplatform:osgp-dto:6.22.0-SNAPSHOT") //TEMP
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
