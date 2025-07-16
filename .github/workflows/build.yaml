@@ -33,7 +33,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Extract version from Gradle
-        if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         id: version
         run: |
           VERSION=$(grep '^version\s*=' build.gradle.kts | sed -E 's/version\s*=\s*"([^"]+)"/\1/')
