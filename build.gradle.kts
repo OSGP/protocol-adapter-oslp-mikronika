@@ -7,6 +7,9 @@ plugins {
     alias(libs.plugins.dependencyManagement)
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.spotless)
+    alias(libs.plugins.gradleWrapperUpgrade)
+    alias(libs.plugins.jacoco)
+    alias(libs.plugins.jacocoReportAggregation)
 }
 
 group = "org.gxf"
