@@ -29,13 +29,13 @@ sonar {
 repositories { mavenCentral() }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation(libs.springBootStarter)
+    implementation(libs.kotlinReflect)
     implementation(libs.ktor)
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    developmentOnly(libs.springBootDevtools)
+    testImplementation(libs.springBootStarterTest)
+    testImplementation(libs.kotlinJunit)
+    testRuntimeOnly(libs.junitLauncher)
 }
 
 kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }

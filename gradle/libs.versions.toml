@@ -9,6 +9,12 @@ ktor = "3.2.0"
 
 [libraries]
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
+springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter" }
+springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
+springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
+kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
+junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
 [plugins]
 dependencyManagement = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }
