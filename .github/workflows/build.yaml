@@ -36,7 +36,7 @@ jobs:
         id: tag
         run: |
           TAG=$(echo "${GITHUB_REF_NAME:-develop}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
-          echo "value=$TAG" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Build Docker image
         run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }} .
       - name: Log in to GitHub Container Registry
