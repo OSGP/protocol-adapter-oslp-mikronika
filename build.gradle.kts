@@ -43,11 +43,9 @@ kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }
 tasks.withType<Test> { useJUnitPlatform() }
 
 extensions.configure<SpotlessExtension> {
-    kotlinGradle { ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) } }
-
     kotlin {
         target("src/**/*.kt")
-        ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) }
+        ktlint("1.6.0")
 
         licenseHeaderFile(file("./spotless/license-header-template.kt"))
     }
