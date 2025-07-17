@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.jacocoReportAggregation)
 }
 
-group = "org.gxf"
+group = "org.lfenergy.gxf"
 
 version = "0.0.1-SNAPSHOT"
 
