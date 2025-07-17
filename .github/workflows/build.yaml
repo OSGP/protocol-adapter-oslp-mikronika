@@ -32,16 +32,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Extract version from Gradle
-        id: version
+      - name: Set Docker tag
+        id: tag
         run: |
-          VERSION=$(grep '^version\s*=' build.gradle.kts | sed -E 's/version\s*=\s*"([^"]+)"/\1/')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          TAG=$(echo "${GITHUB_REF_NAME:-develop}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          echo "value=$TAG" >> "$GITHUB_OUTPUT"
       - name: Build Docker image
-        run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.version.outputs.version }} .
+        run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }} .
       - name: Log in to GitHub Container Registry
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Push Docker image
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
-        run: docker push ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.version.outputs.version }}
+        run: docker push ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }}
