@@ -14,7 +14,7 @@ plugins {
 
 group = "org.lfenergy.gxf"
 
-version = "0.0.1-SNAPSHOT"
+version = System.getenv("GITHUB_REF_NAME")?.replace("/", "-")?.lowercase() ?: "develop"
 
 java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
