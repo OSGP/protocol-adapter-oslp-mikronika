@@ -54,5 +54,3 @@ extensions.configure<SpotlessExtension> {
 }
 
 tasks.named<Jar>("bootJar") { archiveFileName.set("protocol-adapter-oslp-mikronika.jar") }
-
-val dockerImageName = "ghcr.io/oslp/protocol-adapter-oslp-mikronika"
