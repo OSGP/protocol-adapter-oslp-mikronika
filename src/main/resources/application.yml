@@ -1,1 +1,3 @@
-spring.application.name: protocol-adapter-oslp-mikronika
+spring:
+  application:
+    name: protocol-adapter-oslp-mikronika
