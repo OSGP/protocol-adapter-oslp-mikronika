@@ -1,0 +1,20 @@
+spring:
+  artemis:
+    broker-url: tcp://localhost:61616
+    user: artemis
+    password: artemis
+
+  datasource:
+    url: jdbc:postgresql://localhost:51360/osgp_adapter_protocol_oslp_mikronika
+    username: osp_admin
+    password: test
+
+  dev-tools:
+    restart:
+      enabled: false
+
+  flyway:
+    baseline-on-migrate: true
+
+  jpa:
+    show-sql: true
