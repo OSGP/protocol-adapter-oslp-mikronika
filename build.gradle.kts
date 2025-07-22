@@ -39,7 +39,6 @@ dependencies {
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterArtemis)
 
-    developmentOnly(libs.springBootDevtools)
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
     testImplementation(libs.springBootTestcontainers)

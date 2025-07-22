@@ -12,7 +12,6 @@ ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
 flywayCore = { group = "org.flywaydb", name = "flyway-core" }
 flywayPostgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
 springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter" }
-springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis" }

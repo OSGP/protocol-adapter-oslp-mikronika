@@ -23,26 +23,13 @@ class LocalContainerConfig {
                 start()
             }
 
-
         private val artemisContainer =
             GenericContainer<Nothing>(DockerImageName.parse("apache/activemq-artemis:2.41.0-alpine")).apply {
-                withEnv("ARTEMIS_USER", "artemis")     // default user
+                withEnv("ARTEMIS_USER", "artemis") // default user
                 withEnv("ARTEMIS_PASSWORD", "artemis") // default password
-                withExposedPorts(61616, 8161)
+                portBindings = listOf("52360:8161", "61616:61616")
                 waitingFor(Wait.forListeningPort())
                 start()
-
-                val host = host
-                val port61616 = getMappedPort(61616)
-                val port8161 = getMappedPort(8161)
-
-                System.setProperty("spring.artemis.broker-url", "tcp://$host:$port61616")
-                System.setProperty("spring.artemis.user", "artemis")
-                System.setProperty("spring.artemis.password", "artemis")
-                System.setProperty("artemis.web.port", port8161.toString())
-
-                println("Artemis Web Console available at http://$host:$port8161/console")
             }
-
     }
 }
