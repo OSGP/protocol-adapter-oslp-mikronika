@@ -1,6 +1,6 @@
 spring:
   artemis:
-    broker-url: tcp://localhost:61616
+    broker-url: tcp://localhost:52360
     user: artemis
     password: artemis
 
