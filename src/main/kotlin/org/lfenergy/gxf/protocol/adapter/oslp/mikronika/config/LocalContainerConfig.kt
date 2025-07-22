@@ -41,8 +41,7 @@ class LocalContainerConfig {
                 System.setProperty("spring.artemis.password", "artemis")
                 System.setProperty("artemis.web.port", port8161.toString())
 
-                println("✅ Artemis started. Broker URL: tcp://$host:$port61616")
-                println("🔗 Artemis Web Console available at http://$host:$port8161/console")
+                println("Artemis Web Console available at http://$host:$port8161/console")
             }
 
     }
