@@ -32,9 +32,20 @@ dependencies {
     implementation(libs.springBootStarter)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
+    implementation(libs.testcontainersPostgresql)
+    implementation(libs.postgresql)
+    implementation(libs.flywayCore)
+    implementation(libs.flywayPostgresql)
+    implementation(libs.springBootStarterDataJpa)
+    implementation(libs.springBootStarterArtemis)
+
     developmentOnly(libs.springBootDevtools)
+    developmentOnly(libs.springBootCompose)
+
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
+    testImplementation(libs.springBootTestcontainers)
+
     testRuntimeOnly(libs.junitLauncher)
 }
 
