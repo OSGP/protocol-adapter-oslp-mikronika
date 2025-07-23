@@ -21,6 +21,8 @@ junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher"
 postgresql = { group = "org.postgresql", name = "postgresql" }
 springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
 testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql" }
+
+# Development dependencies
 springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
 springBootCompose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
 
