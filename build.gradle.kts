@@ -41,7 +41,6 @@ dependencies {
     implementation(libs.springBootStarter)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
-    implementation(libs.testcontainersPostgresql)
     implementation(libs.postgresql)
     implementation(libs.flywayCore)
     implementation(libs.flywayPostgresql)
@@ -54,6 +53,7 @@ dependencies {
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
     testImplementation(libs.springBootTestcontainers)
+    testImplementation(libs.testcontainersPostgresql)
 
     testRuntimeOnly(libs.junitLauncher)
 }
