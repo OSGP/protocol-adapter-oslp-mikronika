@@ -26,6 +26,15 @@ sonar {
     }
 }
 
+wrapperUpgrade {
+    gradle {
+        register("protocol-adapter-oslp-mikronika") {
+            repo.set("OSGP/protocol-adapter-oslp-mikronika")
+            baseBranch.set("main")
+        }
+    }
+}
+
 repositories { mavenCentral() }
 
 dependencies {
