@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.springBootStarterArtemis)
 
     developmentOnly(libs.springBootDevtools)
-    developmentOnly(libs.springBootCompose)
+    testAndDevelopmentOnly(libs.springBootCompose)
 
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)

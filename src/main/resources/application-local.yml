@@ -4,11 +4,6 @@ spring:
     user: artemis
     password: artemis
 
-  datasource:
-    url: jdbc:postgresql://localhost:51360/osgp_adapter_protocol_oslp_mikronika
-    username: osp_admin
-    password: test
-
   dev-tools:
     restart:
       enabled: true
