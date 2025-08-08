@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: osp_admin
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: osgp_adapter_protocol_oslp_mikronika
+    ports:
+      - "51360:5432"
+  artemis:
+    image: apache/activemq-artemis:2.41.0-alpine
+    container_name: artemis_container
+    environment:
+      ARTEMIS_USERNAME: artemis
+      ARTEMIS_PASSWORD: artemis
+      ARTEMIS_MIN_MEMORY: 512M
+      ARTEMIS_MAX_MEMORY: 512M
+    ports:
+      - "52360:8161"
+      - "61616:61616"
