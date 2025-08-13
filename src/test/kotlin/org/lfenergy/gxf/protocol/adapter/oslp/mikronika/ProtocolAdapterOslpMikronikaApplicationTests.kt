@@ -8,5 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class ProtocolAdapterOslpMikronikaApplicationTests {
-    @Test fun contextLoads() {}
+    @Test
+    fun contextLoads() {
+        // Test startUp application
+    }
 }

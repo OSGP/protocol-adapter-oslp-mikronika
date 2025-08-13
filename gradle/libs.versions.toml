@@ -9,12 +9,22 @@ ktor = "3.2.3"
 
 [libraries]
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
+flywayCore = { group = "org.flywaydb", name = "flyway-core" }
+flywayPostgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
 springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter" }
-springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis" }
 kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
 junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+postgresql = { group = "org.postgresql", name = "postgresql" }
+springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
+testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql" }
+
+# Development dependencies
+springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
+springBootCompose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
 
 [plugins]
 dependencyManagement = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }

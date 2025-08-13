@@ -26,15 +26,35 @@ sonar {
     }
 }
 
+wrapperUpgrade {
+    gradle {
+        register("protocol-adapter-oslp-mikronika") {
+            repo.set("OSGP/protocol-adapter-oslp-mikronika")
+            baseBranch.set("main")
+        }
+    }
+}
+
 repositories { mavenCentral() }
 
 dependencies {
     implementation(libs.springBootStarter)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
+    implementation(libs.postgresql)
+    implementation(libs.flywayCore)
+    implementation(libs.flywayPostgresql)
+    implementation(libs.springBootStarterDataJpa)
+    implementation(libs.springBootStarterArtemis)
+
     developmentOnly(libs.springBootDevtools)
+    testAndDevelopmentOnly(libs.springBootCompose)
+
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
+    testImplementation(libs.springBootTestcontainers)
+    testImplementation(libs.testcontainersPostgresql)
+
     testRuntimeOnly(libs.junitLauncher)
 }
 
