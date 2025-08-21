@@ -38,22 +38,23 @@ wrapperUpgrade {
 repositories { mavenCentral() }
 
 dependencies {
-    implementation(libs.springBootStarter)
+    developmentOnly(libs.springBootDevtools)
+
+    implementation(libs.flywayCore)
+    implementation(libs.flywayPostgresql)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
     implementation(libs.micrometerRegistryPrometheus)
     implementation(libs.postgresql)
-    implementation(libs.flywayCore)
-    implementation(libs.flywayPostgresql)
+    implementation(libs.springBootStarter)
     implementation(libs.springBootStarterActuator)
-    implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterArtemis)
+    implementation(libs.springBootStarterDataJpa)
 
-    developmentOnly(libs.springBootDevtools)
     testAndDevelopmentOnly(libs.springBootCompose)
 
-    testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
+    testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
     testImplementation(libs.testcontainersPostgresql)
 
