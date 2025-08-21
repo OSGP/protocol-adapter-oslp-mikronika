@@ -41,9 +41,11 @@ dependencies {
     implementation(libs.springBootStarter)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
+    implementation(libs.micrometerRegistryPrometheus)
     implementation(libs.postgresql)
     implementation(libs.flywayCore)
     implementation(libs.flywayPostgresql)
+    implementation(libs.springBootStarterActuator)
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterArtemis)
 

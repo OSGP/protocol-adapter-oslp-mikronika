@@ -2,6 +2,7 @@
 dependencyManagement = "1.1.7"
 springBoot = "3.5.4"
 kotlin = "2.2.0"
+micrometer="1.15.3"
 sonarqube = "6.2.0.5505"
 spotless = "7.2.1"
 gradleWrapperUpgrade = "0.12"
@@ -11,7 +12,9 @@ ktor = "3.2.3"
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
 flywayCore = { group = "org.flywaydb", name = "flyway-core" }
 flywayPostgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
+micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref="micrometer"}
 springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter" }
+springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref="springBoot" }
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis" }
