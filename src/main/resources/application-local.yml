@@ -13,3 +13,13 @@ spring:
 
   jpa:
     show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+logging:
+  level:
+    org.springframework.boot.context: DEBUG
