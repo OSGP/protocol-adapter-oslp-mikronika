@@ -15,11 +15,9 @@ spring:
     show-sql: true
 
 management:
+  server:
+    port: 9404
   endpoints:
     web:
       exposure:
-        include: '*'
-
-logging:
-  level:
-    org.springframework.boot.context: DEBUG
+        include: health,info,prometheus
