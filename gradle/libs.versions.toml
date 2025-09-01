@@ -2,7 +2,7 @@
 dependencyManagement = "1.1.7"
 springBoot = "3.5.5"
 kotlin = "2.2.10"
-sonarqube = "6.3.0.5676"
+sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
 gradleWrapperUpgrade = "0.12"
 ktor = "3.2.3"
