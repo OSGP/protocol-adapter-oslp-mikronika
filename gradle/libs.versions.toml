@@ -15,6 +15,8 @@ springBootStarter = { group = "org.springframework.boot", name = "spring-boot-st
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis" }
+springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
 junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
