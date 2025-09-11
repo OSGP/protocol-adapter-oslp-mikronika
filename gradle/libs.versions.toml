@@ -23,6 +23,7 @@ springBootStarter = { group = "org.springframework.boot", name = "spring-boot-st
 springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "springBoot" }
+springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 
 # Test dependencies
 junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junitLauncher" }

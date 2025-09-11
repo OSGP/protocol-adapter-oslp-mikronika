@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.springBootStarterActuator)
     implementation(libs.springBootStarterArtemis)
     implementation(libs.springBootStarterDataJpa)
+    implementation(libs.springBootStarterWeb)
 
     testAndDevelopmentOnly(libs.springBootCompose)
 

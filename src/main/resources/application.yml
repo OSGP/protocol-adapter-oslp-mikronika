@@ -2,11 +2,10 @@ spring:
   application:
     name: protocol-adapter-oslp-mikronika
 
-
 management:
   server:
     port: 9404
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,prometheus
