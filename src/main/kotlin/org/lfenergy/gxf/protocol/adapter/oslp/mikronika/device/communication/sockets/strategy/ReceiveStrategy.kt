@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 
+// TODO refactor stratergies implementation for mutiple devices
 abstract class ReceiveStrategy(private val singingService: SigningService) {
     private val logger = KotlinLogging.logger {}
     abstract fun matches(message: Message): Boolean

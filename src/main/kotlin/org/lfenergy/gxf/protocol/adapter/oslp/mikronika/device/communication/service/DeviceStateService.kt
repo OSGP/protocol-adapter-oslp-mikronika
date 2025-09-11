@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service
 
+//TODO add DeviceStateService for multiple devices
 class DeviceStateService {
     private var deviceRegistered = false
     private var deviceRegistrationConfirmed = false
