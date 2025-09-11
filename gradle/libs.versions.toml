@@ -2,7 +2,6 @@
 dependencyManagement = "1.1.7"
 flyway = "11.11.1"
 gradleWrapperUpgrade = "0.12"
-junitLauncher = "1.13.4"
 kotlin = "2.2.10"
 ktor = "3.2.3"
 micrometer = "1.15.3"
@@ -26,7 +25,6 @@ springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-
 springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 
 # Test dependencies
-junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junitLauncher" }
 kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springBoot" }
 springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "springBoot" }

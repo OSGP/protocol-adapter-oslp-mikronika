@@ -58,8 +58,6 @@ dependencies {
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
     testImplementation(libs.testcontainersPostgresql)
-
-    testRuntimeOnly(libs.junitLauncher)
 }
 
 kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }
