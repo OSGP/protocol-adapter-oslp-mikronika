@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.flywayPostgresql)
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterArtemis)
+    implementation(libs.springBootStarterActuator)
+    implementation(libs.springBootStarterWeb)
 
     developmentOnly(libs.springBootDevtools)
     testAndDevelopmentOnly(libs.springBootCompose)
