@@ -35,12 +35,24 @@ wrapperUpgrade {
     }
 }
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    maven {
+        name = "GXFGithubPackages"
+        url = uri("https://maven.pkg.github.com/osgp/*")
+        credentials {
+            username = project.findProperty("github.username") as String? ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("github.token") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
+}
 
 dependencies {
     implementation(libs.springBootStarter)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
+    implementation(libs.kotlinLoggingJvm)
+    implementation(libs.kotlinSerializationJson)
     implementation(libs.postgresql)
     implementation(libs.flywayCore)
     implementation(libs.flywayPostgresql)
@@ -48,6 +60,10 @@ dependencies {
     implementation(libs.springBootStarterArtemis)
     implementation(libs.springBootStarterActuator)
     implementation(libs.springBootStarterWeb)
+    implementation(project(":protobuf"))
+    implementation(libs.protobufKotlin)
+    implementation(libs.protobufJavaUtil)
+    implementation(libs.oslpMessageSigning)
 
     developmentOnly(libs.springBootDevtools)
     testAndDevelopmentOnly(libs.springBootCompose)
