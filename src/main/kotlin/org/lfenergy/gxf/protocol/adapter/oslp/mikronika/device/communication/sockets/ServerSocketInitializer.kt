@@ -5,7 +5,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.soc
 import org.springframework.stereotype.Component
 
 @Component
-class ServerSocketStarter(
+class ServerSocketInitializer(
     private val serverSocket: ServerSocket,
     private val serverSocketConfiguration: ServerSocketConfiguration
 ) {

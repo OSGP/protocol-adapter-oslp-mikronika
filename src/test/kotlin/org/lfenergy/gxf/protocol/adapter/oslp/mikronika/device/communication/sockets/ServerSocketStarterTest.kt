@@ -18,7 +18,7 @@ class ServerSocketStarterTest {
     private lateinit var serverSocketConfiguration: ServerSocketConfiguration
 
     @InjectMockKs
-    private lateinit var starter: ServerSocketStarter
+    private lateinit var starter: ServerSocketInitializer
 
     @BeforeEach
     fun setUp() {

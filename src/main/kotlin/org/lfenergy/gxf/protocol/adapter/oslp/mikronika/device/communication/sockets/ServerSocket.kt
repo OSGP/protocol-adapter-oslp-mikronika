@@ -4,7 +4,6 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
 
 import com.google.protobuf.InvalidProtocolBufferException
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
@@ -13,18 +12,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.platform.producer.MikronikaProtocolProducer
-import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 
 @Component
 class ServerSocket(
-    private val strategyFactory: StrategyFactory,
-    private val mikronikaProtocolProducer: MikronikaProtocolProducer
+    private val serverSocketMessageProcessor: ServerSocketMessageProcessor
 ) {
-    private val logger = KotlinLogging.logger {}
 
     @OptIn(DelicateCoroutinesApi::class)
     fun startListening(
@@ -36,11 +29,9 @@ class ServerSocket(
                 aSocket(ActorSelectorManager(Dispatchers.IO))
                     .tcp()
                     .bind(InetSocketAddress(hostName, port))
-            logger.info { "Server is listening on address: ${serverSocket.localAddress}" }
 
             while (true) {
                 val socket = serverSocket.accept()
-                logger.info { "Accepted connection from ${socket.remoteAddress}" }
 
                 val input = socket.openReadChannel()
                 val output = socket.openWriteChannel(autoFlush = true)
@@ -51,24 +42,7 @@ class ServerSocket(
 
                     if (bytesRead > 0) {
                         val requestEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
-
-                        logger.info {
-                            "Received: Seq: ${requestEnvelope.sequenceNumber} - Len: ${requestEnvelope.lengthIndicator} Message: ${requestEnvelope.message}"
-                        }
-
-                        val message = requestEnvelope.message;
-                        getStrategyFor(message)?.let {
-                            it.invoke(
-                                requestEnvelope
-                            )?.let { envelope ->
-                                val responseBytes = envelope.getBytes()
-                                output.writeFully(responseBytes)
-
-                                mikronikaProtocolProducer.send(
-                                    "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}"
-                                )
-                            }
-                        }
+                        serverSocketMessageProcessor.handleMessage(requestEnvelope, output)
                     }
                 } catch (e: InvalidProtocolBufferException) {
                     e.printStackTrace()
@@ -78,17 +52,6 @@ class ServerSocket(
                 } finally {
                     socket.close()
                 }
-            }
-        }
-    }
-
-    private fun getStrategyFor(message: Message): ReceiveStrategy? {
-        with(message) {
-            return when {
-                hasRegisterDeviceRequest() -> strategyFactory.getStrategy("RegisterDeviceStrategy")
-                hasConfirmRegisterDeviceRequest() -> strategyFactory.getStrategy("ConfirmRegisterDeviceStrategy")
-                hasEventNotificationRequest() -> strategyFactory.getStrategy("EventNotificationRequestStrategy")
-                else -> error("Unexpected request message: $message")
             }
         }
     }
