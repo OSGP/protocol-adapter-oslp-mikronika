@@ -20,7 +20,7 @@ abstract class ReceiveStrategy(
 
     abstract fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice)
 
-    abstract fun buildResponsePayload(requestEnvelope: Envelope): Message
+    abstract fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message
 
     operator fun invoke(requestEnvelope: Envelope): Envelope? {
         val deviceUuid = String(requestEnvelope.deviceUid)
@@ -28,7 +28,9 @@ abstract class ReceiveStrategy(
 
         if (!validateSignature(requestEnvelope, MikronikaKey(mikronikaDevice.publicKey))) return null
         handle(requestEnvelope, mikronikaDevice)
-        val responsePayload = buildResponsePayload(requestEnvelope).toByteArray()
+        val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
+
+        saveDeviceChanges(mikronikaDevice)
         return createResponseEnvelope(requestEnvelope, responsePayload)
     }
 

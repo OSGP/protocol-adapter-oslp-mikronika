@@ -4,7 +4,6 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceStateService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -20,15 +19,12 @@ class RegisterDeviceStrategy(
 ) : ReceiveStrategy(signingService, mikronikaDeviceService) {
 
     override fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice) {
-        val deviceStateService = DeviceStateService.getInstance()
-        deviceStateService.registerDevice(requestEnvelope.deviceUid)
-        deviceStateService.randomDevice = requestEnvelope.message.registerDeviceRequest.randomDevice
+        mikronikaDevice.randomDevice = requestEnvelope.message.registerDeviceRequest.randomDevice
     }
 
-    override fun buildResponsePayload(requestEnvelope: Envelope): Message {
-        val deviceStateService = DeviceStateService.getInstance()
-
-        deviceStateService.randomPlatform = Random.nextInt(65536)
+    override fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message {
+        val randomPlatform = Random.nextInt(65536)
+        mikronikaDevice.randomPlatform = randomPlatform
 
         val response =
             Message
@@ -39,7 +35,7 @@ class RegisterDeviceStrategy(
                         .setRandomDevice(requestEnvelope.message.registerDeviceRequest.randomDevice)
                         .setCurrentTime(System.currentTimeMillis().toString())
                         .setStatus(Oslp.Status.OK)
-                        .setRandomPlatform(deviceStateService.randomPlatform)
+                        .setRandomPlatform(randomPlatform)
                         .setLocationInfo(
                             Oslp.LocationInfo
                                 .newBuilder()

@@ -4,7 +4,6 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceStateService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -17,30 +16,29 @@ class ConfirmRegisterDeviceStrategy(
     signingService: SigningService,
     mikronikaDeviceService: MikronikaDeviceService
 ) : ReceiveStrategy(signingService, mikronikaDeviceService) {
-    private val deviceStateService = DeviceStateService.getInstance()
 
     override fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice) {
         with(requestEnvelope.message.confirmRegisterDeviceRequest) {
-            if (randomDevice != deviceStateService.randomDevice) {
-                println("Invalid randomDevice! Expected: ${deviceStateService.randomDevice} - Got: $randomDevice")
+            if (randomDevice != mikronikaDevice.randomDevice) {
+                println("Invalid randomDevice! Expected: ${mikronikaDevice.randomDevice} - Got: $randomDevice")
             }
-            if (randomPlatform != deviceStateService.randomPlatform) {
-                println("Invalid randomPlatform! Expected: ${deviceStateService.randomPlatform} - Got: $randomPlatform")
+            if (randomPlatform != mikronikaDevice.randomPlatform) {
+                println("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $randomPlatform")
             }
         }
 
-        deviceStateService.confirmRegisterDevice(requestEnvelope.sequenceNumber)
+        mikronikaDevice.sequenceNumber = requestEnvelope.sequenceNumber
     }
 
-    override fun buildResponsePayload(requestEnvelope: Envelope): Message {
+    override fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message {
         val response =
             Message
                 .newBuilder()
                 .setConfirmRegisterDeviceResponse(
                     Oslp.ConfirmRegisterDeviceResponse
                         .newBuilder()
-                        .setRandomDevice(deviceStateService.randomDevice)
-                        .setRandomPlatform(deviceStateService.randomPlatform)
+                        .setRandomDevice(mikronikaDevice.randomDevice ?: 0)
+                        .setRandomPlatform(mikronikaDevice.randomPlatform ?: 0)
                         .setSequenceWindow(1)
                         .setStatusValue(0)
                         .build(),

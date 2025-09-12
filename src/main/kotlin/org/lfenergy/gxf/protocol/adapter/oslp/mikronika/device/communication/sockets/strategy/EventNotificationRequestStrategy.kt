@@ -1,7 +1,6 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceStateService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -15,13 +14,12 @@ class EventNotificationRequestStrategy(
     mikronikaDeviceService: MikronikaDeviceService
 ) :
     ReceiveStrategy(signingService, mikronikaDeviceService) {
-    private val deviceStateService = DeviceStateService.getInstance()
 
     override fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice) {
-        deviceStateService.updateSequenceNumber(requestEnvelope.sequenceNumber)
+        mikronikaDevice.sequenceNumber = requestEnvelope.sequenceNumber
     }
 
-    override fun buildResponsePayload(requestEnvelope: Envelope): Message {
+    override fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message {
         return Message.newBuilder()
             .setEventNotificationResponse(Oslp.EventNotificationResponse.newBuilder().setStatus(Oslp.Status.OK))
             .build()
