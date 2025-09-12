@@ -6,7 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.si
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PrivateKeyException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PublicKeyException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaKey
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
 import org.springframework.stereotype.Component
 import java.io.File
 import java.nio.file.Files
@@ -42,7 +42,7 @@ class KeyProvider(
         }
     }
 
-    fun getPublicKey(publicKey: MikronikaKey): PublicKey {
+    fun getPublicKey(publicKey: Key): PublicKey {
         try {
             val publicKeyBytes =
                 Base64

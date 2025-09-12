@@ -3,6 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models
 
-data class MikronikaKey(
+data class Key(
     val key: String,
 )

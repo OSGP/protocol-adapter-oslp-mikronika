@@ -6,7 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaKey
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -32,7 +32,7 @@ abstract class ReceiveStrategy(
         val deviceUuid = String(requestEnvelope.deviceUid)
         val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUuid)
 
-        if (!validateSignature(requestEnvelope, MikronikaKey(mikronikaDevice.publicKey))) return null
+        if (!validateSignature(requestEnvelope, Key(mikronikaDevice.publicKey))) return null
         handle(requestEnvelope, mikronikaDevice)
         val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
 
@@ -50,7 +50,7 @@ abstract class ReceiveStrategy(
 
     private fun validateSignature(
         requestEnvelope: Envelope,
-        key: MikronikaKey,
+        key: Key,
     ): Boolean {
         val verified =
             with(requestEnvelope) {
