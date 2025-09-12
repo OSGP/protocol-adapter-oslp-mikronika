@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.ByteArrayHelpers.Companion.toByteArray
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.opensmartgridplatform.oslp.Oslp
 import java.nio.ByteBuffer
 
@@ -48,7 +48,7 @@ data class Envelope(
     override fun hashCode(): Int {
         var result = sequenceNumber.hashCode()
         result = 31 * result + lengthIndicator.hashCode()
-        result = 31 * result + deviceUid.hashCode()
+        result = 31 * result + deviceUid.contentHashCode()
         result = 31 * result + securityKey.contentHashCode()
         return result
     }

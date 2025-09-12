@@ -5,7 +5,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.ByteArrayHelpers.Companion.toByteArray
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
