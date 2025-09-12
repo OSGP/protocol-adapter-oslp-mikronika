@@ -14,9 +14,6 @@ import io.ktor.utils.io.readAvailable
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.exception.SendAndReceiveException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.service.DeviceStateService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.SendAndReceiveException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceStateService

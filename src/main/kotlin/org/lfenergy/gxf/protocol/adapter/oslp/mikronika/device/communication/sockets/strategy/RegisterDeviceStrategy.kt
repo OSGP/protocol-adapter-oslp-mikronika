@@ -3,16 +3,18 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.service.DeviceStateService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceStateService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 import kotlin.random.Random
 
 @Component
-class RegisterDeviceStrategy(signingService: SigningService) : ReceiveStrategy(signingService) {
+class RegisterDeviceStrategy(
+    signingService: SigningService,
+) : ReceiveStrategy(signingService) {
     override fun matches(message: Message): Boolean = message.hasRegisterDeviceRequest()
 
     override fun handle(requestEnvelope: Envelope) {
@@ -40,8 +42,8 @@ class RegisterDeviceStrategy(signingService: SigningService) : ReceiveStrategy(s
                         .setLocationInfo(
                             Oslp.LocationInfo
                                 .newBuilder()
-                                .setLatitude(config.latitude)
-                                .setLongitude(config.longitude)
+                                .setLatitude(1111)
+                                .setLongitude(222222)
                                 .setTimeOffset(60),
                         ).build(),
                 ).build()

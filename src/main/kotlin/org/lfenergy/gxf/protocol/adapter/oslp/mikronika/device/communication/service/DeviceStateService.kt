@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service
 
-//TODO add DeviceStateService for multiple devices
+// TODO add DeviceStateService for multiple devices
 class DeviceStateService {
     private var deviceRegistered = false
     private var deviceRegistrationConfirmed = false
@@ -35,10 +35,11 @@ class DeviceStateService {
     companion object {
         private var instance: DeviceStateService? = null
 
-        fun createInstance() {
+        fun createInstance(): DeviceStateService {
             instance = DeviceStateService()
+            return instance!!
         }
 
-        fun getInstance(): DeviceStateService = instance ?: throw IllegalStateException("No DeviceStateService instance found!")
+        fun getInstance(): DeviceStateService = instance ?: createInstance()
     }
 }

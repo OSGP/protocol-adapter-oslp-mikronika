@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.helpers.ByteArrayHelpers.Companion.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.ByteArrayHelpers.Companion.toByteArray
 import org.opensmartgridplatform.oslp.Oslp
 import java.nio.ByteBuffer

@@ -5,22 +5,23 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import com.google.protobuf.InvalidProtocolBufferException
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.network.selector.ActorSelectorManager
-import io.ktor.network.sockets.InetSocketAddress
-import io.ktor.network.sockets.aSocket
-import io.ktor.network.sockets.openReadChannel
-import io.ktor.network.sockets.openWriteChannel
-import io.ktor.utils.io.readAvailable
-import io.ktor.utils.io.writeFully
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.RegisterDeviceStrategy
+import org.springframework.stereotype.Component
 
-class ServerSocket {
+@Component
+class ServerSocket(
+    private val signingService: SigningService,
+    private val registerDeviceStrategy: RegisterDeviceStrategy,
+) {
     private val logger = KotlinLogging.logger {}
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -28,6 +29,7 @@ class ServerSocket {
         hostName: String,
         port: Int,
     ) {
+        println("Starting the serversocket")
         GlobalScope.launch {
             val serverSocket =
                 aSocket(ActorSelectorManager(Dispatchers.IO))
@@ -53,20 +55,36 @@ class ServerSocket {
                             "Received: Seq: ${requestEnvelope.sequenceNumber} - Len: ${requestEnvelope.lengthIndicator} Message: ${requestEnvelope.message}"
                         }
 
-                        val responseStrategy = ReceiveStrategy.getStrategyFor(requestEnvelope.message)
+                        val message = requestEnvelope.message;
+                        if (message.hasRegisterDeviceRequest()) {
+                            registerDeviceStrategy.invoke(
+                                requestEnvelope,
+                                message.registerDeviceRequest.deviceIdentification
+                            )?.let { envelope ->
+                                val responseBytes = envelope.getBytes()
+                                output.writeFully(responseBytes)
 
-                        responseStrategy(requestEnvelope)?.let { envelope ->
-                            val responseBytes = envelope.getBytes()
-                            output.writeFully(responseBytes)
-
-                            logger.info {
-                                "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}"
+                                logger.info {
+                                    "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}"
+                                }
                             }
                         }
+
+//                        val responseStrategy = ReceiveStrategy.getStrategyFor(requestEnvelope.message)
+
+//                        responseStrategy(requestEnvelope)?.let { envelope ->
+//                            val responseBytes = envelope.getBytes()
+//                            output.writeFully(responseBytes)
+//
+//                            logger.info {
+//                                "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}"
+//                            }
+//                        }
                     }
                 } catch (e: InvalidProtocolBufferException) {
                     println("Failed to parse Protobuf message: ${e.message}")
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     logger.error(e.message ?: e.toString())
                 } finally {
                     socket.close()
