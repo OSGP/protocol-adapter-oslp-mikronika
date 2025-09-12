@@ -43,6 +43,6 @@ class MikronikaDevice(
     var randomDevice: Int? = null,
     @Column(name = "random_platform")
     var randomPlatform: Int? = null,
-    @Column(name = "public_key", length = 255)
-    var publicKey: String? = null
+    @Column(name = "public_key", length = 255, nullable = false)
+    var publicKey: String = ""
 )

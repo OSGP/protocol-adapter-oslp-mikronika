@@ -6,32 +6,39 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.ByteArrayHelpers.Companion.toByteArray
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaKey
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp.Message
 
 abstract class ReceiveStrategy(
     private val singingService: SigningService,
+    private val mikronikaDeviceService: MikronikaDeviceService
 ) {
     private val logger = KotlinLogging.logger {}
 
-    abstract fun handle(requestEnvelope: Envelope)
+    abstract fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice)
 
     abstract fun buildResponsePayload(requestEnvelope: Envelope): Message
 
     operator fun invoke(requestEnvelope: Envelope): Envelope? {
-        if (!validateSignature(requestEnvelope)) return null
-        handle(requestEnvelope)
+        val deviceUuid = String(requestEnvelope.deviceUid)
+        val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUuid)
+
+        if (!validateSignature(requestEnvelope, MikronikaKey(mikronikaDevice.publicKey))) return null
+        handle(requestEnvelope, mikronikaDevice)
         val responsePayload = buildResponsePayload(requestEnvelope).toByteArray()
         return createResponseEnvelope(requestEnvelope, responsePayload)
     }
 
-    private fun validateSignature(requestEnvelope: Envelope): Boolean {
+    private fun validateSignature(requestEnvelope: Envelope, key: MikronikaKey): Boolean {
         val verified =
             with(requestEnvelope) {
                 singingService.verifySignature(
                     sequenceNumber.toByteArray(2) + deviceUid + lengthIndicator.toByteArray(2) + messageBytes,
                     securityKey,
-                    String(requestEnvelope.deviceUid, Charsets.UTF_8),
+                    key,
                 )
             }
 
@@ -40,6 +47,10 @@ abstract class ReceiveStrategy(
             return false
         }
         return true
+    }
+
+    fun saveDeviceChanges(mikronikaDevice: MikronikaDevice) {
+        mikronikaDeviceService.saveDevice(mikronikaDevice)
     }
 
     private fun createResponseEnvelope(

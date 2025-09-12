@@ -5,31 +5,25 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.si
 
 import com.gxf.utilities.oslp.message.signing.SigningUtil
 import com.gxf.utilities.oslp.message.signing.configuration.SigningProperties
-import jakarta.persistence.EntityNotFoundException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaRepository
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaKey
 import org.springframework.stereotype.Service
 
 @Service
 class SigningService(
     private val keyProvider: KeyProvider,
-    signingConfiguration: SigningConfiguration,
-    private val mikronikaRepository: MikronikaRepository,
+    signingConfiguration: SigningConfiguration
 ) : SigningUtil(SigningProperties(signingConfiguration.securityProvider, signingConfiguration.securityAlgorithm)) {
     fun createSignature(data: ByteArray): ByteArray = this.createSignature(data, keyProvider.getPrivateKey())
 
     fun verifySignature(
         data: ByteArray,
         signature: ByteArray,
-        deviceUid: String,
+        mikronikaKey: MikronikaKey,
     ): Boolean {
-        val device: MikronikaDevice =
-            mikronikaRepository.findByDeviceUid(deviceUid)
-                ?: throw EntityNotFoundException("Device with identification $deviceUid not found")
         return this.verifySignature(
             data,
             signature,
-            keyProvider.getPublicKey(device),
+            keyProvider.getPublicKey(mikronikaKey),
         )
     }
 }

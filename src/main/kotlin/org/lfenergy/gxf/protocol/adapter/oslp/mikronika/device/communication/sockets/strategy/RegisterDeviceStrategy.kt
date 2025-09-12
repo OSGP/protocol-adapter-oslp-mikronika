@@ -5,7 +5,9 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceStateService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
@@ -14,9 +16,10 @@ import kotlin.random.Random
 @Component("RegisterDeviceStrategy")
 class RegisterDeviceStrategy(
     signingService: SigningService,
-) : ReceiveStrategy(signingService) {
+    mikronikaDeviceService: MikronikaDeviceService
+) : ReceiveStrategy(signingService, mikronikaDeviceService) {
 
-    override fun handle(requestEnvelope: Envelope) {
+    override fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice) {
         val deviceStateService = DeviceStateService.getInstance()
         deviceStateService.registerDevice(requestEnvelope.deviceUid)
         deviceStateService.randomDevice = requestEnvelope.message.registerDeviceRequest.randomDevice
@@ -25,7 +28,6 @@ class RegisterDeviceStrategy(
     override fun buildResponsePayload(requestEnvelope: Envelope): Message {
         val deviceStateService = DeviceStateService.getInstance()
 
-//        deviceStateService.deviceUid = requestEnvelope.deviceUid
         deviceStateService.randomPlatform = Random.nextInt(65536)
 
         val response =
