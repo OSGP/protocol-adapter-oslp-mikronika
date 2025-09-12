@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import io.mockk.every
@@ -16,7 +19,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sig
 @ExtendWith(MockKExtension::class)
 class ReceiveStrategyTest {
     @MockK
-    private lateinit var signingService: SigningService;
+    private lateinit var signingService: SigningService
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
@@ -38,5 +41,5 @@ class ReceiveStrategyTest {
             .hasMessageContaining(expectedException.message)
     }
 
-    //todo more tests here for all the signing logic etc....
+    // todo more tests here for all the signing logic etc....
 }

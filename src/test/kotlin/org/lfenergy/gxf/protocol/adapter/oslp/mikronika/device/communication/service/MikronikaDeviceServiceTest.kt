@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service
 
 import io.mockk.every
@@ -17,7 +20,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.Mikronik
 @ExtendWith(MockKExtension::class)
 class MikronikaDeviceServiceTest {
     @MockK
-    private lateinit var mikronikaDeviceRepository: MikronikaDeviceRepository;
+    private lateinit var mikronikaDeviceRepository: MikronikaDeviceRepository
 
     @InjectMockKs
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
@@ -52,7 +55,7 @@ class MikronikaDeviceServiceTest {
 
         val actual = mikronikaDeviceService.saveDevice(device)
 
-        verify(exactly = 1) { mikronikaDeviceService.saveDevice(device) }
+        verify(exactly = 1) { mikronikaDeviceRepository.save(device) }
 
         assertThat(actual).isEqualTo(device)
     }

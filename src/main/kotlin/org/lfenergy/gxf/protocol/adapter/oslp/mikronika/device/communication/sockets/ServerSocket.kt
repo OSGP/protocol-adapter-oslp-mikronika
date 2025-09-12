@@ -4,9 +4,12 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
 
 import com.google.protobuf.InvalidProtocolBufferException
-import io.ktor.network.selector.*
-import io.ktor.network.sockets.*
-import io.ktor.utils.io.*
+import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.readAvailable
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,9 +19,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ServerSocket(
-    private val serverSocketMessageProcessor: ServerSocketMessageProcessor
+    private val serverSocketMessageProcessor: ServerSocketMessageProcessor,
 ) {
-
     @OptIn(DelicateCoroutinesApi::class)
     fun startListening(
         hostName: String,

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
 
 import io.mockk.MockKAnnotations
@@ -10,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.configuration.ServerSocketConfiguration
 
 class ServerSocketStarterTest {
-
     @MockK(relaxed = true)
     private lateinit var serverSocket: ServerSocket
 

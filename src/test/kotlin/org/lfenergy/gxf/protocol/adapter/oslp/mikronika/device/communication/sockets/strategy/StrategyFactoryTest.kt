@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import io.mockk.mockk
@@ -5,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class StrategyFactoryTest {
-
     @Test
     fun `getStrategy returns correct strategy for key`() {
         val strategyA = mockk<ReceiveStrategy>()

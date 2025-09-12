@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service
 
 import jakarta.persistence.EntityNotFoundException
@@ -7,14 +10,13 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.Mikronik
 import org.springframework.stereotype.Service
 
 @Service
-class MikronikaDeviceService(private val mikronikaDeviceRepository: MikronikaDeviceRepository) {
-
+class MikronikaDeviceService(
+    private val mikronikaDeviceRepository: MikronikaDeviceRepository,
+) {
     fun findByDeviceUid(deviceUid: String): MikronikaDevice =
         mikronikaDeviceRepository.findByDeviceUid(deviceUid)
             ?: throw EntityNotFoundException("Device with identification $deviceUid not found")
 
     @Transactional
-    fun saveDevice(device: MikronikaDevice) =
-        mikronikaDeviceRepository.save(device)
-
+    fun saveDevice(device: MikronikaDevice) = mikronikaDeviceRepository.save(device)
 }

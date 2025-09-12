@@ -13,14 +13,20 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.Mikronik
 import org.opensmartgridplatform.oslp.Oslp.Message
 
 abstract class ReceiveStrategy(
-    private val singingService: SigningService,
-    private val mikronikaDeviceService: MikronikaDeviceService
+    private val signingService: SigningService,
+    private val mikronikaDeviceService: MikronikaDeviceService,
 ) {
     private val logger = KotlinLogging.logger {}
 
-    abstract fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice)
+    abstract fun handle(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+    )
 
-    abstract fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message
+    abstract fun buildResponsePayload(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+    ): Message
 
     operator fun invoke(requestEnvelope: Envelope): Envelope? {
         val deviceUuid = String(requestEnvelope.deviceUid)
@@ -36,16 +42,19 @@ abstract class ReceiveStrategy(
     private fun finalizeInvocation(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
-        responsePayload: ByteArray
+        responsePayload: ByteArray,
     ): Envelope? {
         saveDeviceChanges(mikronikaDevice)
         return createResponseEnvelope(requestEnvelope, responsePayload)
     }
 
-    private fun validateSignature(requestEnvelope: Envelope, key: MikronikaKey): Boolean {
+    private fun validateSignature(
+        requestEnvelope: Envelope,
+        key: MikronikaKey,
+    ): Boolean {
         val verified =
             with(requestEnvelope) {
-                singingService.verifySignature(
+                signingService.verifySignature(
                     sequenceNumber.toByteArray(2) + deviceUid + lengthIndicator.toByteArray(2) + messageBytes,
                     securityKey,
                     key,
@@ -68,11 +77,11 @@ abstract class ReceiveStrategy(
         responsePayload: ByteArray,
     ): Envelope {
         val securityKey =
-            singingService.createSignature(
+            signingService.createSignature(
                 requestEnvelope.sequenceNumber.toByteArray(2) +
-                        requestEnvelope.deviceUid +
-                        responsePayload.size.toByteArray(2) +
-                        responsePayload,
+                    requestEnvelope.deviceUid +
+                    responsePayload.size.toByteArray(2) +
+                    responsePayload,
             )
 
         return Envelope(

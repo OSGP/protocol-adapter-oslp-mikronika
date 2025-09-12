@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class SigningService(
     private val keyProvider: KeyProvider,
-    signingConfiguration: SigningConfiguration
+    signingConfiguration: SigningConfiguration,
 ) : SigningUtil(SigningProperties(signingConfiguration.securityProvider, signingConfiguration.securityAlgorithm)) {
     fun createSignature(data: ByteArray): ByteArray = this.createSignature(data, keyProvider.getPrivateKey())
 
@@ -19,11 +19,10 @@ class SigningService(
         data: ByteArray,
         signature: ByteArray,
         mikronikaKey: MikronikaKey,
-    ): Boolean {
-        return this.verifySignature(
+    ): Boolean =
+        this.verifySignature(
             data,
             signature,
             keyProvider.getPublicKey(mikronikaKey),
         )
-    }
 }

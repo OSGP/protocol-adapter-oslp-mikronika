@@ -16,7 +16,7 @@ import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
-import java.util.*
+import java.util.Base64
 
 @Component
 class KeyProvider(
@@ -44,8 +44,10 @@ class KeyProvider(
 
     fun getPublicKey(publicKey: MikronikaKey): PublicKey {
         try {
-            val publicKeyBytes = Base64.getDecoder()
-                .decode(publicKey.key)
+            val publicKeyBytes =
+                Base64
+                    .getDecoder()
+                    .decode(publicKey.key)
             val publicKeySpec = X509EncodedKeySpec(publicKeyBytes)
             val publicKeyFactory =
                 KeyFactory.getInstance(signingConfiguration.securityKeyType, signingConfiguration.securityProvider)

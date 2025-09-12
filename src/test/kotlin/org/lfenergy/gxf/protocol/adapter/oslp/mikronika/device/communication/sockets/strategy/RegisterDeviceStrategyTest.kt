@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import io.mockk.every
@@ -19,7 +22,7 @@ import org.opensmartgridplatform.oslp.Oslp
 @ExtendWith(MockKExtension::class)
 class RegisterDeviceStrategyTest {
     @MockK
-    private lateinit var signingService: SigningService;
+    private lateinit var signingService: SigningService
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
@@ -31,7 +34,7 @@ class RegisterDeviceStrategyTest {
     fun `handle should set the register device request random device on the mikronika device`() {
         val randomDevice = 1234
 
-        val envelopeMock = mockEnvelope(randomDevice);
+        val envelopeMock = mockEnvelope(randomDevice)
 
         val mikronikaDevice = mockk<MikronikaDevice>(relaxed = true)
 
@@ -44,7 +47,7 @@ class RegisterDeviceStrategyTest {
     fun `build response payload should return the correct register device response and set the random platform number`() {
         val randomDevice = 5678
 
-        val envelopeMock = mockEnvelope(randomDevice);
+        val envelopeMock = mockEnvelope(randomDevice)
         val mikronikaDevice = mockk<MikronikaDevice>(relaxed = true)
         val slot = slot<Int>()
 

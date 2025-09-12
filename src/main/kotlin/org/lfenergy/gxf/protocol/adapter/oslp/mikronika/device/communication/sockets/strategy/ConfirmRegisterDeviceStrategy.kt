@@ -14,10 +14,12 @@ import org.springframework.stereotype.Component
 @Component("ConfirmRegisterDeviceStrategy")
 class ConfirmRegisterDeviceStrategy(
     signingService: SigningService,
-    mikronikaDeviceService: MikronikaDeviceService
+    mikronikaDeviceService: MikronikaDeviceService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService) {
-
-    override fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice) {
+    override fun handle(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+    ) {
         with(requestEnvelope.message.confirmRegisterDeviceRequest) {
             if (randomDevice != mikronikaDevice.randomDevice) {
                 println("Invalid randomDevice! Expected: ${mikronikaDevice.randomDevice} - Got: $randomDevice")
@@ -30,7 +32,10 @@ class ConfirmRegisterDeviceStrategy(
         mikronikaDevice.sequenceNumber = requestEnvelope.sequenceNumber
     }
 
-    override fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message {
+    override fun buildResponsePayload(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+    ): Message {
         val response =
             Message
                 .newBuilder()

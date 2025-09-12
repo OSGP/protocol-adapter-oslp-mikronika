@@ -15,14 +15,19 @@ import kotlin.random.Random
 @Component("RegisterDeviceStrategy")
 class RegisterDeviceStrategy(
     signingService: SigningService,
-    mikronikaDeviceService: MikronikaDeviceService
+    mikronikaDeviceService: MikronikaDeviceService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService) {
-
-    override fun handle(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice) {
+    override fun handle(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+    ) {
         mikronikaDevice.randomDevice = requestEnvelope.message.registerDeviceRequest.randomDevice
     }
 
-    override fun buildResponsePayload(requestEnvelope: Envelope, mikronikaDevice: MikronikaDevice): Message {
+    override fun buildResponsePayload(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+    ): Message {
         val randomPlatform = Random.nextInt(65536)
         mikronikaDevice.randomPlatform = randomPlatform
 

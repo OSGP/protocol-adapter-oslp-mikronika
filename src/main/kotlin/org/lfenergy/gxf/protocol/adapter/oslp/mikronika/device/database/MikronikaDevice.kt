@@ -21,7 +21,7 @@ class MikronikaDevice(
     @SequenceGenerator(
         name = "oslp_mikronika_device_id_seq_gen",
         sequenceName = "oslp_mikronika_device_id_seq",
-        allocationSize = 1
+        allocationSize = 1,
     )
     @Column(name = "id", nullable = false)
     var id: Long? = null,
@@ -44,5 +44,5 @@ class MikronikaDevice(
     @Column(name = "random_platform")
     var randomPlatform: Int? = null,
     @Column(name = "public_key", length = 255, nullable = false)
-    var publicKey: String = ""
+    var publicKey: String = "",
 )
