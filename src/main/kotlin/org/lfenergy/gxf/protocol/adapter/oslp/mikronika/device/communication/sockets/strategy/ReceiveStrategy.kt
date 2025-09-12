@@ -30,6 +30,14 @@ abstract class ReceiveStrategy(
         handle(requestEnvelope, mikronikaDevice)
         val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
 
+        return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload)
+    }
+
+    private fun finalizeInvocation(
+        requestEnvelope: Envelope,
+        mikronikaDevice: MikronikaDevice,
+        responsePayload: ByteArray
+    ): Envelope? {
         saveDeviceChanges(mikronikaDevice)
         return createResponseEnvelope(requestEnvelope, responsePayload)
     }
