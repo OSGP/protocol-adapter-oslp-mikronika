@@ -14,8 +14,6 @@ abstract class ReceiveStrategy(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    abstract fun matches(message: Message): Boolean
-
     abstract fun handle(requestEnvelope: Envelope)
 
     abstract fun buildResponsePayload(requestEnvelope: Envelope): Message

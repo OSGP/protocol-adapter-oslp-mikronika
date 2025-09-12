@@ -72,6 +72,9 @@ dependencies {
     testImplementation(libs.kotlinJunit)
     testImplementation(libs.springBootTestcontainers)
     testImplementation(libs.testcontainersPostgresql)
+    testImplementation(libs.mockkJvm)
+    testImplementation(libs.mockkSpring)
+    testImplementation(libs.assertJ)
 
     testRuntimeOnly(libs.junitLauncher)
 }

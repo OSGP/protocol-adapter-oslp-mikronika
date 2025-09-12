@@ -5,17 +5,13 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.se
 
 // TODO add DeviceStateService for multiple devices
 class DeviceStateService {
-    private var deviceRegistered = false
-    private var deviceRegistrationConfirmed = false
-
-    var deviceId: ByteArray = byteArrayOf()
+    var deviceUid: ByteArray = byteArrayOf()
     var sequenceNumber: Int = 0
     var randomPlatform: Int = 0
     var randomDevice: Int = 0
 
-    fun registerDevice(deviceId: ByteArray) {
-        this.deviceId = deviceId
-        deviceRegistered = true
+    fun registerDevice(deviceUid: ByteArray) {
+        this.deviceUid = deviceUid
     }
 
     fun updateSequenceNumber(newSequenceNumber: Int) {
@@ -23,13 +19,7 @@ class DeviceStateService {
     }
 
     fun confirmRegisterDevice(newSequenceNumber: Int) {
-        deviceRegistrationConfirmed = true
         sequenceNumber = newSequenceNumber
-    }
-
-    fun resetRegistrationValues() {
-        deviceRegistered = false
-        deviceRegistrationConfirmed = false
     }
 
     companion object {

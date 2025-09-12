@@ -11,6 +11,8 @@ kotlinLogging = "7.0.13"
 kotlinSerializationJson = "1.9.0"
 protobuf = "4.32.0"
 protobufPlugin = "0.9.5"
+mockk = "1.14.5"
+mockkSpring = "4.0.2"
 
 [libraries]
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
@@ -34,6 +36,9 @@ postgresql = { group = "org.postgresql", name = "postgresql" }
 springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
 testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql" }
 oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing", version.ref = "gxfUtils" }
+mockkJvm = { group = "io.mockk", name = "mockk-jvm", version.ref = "mockk" }
+mockkSpring = { group = "com.ninja-squad", name = "springmockk", version.ref = "mockkSpring" }
+assertJ = { group = "org.assertj", name = "assertj-core" }
 
 # Development dependencies
 springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }

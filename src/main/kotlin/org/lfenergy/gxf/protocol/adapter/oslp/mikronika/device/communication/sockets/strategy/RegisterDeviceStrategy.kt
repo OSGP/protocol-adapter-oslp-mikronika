@@ -15,7 +15,6 @@ import kotlin.random.Random
 class RegisterDeviceStrategy(
     signingService: SigningService,
 ) : ReceiveStrategy(signingService) {
-    override fun matches(message: Message): Boolean = message.hasRegisterDeviceRequest()
 
     override fun handle(requestEnvelope: Envelope) {
         val deviceStateService = DeviceStateService.getInstance()
@@ -26,7 +25,7 @@ class RegisterDeviceStrategy(
     override fun buildResponsePayload(requestEnvelope: Envelope): Message {
         val deviceStateService = DeviceStateService.getInstance()
 
-        deviceStateService.deviceId = requestEnvelope.deviceUid
+//        deviceStateService.deviceUid = requestEnvelope.deviceUid
         deviceStateService.randomPlatform = Random.nextInt(65536)
 
         val response =

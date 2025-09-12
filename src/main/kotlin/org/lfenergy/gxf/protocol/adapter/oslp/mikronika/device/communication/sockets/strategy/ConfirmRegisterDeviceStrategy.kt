@@ -16,8 +16,6 @@ class ConfirmRegisterDeviceStrategy(
 ) : ReceiveStrategy(signingService) {
     private val deviceStateService = DeviceStateService.getInstance()
 
-    override fun matches(message: Message): Boolean = message.hasConfirmRegisterDeviceRequest()
-
     override fun handle(requestEnvelope: Envelope) {
         with(requestEnvelope.message.confirmRegisterDeviceRequest) {
             if (randomDevice != deviceStateService.randomDevice) {

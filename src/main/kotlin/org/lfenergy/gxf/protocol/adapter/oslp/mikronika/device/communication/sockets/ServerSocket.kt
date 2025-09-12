@@ -15,12 +15,14 @@ import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.platform.producer.MikronikaProtocolProducer
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 
 @Component
 class ServerSocket(
     private val strategyFactory: StrategyFactory,
+    private val mikronikaProtocolProducer: MikronikaProtocolProducer
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -62,9 +64,9 @@ class ServerSocket(
                                 val responseBytes = envelope.getBytes()
                                 output.writeFully(responseBytes)
 
-                                logger.info {
+                                mikronikaProtocolProducer.send(
                                     "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}"
-                                }
+                                )
                             }
                         }
                     }
@@ -80,11 +82,12 @@ class ServerSocket(
         }
     }
 
-    fun getStrategyFor(message: Message): ReceiveStrategy? {
+    private fun getStrategyFor(message: Message): ReceiveStrategy? {
         with(message) {
             return when {
                 hasRegisterDeviceRequest() -> strategyFactory.getStrategy("RegisterDeviceStrategy")
                 hasConfirmRegisterDeviceRequest() -> strategyFactory.getStrategy("ConfirmRegisterDeviceStrategy")
+                hasEventNotificationRequest() -> strategyFactory.getStrategy("EventNotificationRequestStrategy")
                 else -> error("Unexpected request message: $message")
             }
         }

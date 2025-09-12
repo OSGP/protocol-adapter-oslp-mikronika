@@ -5,7 +5,10 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import jakarta.persistence.Version
 import java.time.Instant
@@ -14,6 +17,12 @@ import java.time.Instant
 @Table(name = "oslp_mikronika_device")
 class MikronikaDevice(
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "oslp_mikronika_device_id_seq_gen")
+    @SequenceGenerator(
+        name = "oslp_mikronika_device_id_seq_gen",
+        sequenceName = "oslp_mikronika_device_id_seq",
+        allocationSize = 1
+    )
     @Column(name = "id", nullable = false)
     var id: Long? = null,
     @Column(name = "creation_time", nullable = false)
