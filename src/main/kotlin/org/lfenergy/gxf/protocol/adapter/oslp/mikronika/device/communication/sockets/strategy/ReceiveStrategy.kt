@@ -51,7 +51,7 @@ abstract class ReceiveStrategy(
         return true
     }
 
-    fun saveDeviceChanges(mikronikaDevice: MikronikaDevice) {
+    private fun saveDeviceChanges(mikronikaDevice: MikronikaDevice) {
         mikronikaDeviceService.saveDevice(mikronikaDevice)
     }
 
