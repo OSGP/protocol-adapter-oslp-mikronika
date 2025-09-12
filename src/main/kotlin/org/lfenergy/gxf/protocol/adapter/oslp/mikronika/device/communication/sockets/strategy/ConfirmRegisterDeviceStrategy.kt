@@ -10,10 +10,10 @@ import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 
-@Component
+@Component("ConfirmRegisterDeviceStrategy")
 class ConfirmRegisterDeviceStrategy(
     signingService: SigningService,
-) : RegisterDeviceStrategy(signingService) {
+) : ReceiveStrategy(signingService) {
     private val deviceStateService = DeviceStateService.getInstance()
 
     override fun matches(message: Message): Boolean = message.hasConfirmRegisterDeviceRequest()

@@ -21,11 +21,11 @@ class SigningService(
     fun verifySignature(
         data: ByteArray,
         signature: ByteArray,
-        deviceIdentification: String,
+        deviceUid: String,
     ): Boolean {
         val device: MikronikaDevice =
-            mikronikaRepository.findByDeviceIdentification(deviceIdentification)
-                ?: throw EntityNotFoundException("Device with identification $deviceIdentification not found")
+            mikronikaRepository.findByDeviceUid(deviceUid)
+                ?: throw EntityNotFoundException("Device with identification $deviceUid not found")
         return this.verifySignature(
             data,
             signature,

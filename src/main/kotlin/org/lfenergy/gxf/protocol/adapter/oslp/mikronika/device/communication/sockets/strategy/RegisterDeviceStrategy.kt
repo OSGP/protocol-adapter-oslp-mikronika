@@ -11,7 +11,7 @@ import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 import kotlin.random.Random
 
-@Component
+@Component("RegisterDeviceStrategy")
 class RegisterDeviceStrategy(
     signingService: SigningService,
 ) : ReceiveStrategy(signingService) {
@@ -19,14 +19,14 @@ class RegisterDeviceStrategy(
 
     override fun handle(requestEnvelope: Envelope) {
         val deviceStateService = DeviceStateService.getInstance()
-        deviceStateService.registerDevice(requestEnvelope.deviceId)
+        deviceStateService.registerDevice(requestEnvelope.deviceUid)
         deviceStateService.randomDevice = requestEnvelope.message.registerDeviceRequest.randomDevice
     }
 
     override fun buildResponsePayload(requestEnvelope: Envelope): Message {
         val deviceStateService = DeviceStateService.getInstance()
 
-        deviceStateService.deviceId = requestEnvelope.deviceId
+        deviceStateService.deviceId = requestEnvelope.deviceUid
         deviceStateService.randomPlatform = Random.nextInt(65536)
 
         val response =

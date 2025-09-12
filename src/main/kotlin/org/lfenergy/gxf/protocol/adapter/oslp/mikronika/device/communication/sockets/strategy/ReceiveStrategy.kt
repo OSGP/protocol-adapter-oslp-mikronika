@@ -9,7 +9,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.hel
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.opensmartgridplatform.oslp.Oslp.Message
 
-// TODO refactor stratergies implementation for mutiple devices
+
 abstract class ReceiveStrategy(
     private val singingService: SigningService,
 ) {
@@ -21,25 +21,25 @@ abstract class ReceiveStrategy(
 
     abstract fun buildResponsePayload(requestEnvelope: Envelope): Message
 
-    operator fun invoke(requestEnvelope: Envelope, deviceIdentification: String): Envelope? {
-        if (!validateSignature(requestEnvelope, deviceIdentification)) return null
+    operator fun invoke(requestEnvelope: Envelope): Envelope? {
+        if (!validateSignature(requestEnvelope)) return null
         handle(requestEnvelope)
         val responsePayload = buildResponsePayload(requestEnvelope).toByteArray()
         return createResponseEnvelope(requestEnvelope, responsePayload)
     }
 
-    private fun validateSignature(requestEnvelope: Envelope, deviceIdentification: String): Boolean {
+    private fun validateSignature(requestEnvelope: Envelope): Boolean {
         val verified =
             with(requestEnvelope) {
                 singingService.verifySignature(
-                    sequenceNumber.toByteArray(2) + deviceId + lengthIndicator.toByteArray(2) + messageBytes,
+                    sequenceNumber.toByteArray(2) + deviceUid + lengthIndicator.toByteArray(2) + messageBytes,
                     securityKey,
-                    deviceIdentification,
+                    String(requestEnvelope.deviceUid, Charsets.UTF_8),
                 )
             }
 
         if (!verified) {
-            logger.error { "The signature is not valid for device ${requestEnvelope.deviceId}!" }
+            logger.error { "The signature is not valid for device ${requestEnvelope.deviceUid}!" }
             return false
         }
         return true
@@ -52,7 +52,7 @@ abstract class ReceiveStrategy(
         val securityKey =
             singingService.createSignature(
                 requestEnvelope.sequenceNumber.toByteArray(2) +
-                        requestEnvelope.deviceId +
+                        requestEnvelope.deviceUid +
                         responsePayload.size.toByteArray(2) +
                         responsePayload,
             )
@@ -60,21 +60,9 @@ abstract class ReceiveStrategy(
         return Envelope(
             securityKey,
             requestEnvelope.sequenceNumber,
-            requestEnvelope.deviceId,
+            requestEnvelope.deviceUid,
             responsePayload.size,
             responsePayload,
         )
     }
-
-//    companion object {
-//        fun getStrategyFor(message: Message): ReceiveStrategy {
-//            with(message) {
-//                return when {
-//                    hasRegisterDeviceRequest() -> RegisterDeviceStrategy()
-//                    hasConfirmRegisterDeviceRequest() -> ConfirmRegisterDeviceStrategy()
-//                    else -> error("Unexpected request message: $message")
-//                }
-//            }
-//        }
-//    }
 }

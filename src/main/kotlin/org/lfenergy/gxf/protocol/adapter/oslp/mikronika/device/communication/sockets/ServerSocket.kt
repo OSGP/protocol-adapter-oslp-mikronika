@@ -13,14 +13,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.RegisterDeviceStrategy
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
+import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 
 @Component
 class ServerSocket(
-    private val signingService: SigningService,
-    private val registerDeviceStrategy: RegisterDeviceStrategy,
+    private val strategyFactory: StrategyFactory,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -56,10 +56,9 @@ class ServerSocket(
                         }
 
                         val message = requestEnvelope.message;
-                        if (message.hasRegisterDeviceRequest()) {
-                            registerDeviceStrategy.invoke(
-                                requestEnvelope,
-                                message.registerDeviceRequest.deviceIdentification
+                        getStrategyFor(message)?.let {
+                            it.invoke(
+                                requestEnvelope
                             )?.let { envelope ->
                                 val responseBytes = envelope.getBytes()
                                 output.writeFully(responseBytes)
@@ -69,17 +68,6 @@ class ServerSocket(
                                 }
                             }
                         }
-
-//                        val responseStrategy = ReceiveStrategy.getStrategyFor(requestEnvelope.message)
-
-//                        responseStrategy(requestEnvelope)?.let { envelope ->
-//                            val responseBytes = envelope.getBytes()
-//                            output.writeFully(responseBytes)
-//
-//                            logger.info {
-//                                "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}"
-//                            }
-//                        }
                     }
                 } catch (e: InvalidProtocolBufferException) {
                     println("Failed to parse Protobuf message: ${e.message}")
@@ -89,6 +77,16 @@ class ServerSocket(
                 } finally {
                     socket.close()
                 }
+            }
+        }
+    }
+
+    fun getStrategyFor(message: Message): ReceiveStrategy? {
+        with(message) {
+            return when {
+                hasRegisterDeviceRequest() -> strategyFactory.getStrategy("RegisterDeviceStrategy")
+                hasConfirmRegisterDeviceRequest() -> strategyFactory.getStrategy("ConfirmRegisterDeviceStrategy")
+                else -> error("Unexpected request message: $message")
             }
         }
     }

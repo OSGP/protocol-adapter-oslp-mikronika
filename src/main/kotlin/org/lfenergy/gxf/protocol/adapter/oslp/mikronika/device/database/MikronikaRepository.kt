@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MikronikaRepository : JpaRepository<MikronikaDevice, Long> {
-    fun findByDeviceIdentification(deviceIdentification: String): MikronikaDevice?
+    fun findByDeviceUid(deviceUid: String): MikronikaDevice?
 }

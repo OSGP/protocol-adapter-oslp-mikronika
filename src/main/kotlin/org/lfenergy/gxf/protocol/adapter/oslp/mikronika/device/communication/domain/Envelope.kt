@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
 data class Envelope(
     val securityKey: ByteArray,
     val sequenceNumber: Int,
-    val deviceId: ByteArray,
+    val deviceUid: ByteArray,
     val lengthIndicator: Int,
     val messageBytes: ByteArray,
 ) {
@@ -24,7 +24,7 @@ data class Envelope(
 
         buf.put(securityKey.copyOf(SECURITY_KEY_LEN))
         buf.put(sequenceNumber.toByteArray(SEQUENCE_NUMBER_LEN))
-        buf.put(deviceId)
+        buf.put(deviceUid)
         buf.put(lengthIndicator.toByteArray(LENGTH_INDICATOR_LEN))
         buf.put(messageBytes)
 
@@ -39,7 +39,7 @@ data class Envelope(
 
         if (sequenceNumber != other.sequenceNumber) return false
         if (lengthIndicator != other.lengthIndicator) return false
-        if (!deviceId.contentEquals(other.deviceId)) return false
+        if (!deviceUid.contentEquals(other.deviceUid)) return false
         if (!securityKey.contentEquals(other.securityKey)) return false
 
         return true
@@ -48,7 +48,7 @@ data class Envelope(
     override fun hashCode(): Int {
         var result = sequenceNumber.hashCode()
         result = 31 * result + lengthIndicator.hashCode()
-        result = 31 * result + deviceId.hashCode()
+        result = 31 * result + deviceUid.hashCode()
         result = 31 * result + securityKey.contentHashCode()
         return result
     }
