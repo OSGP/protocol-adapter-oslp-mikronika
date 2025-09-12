@@ -29,7 +29,6 @@ class ServerSocket(
         hostName: String,
         port: Int,
     ) {
-        println("Starting the serversocket")
         GlobalScope.launch {
             val serverSocket =
                 aSocket(ActorSelectorManager(Dispatchers.IO))
@@ -70,10 +69,10 @@ class ServerSocket(
                         }
                     }
                 } catch (e: InvalidProtocolBufferException) {
+                    e.printStackTrace()
                     println("Failed to parse Protobuf message: ${e.message}")
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    logger.error(e.message ?: e.toString())
                 } finally {
                     socket.close()
                 }
