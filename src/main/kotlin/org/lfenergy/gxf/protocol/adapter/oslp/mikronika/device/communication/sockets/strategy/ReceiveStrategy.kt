@@ -9,7 +9,6 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.hel
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.opensmartgridplatform.oslp.Oslp.Message
 
-
 abstract class ReceiveStrategy(
     private val singingService: SigningService,
 ) {

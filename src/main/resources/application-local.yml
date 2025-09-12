@@ -13,3 +13,7 @@ spring:
 
   jpa:
     show-sql: true
+
+server-socket:
+  port: 12122
+  hostName: localhost
