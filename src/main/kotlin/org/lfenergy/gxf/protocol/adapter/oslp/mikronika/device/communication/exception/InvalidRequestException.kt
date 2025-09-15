@@ -4,5 +4,5 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception
 
 class InvalidRequestException(
-    val errorMessage: String,
+    errorMessage: String,
 ) : Exception(errorMessage)
