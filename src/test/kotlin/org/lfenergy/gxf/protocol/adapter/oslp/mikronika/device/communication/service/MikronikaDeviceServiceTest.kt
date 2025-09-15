@@ -7,14 +7,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
 import io.mockk.verify
 import jakarta.persistence.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDeviceRepository
 
 @ExtendWith(MockKExtension::class)
@@ -27,8 +26,8 @@ class MikronikaDeviceServiceTest {
 
     @Test
     fun `findDeviceByUid should return a mikronika device`() {
-        val deviceUid = "my-device-uid"
-        val expected = mockk<MikronikaDevice>(relaxed = true)
+        val expected = mikronikaDevice()
+        val deviceUid = expected.deviceUid!!
 
         every { mikronikaDeviceRepository.findByDeviceUid(deviceUid) } returns expected
 
@@ -49,7 +48,7 @@ class MikronikaDeviceServiceTest {
 
     @Test
     fun `saveDevice should call the save`() {
-        val device = mockk<MikronikaDevice>(relaxed = true)
+        val device = mikronikaDevice()
 
         every { mikronikaDeviceRepository.save(device) } returns device
 

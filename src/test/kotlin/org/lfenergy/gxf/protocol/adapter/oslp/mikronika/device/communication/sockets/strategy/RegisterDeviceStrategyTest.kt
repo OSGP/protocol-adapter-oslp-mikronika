@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -36,11 +37,11 @@ class RegisterDeviceStrategyTest {
 
         val envelopeMock = mockEnvelope(randomDevice)
 
-        val mikronikaDevice = mockk<MikronikaDevice>(relaxed = true)
+        val mikronikaDevice = mikronikaDevice()
 
         registerDeviceStrategy.handle(envelopeMock, mikronikaDevice)
 
-        verify { mikronikaDevice.randomDevice = randomDevice }
+        assertThat(mikronikaDevice.randomDevice).isEqualTo(randomDevice)
     }
 
     @Test
