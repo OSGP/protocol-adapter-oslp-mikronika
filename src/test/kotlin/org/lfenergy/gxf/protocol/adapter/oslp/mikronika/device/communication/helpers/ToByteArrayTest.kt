@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers
 
 import org.junit.jupiter.api.Assertions.assertArrayEquals
@@ -5,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class ToByteArrayTest {
-
     @Test
     fun `converts Int to ByteArray with 1 byte`() {
         val value = 0x7F

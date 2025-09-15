@@ -4,6 +4,10 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PrivateKeyException
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PublicKeyException
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.springframework.stereotype.Component
 import java.io.File
 import java.nio.file.Files
 import java.security.GeneralSecurityException
@@ -13,10 +17,6 @@ import java.security.PublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PrivateKeyException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PublicKeyException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
-import org.springframework.stereotype.Component
 
 @Component
 class KeyProvider(
