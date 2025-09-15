@@ -38,6 +38,7 @@ abstract class ReceiveStrategy(
             handle(requestEnvelope, mikronikaDevice)
         } catch (e: InvalidRequestException) {
             logger.warn { "Invalid request received for deviceUid: ${mikronikaDevice.deviceUid} with message: ${e.message}" }
+            return null
         }
         val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
 
@@ -48,7 +49,7 @@ abstract class ReceiveStrategy(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
         responsePayload: ByteArray,
-    ): Envelope? {
+    ): Envelope {
         saveDeviceChanges(mikronikaDevice)
         return createResponseEnvelope(requestEnvelope, responsePayload)
     }

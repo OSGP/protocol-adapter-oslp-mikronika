@@ -8,11 +8,15 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import jakarta.persistence.EntityNotFoundException
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 
@@ -41,5 +45,45 @@ class ReceiveStrategyTest {
             .hasMessageContaining(expectedException.message)
     }
 
-    // todo more tests here for all the signing logic etc....
+    @Test
+    fun `invalid signature should return false`() {
+        val deviceUid = "device-uid"
+        val envelope = mockEnvelope(deviceUid)
+
+        val mikronikaDevice = mikronikaDevice()
+        every { mikronikaDeviceService.findByDeviceUid(deviceUid) } returns mikronikaDevice
+
+        every { signingService.verifySignature(any<ByteArray>(), any<ByteArray>(), any<Key>()) } returns false
+
+        val result = eventNotificationRequestStrategy.invoke(envelope)
+
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `handle should save and return as signed envelope`() {
+        val deviceUid = "device-uid2"
+        val envelope = mockEnvelope(deviceUid)
+
+        val mikronikaDevice = mikronikaDevice()
+        every { mikronikaDeviceService.findByDeviceUid(deviceUid) } returns mikronikaDevice
+
+        every { signingService.verifySignature(any<ByteArray>(), any<ByteArray>(), any<Key>()) } returns true
+        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
+        every { signingService.createSignature(any<ByteArray>()) } returns ByteArray(16) { 0x01 }
+
+        val result = eventNotificationRequestStrategy.invoke(envelope)
+
+        assertThat(result).isNotNull()
+
+        verify(exactly = 1) { mikronikaDeviceService.saveDevice(mikronikaDevice) }
+        verify(exactly = 1) { signingService.createSignature(any<ByteArray>()) }
+    }
+
+    private fun mockEnvelope(deviceUid: String): Envelope {
+        val envelope = mockk<Envelope>(relaxed = true)
+        every { envelope.deviceUid } returns deviceUid.toByteArray()
+
+        return envelope
+    }
 }
