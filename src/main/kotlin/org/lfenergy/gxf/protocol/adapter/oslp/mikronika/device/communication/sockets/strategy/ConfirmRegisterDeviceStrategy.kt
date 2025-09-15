@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -22,10 +23,10 @@ class ConfirmRegisterDeviceStrategy(
     ) {
         with(requestEnvelope.message.confirmRegisterDeviceRequest) {
             if (randomDevice != mikronikaDevice.randomDevice) {
-                println("Invalid randomDevice! Expected: ${mikronikaDevice.randomDevice} - Got: $randomDevice")
+                throw InvalidRequestException("Invalid randomDevice! Expected: ${mikronikaDevice.randomDevice} - Got: $randomDevice")
             }
             if (randomPlatform != mikronikaDevice.randomPlatform) {
-                println("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $randomPlatform")
+                throw InvalidRequestException("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $randomPlatform")
             }
         }
 

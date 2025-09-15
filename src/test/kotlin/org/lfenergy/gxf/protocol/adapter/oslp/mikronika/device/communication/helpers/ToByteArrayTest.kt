@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assertions.assertArrayEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 class ToByteArrayTest {
     @Test
@@ -29,22 +31,11 @@ class ToByteArrayTest {
         assertArrayEquals(byteArrayOf(0x01, 0x02, 0x03, 0x04), result)
     }
 
-    @Test
-    fun `throws exception for zero numBytes`() {
+    @ParameterizedTest
+    @ValueSource(ints = [0, 5])
+    fun `throws exception for invalid numBytes`(numBytes: Int) {
         val value = 0x1234
-        assertThrows(IllegalArgumentException::class.java) {
-            value.toByteArray(0)
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            value.toByteArray(5)
-        }
-    }
-
-    @Test
-    fun `throws exception for large number of byte`() {
-        val value = 0x1234
-        assertThrows(IllegalArgumentException::class.java) {
-            value.toByteArray(5)
-        }
+        assertThatThrownBy { value.toByteArray(numBytes) }
+            .isInstanceOf(IllegalArgumentException::class.java)
     }
 }

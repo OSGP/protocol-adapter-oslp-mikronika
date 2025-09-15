@@ -5,6 +5,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
@@ -33,7 +34,11 @@ abstract class ReceiveStrategy(
         val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUuid)
 
         if (!validateSignature(requestEnvelope, Key(mikronikaDevice.publicKey))) return null
-        handle(requestEnvelope, mikronikaDevice)
+        try {
+            handle(requestEnvelope, mikronikaDevice)
+        } catch (e: InvalidRequestException) {
+            logger.warn { "Invalid request received for deviceUid: ${mikronikaDevice.deviceUid} with message: ${e.message}" }
+        }
         val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
 
         return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload)
