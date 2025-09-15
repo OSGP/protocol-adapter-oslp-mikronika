@@ -48,28 +48,30 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.springBootStarter)
+    developmentOnly(libs.springBootDevtools)
+
+    implementation(libs.flywayCore)
+    implementation(libs.flywayPostgresql)
     implementation(libs.kotlinReflect)
     implementation(libs.ktor)
+    implementation(libs.micrometerRegistryPrometheus)
     implementation(libs.kotlinLoggingJvm)
     implementation(libs.kotlinSerializationJson)
     implementation(libs.postgresql)
-    implementation(libs.flywayCore)
-    implementation(libs.flywayPostgresql)
-    implementation(libs.springBootStarterDataJpa)
-    implementation(libs.springBootStarterArtemis)
+    implementation(libs.springBootStarter)
     implementation(libs.springBootStarterActuator)
+    implementation(libs.springBootStarterArtemis)
+    implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterWeb)
     implementation(project(":protobuf"))
     implementation(libs.protobufKotlin)
     implementation(libs.protobufJavaUtil)
     implementation(libs.oslpMessageSigning)
 
-    developmentOnly(libs.springBootDevtools)
     testAndDevelopmentOnly(libs.springBootCompose)
 
-    testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
+    testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
     testImplementation(libs.testcontainersPostgresql)
     testImplementation(libs.mockkJvm)

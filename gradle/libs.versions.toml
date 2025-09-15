@@ -1,9 +1,15 @@
 [versions]
 dependencyManagement = "1.1.7"
-springBoot = "3.5.5"
+flyway = "11.11.1"
+gradleWrapperUpgrade = "0.12"
 kotlin = "2.2.10"
+ktor = "3.2.3"
+micrometer = "1.15.3"
+postgresql = "42.7.7"
 sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
+springBoot = "3.5.5"
+testcontainers = "1.21.3"
 gradleWrapperUpgrade = "0.12"
 gxfUtils = "2.6.3"
 ktor = "3.2.3"
@@ -15,15 +21,23 @@ mockk = "1.14.5"
 mockkSpring = "4.0.2"
 
 [libraries]
+flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
+flywayPostgresql = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway" }
+kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
-flywayCore = { group = "org.flywaydb", name = "flyway-core" }
-flywayPostgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
-springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter" }
-springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
-springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
-springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis" }
-springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springBoot" }
+springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" }
+springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
+springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "springBoot" }
 springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+
+# Test dependencies
+kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
+springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springBoot" }
+springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "springBoot" }
+testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
 kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
 kotlinLoggingJvm = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
@@ -41,17 +55,18 @@ mockkSpring = { group = "com.ninja-squad", name = "springmockk", version.ref = "
 assertJ = { group = "org.assertj", name = "assertj-core" }
 
 # Development dependencies
-springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
-springBootCompose = { group = "org.springframework.boot", name = "spring-boot-docker-compose" }
+springBootDevtools = { group = "org.springframework.boot", name = "spring-boot-devtools", version.ref = "springBoot" }
+springBootCompose = { group = "org.springframework.boot", name = "spring-boot-docker-compose", version.ref = "springBoot" }
 
 [plugins]
 dependencyManagement = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }
-jacoco.id = "jacoco"
-jacocoReportAggregation.id = "jacoco-report-aggregation"
-springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
+gradleWrapperUpgrade = { id = "org.gradle.wrapper-upgrade", version.ref = "gradleWrapperUpgrade" }
+# JaCoCo plugins are core Gradle plugins, and versioned as part of Gradle, so no version number allowed
+jacoco = { id = "jacoco" }
+jacocoReportAggregation = { id = "jacoco-report-aggregation" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-gradleWrapperUpgrade = { id = "org.gradle.wrapper-upgrade", version.ref = "gradleWrapperUpgrade" }
+springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
