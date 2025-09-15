@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.configuration.ServerSocketConfiguration
 
-class ServerSocketStarterTest {
+class ServerSocketInitializerTest {
     @MockK(relaxed = true)
     private lateinit var serverSocket: ServerSocket
 
@@ -20,7 +20,7 @@ class ServerSocketStarterTest {
     private lateinit var serverSocketConfiguration: ServerSocketConfiguration
 
     @InjectMockKs
-    private lateinit var starter: ServerSocketInitializer
+    private lateinit var serverSocketInitializer: ServerSocketInitializer
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +31,7 @@ class ServerSocketStarterTest {
 
     @Test
     fun `should call startListening on serverSocket with correct arguments`() {
-        starter.start()
+        serverSocketInitializer.start()
         verify(exactly = 1) { serverSocket.startListening("localhost", 1234) }
     }
 }

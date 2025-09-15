@@ -4,10 +4,6 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PrivateKeyException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PublicKeyException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
-import org.springframework.stereotype.Component
 import java.io.File
 import java.nio.file.Files
 import java.security.GeneralSecurityException
@@ -17,6 +13,10 @@ import java.security.PublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PrivateKeyException
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PublicKeyException
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.springframework.stereotype.Component
 
 @Component
 class KeyProvider(
@@ -32,10 +32,9 @@ class KeyProvider(
                 KeyFactory.getInstance(signingConfiguration.securityKeyType, signingConfiguration.securityProvider)
             return privateKeyFactory.generatePrivate(privateKeySpec)
         } catch (ex: GeneralSecurityException) {
-            ex.printStackTrace()
             val exception =
                 PrivateKeyException(
-                    "Security exception creating private key for algorithm ${signingConfiguration.securityAlgorithm} by provider ${signingConfiguration.securityProvider} and path ${signingConfiguration.privateKeyPath}",
+                    "Security exception creating private key for algorithm ${signingConfiguration.securityAlgorithm} by provider ${signingConfiguration.securityProvider} and path ${signingConfiguration.privateKeyPath}, with message: ${ex.message}",
                 )
             logger.error { exception.message }
             throw exception
@@ -53,10 +52,9 @@ class KeyProvider(
                 KeyFactory.getInstance(signingConfiguration.securityKeyType, signingConfiguration.securityProvider)
             return publicKeyFactory.generatePublic(publicKeySpec)
         } catch (ex: GeneralSecurityException) {
-            ex.printStackTrace()
             val exception =
                 PublicKeyException(
-                    "Security exception creating public key for algorithm ${signingConfiguration.securityAlgorithm} by provider ${signingConfiguration.securityProvider}",
+                    "Security exception creating public key for algorithm ${signingConfiguration.securityAlgorithm} by provider ${signingConfiguration.securityProvider}, with message: ${ex.message}",
                 )
             logger.error { exception.message }
             throw exception

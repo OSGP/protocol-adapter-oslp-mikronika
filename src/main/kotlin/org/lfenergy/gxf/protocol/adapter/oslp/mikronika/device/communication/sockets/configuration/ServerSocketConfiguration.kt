@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @ConfigurationProperties(prefix = "server-socket")
 class ServerSocketConfiguration {
-    var hostName: String = "localhost"
+    lateinit var hostName: String
     var port: Int = 12124
 }
