@@ -38,26 +38,26 @@ wrapperUpgrade {
 repositories { mavenCentral() }
 
 dependencies {
-    implementation(libs.springBootStarter)
-    implementation(libs.kotlinReflect)
-    implementation(libs.ktor)
-    implementation(libs.postgresql)
+    developmentOnly(libs.springBootDevtools)
+
     implementation(libs.flywayCore)
     implementation(libs.flywayPostgresql)
-    implementation(libs.springBootStarterDataJpa)
-    implementation(libs.springBootStarterArtemis)
+    implementation(libs.kotlinReflect)
+    implementation(libs.ktor)
+    implementation(libs.micrometerRegistryPrometheus)
+    implementation(libs.postgresql)
+    implementation(libs.springBootStarter)
     implementation(libs.springBootStarterActuator)
+    implementation(libs.springBootStarterArtemis)
+    implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterWeb)
 
-    developmentOnly(libs.springBootDevtools)
     testAndDevelopmentOnly(libs.springBootCompose)
 
-    testImplementation(libs.springBootStarterTest)
     testImplementation(libs.kotlinJunit)
+    testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
     testImplementation(libs.testcontainersPostgresql)
-
-    testRuntimeOnly(libs.junitLauncher)
 }
 
 kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }
