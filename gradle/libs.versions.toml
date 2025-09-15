@@ -10,9 +10,7 @@ sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
 springBoot = "3.5.5"
 testcontainers = "1.21.3"
-gradleWrapperUpgrade = "0.12"
 gxfUtils = "2.6.3"
-ktor = "3.2.3"
 kotlinLogging = "7.0.13"
 kotlinSerializationJson = "1.9.0"
 protobuf = "4.32.0"
@@ -38,17 +36,12 @@ kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", ver
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springBoot" }
 springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "springBoot" }
 testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
-kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
-kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
 kotlinLoggingJvm = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlinLogging" }
 protobufKotlin = { group = "com.google.protobuf", name = "protobuf-kotlin", version.ref = "protobuf" }
 protobufJavaUtil = { group = "com.google.protobuf", name = "protobuf-java-util", version.ref = "protobuf" }
 kotlinSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerializationJson" }
 protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
-postgresql = { group = "org.postgresql", name = "postgresql" }
-springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
-testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql" }
 oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing", version.ref = "gxfUtils" }
 mockkJvm = { group = "io.mockk", name = "mockk-jvm", version.ref = "mockk" }
 mockkSpring = { group = "com.ninja-squad", name = "springmockk", version.ref = "mockkSpring" }
