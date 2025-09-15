@@ -9,14 +9,12 @@ import io.ktor.utils.io.writeFully
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.platform.producer.MikronikaProtocolProducer
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 
 @Component
 class ServerSocketMessageProcessor(
     private val strategyFactory: StrategyFactory,
-    private val mikronikaProtocolProducer: MikronikaProtocolProducer,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -36,10 +34,6 @@ class ServerSocketMessageProcessor(
                 )?.let { envelope ->
                     val responseBytes = envelope.getBytes()
                     output.writeFully(responseBytes)
-
-                    mikronikaProtocolProducer.send(
-                        "Sent: Seq: ${envelope.sequenceNumber} - Len: ${envelope.lengthIndicator} Message: ${envelope.message}",
-                    )
                 }
         }
     }
