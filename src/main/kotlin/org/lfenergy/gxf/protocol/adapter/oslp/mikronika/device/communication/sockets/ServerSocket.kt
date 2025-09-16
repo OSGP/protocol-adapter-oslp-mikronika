@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
 
-import com.google.protobuf.InvalidProtocolBufferException
 import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.aSocket
@@ -46,9 +45,6 @@ class ServerSocket(
                         val requestEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
                         serverSocketMessageProcessor.handleMessage(requestEnvelope, output)
                     }
-                } catch (e: InvalidProtocolBufferException) {
-                    e.printStackTrace()
-                    println("Failed to parse Protobuf message: ${e.message}")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 } finally {

@@ -47,9 +47,9 @@ data class Envelope(
 
     override fun hashCode(): Int {
         var result = sequenceNumber.hashCode()
-        result = 31 * result + lengthIndicator.hashCode()
-        result = 31 * result + deviceUid.contentHashCode()
-        result = 31 * result + securityKey.contentHashCode()
+        result = HASH_PRIME * result + lengthIndicator.hashCode()
+        result = HASH_PRIME * result + deviceUid.contentHashCode()
+        result = HASH_PRIME * result + securityKey.contentHashCode()
         return result
     }
 
@@ -72,6 +72,7 @@ data class Envelope(
         private const val SEQUENCE_NUMBER_LEN = 2
         private const val DEVICE_ID_LEN = 12
         private const val LENGTH_INDICATOR_LEN = 2
+        private const val HASH_PRIME = 31
 
         private const val HEADER_LEN = SECURITY_KEY_LEN + SEQUENCE_NUMBER_LEN + DEVICE_ID_LEN + LENGTH_INDICATOR_LEN
 

@@ -30,8 +30,8 @@ abstract class ReceiveStrategy(
     ): Message
 
     operator fun invoke(requestEnvelope: Envelope): Envelope? {
-        val deviceUuid = String(requestEnvelope.deviceUid)
-        val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUuid)
+        val deviceUid = String(requestEnvelope.deviceUid)
+        val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUid)
 
         if (!validateSignature(requestEnvelope, Key(mikronikaDevice.publicKey))) return null
         try {
