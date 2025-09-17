@@ -5,7 +5,9 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 
 class StrategyFactoryTest {
     @Test
@@ -21,11 +23,13 @@ class StrategyFactoryTest {
     }
 
     @Test
-    fun `getStrategy returns null for unknown key`() {
+    fun `getStrategy throws exception for unknown key`() {
         val strategyA = mockk<ReceiveStrategy>()
         val strategies = mapOf("A" to strategyA)
         val factory = StrategyFactory(strategies)
 
-        assertThat(factory.getStrategy("Unknown")).isNull()
+        assertThatThrownBy { factory.getStrategy("Unknown") }
+            .isInstanceOf(InvalidRequestException::class.java)
+            .hasMessageContaining("Unable to find the correct strategy for the message")
     }
 }

@@ -7,6 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.writeFully
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
 import org.opensmartgridplatform.oslp.Oslp.Message
@@ -27,18 +28,22 @@ class ServerSocketMessageProcessor(
         }
 
         val message = envelope.message
-        getStrategyFor(message)?.let {
-            it
-                .invoke(
-                    envelope,
-                )?.let { envelope ->
-                    val responseBytes = envelope.getBytes()
-                    output.writeFully(responseBytes)
-                }
+        try {
+            getStrategyFor(message).let {
+                it
+                    .invoke(
+                        envelope,
+                    )?.let { envelope ->
+                        val responseBytes = envelope.getBytes()
+                        output.writeFully(responseBytes)
+                    }
+            }
+        } catch (invalidRequestException: InvalidRequestException) {
+            logger.error { "Ignoring incoming request because of ${invalidRequestException.message}" }
         }
     }
 
-    private fun getStrategyFor(message: Message): ReceiveStrategy? {
+    private fun getStrategyFor(message: Message): ReceiveStrategy {
         with(message) {
             return when {
                 hasRegisterDeviceRequest() -> strategyFactory.getStrategy("RegisterDeviceStrategy")

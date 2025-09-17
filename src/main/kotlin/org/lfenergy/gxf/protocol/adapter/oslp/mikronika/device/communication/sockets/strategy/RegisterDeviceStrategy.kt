@@ -28,7 +28,7 @@ class RegisterDeviceStrategy(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
     ): Message {
-        val randomPlatform = Random.nextInt(65536)
+        val randomPlatform = Random.nextInt(RANDOM_PLATFORM_MAX)
         mikronikaDevice.randomPlatform = randomPlatform
 
         val response =
@@ -51,5 +51,9 @@ class RegisterDeviceStrategy(
                 ).build()
 
         return response
+    }
+
+    private companion object {
+        const val RANDOM_PLATFORM_MAX = 65536
     }
 }
