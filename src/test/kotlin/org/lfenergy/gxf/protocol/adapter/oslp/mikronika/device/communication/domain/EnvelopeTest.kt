@@ -17,9 +17,9 @@ class EnvelopeTest {
     fun `get message should return the message`() {
         val envelope =
             Envelope(
-                securityKey = ByteArray(128) { 1 },
+                securityKey = ByteArray(SECURITY_KEY_LENGTH) { 1 },
                 sequenceNumber = 42,
-                deviceUid = ByteArray(12) { 2 },
+                deviceUid = ByteArray(DEVICE_UID_LENGTH) { 2 },
                 lengthIndicator = 10,
                 messageBytes = testMessage.toByteArray(),
             )
@@ -31,9 +31,9 @@ class EnvelopeTest {
 
     @Test
     fun `getBytes should return correct byte array layout`() {
-        val securityKey = ByteArray(128) { 0x01 }
+        val securityKey = ByteArray(SECURITY_KEY_LENGTH) { 0x01 }
         val sequenceNumber = 0x2A // 42
-        val deviceUid = ByteArray(12) { 0x02 }
+        val deviceUid = ByteArray(DEVICE_UID_LENGTH) { 0x02 }
         val lengthIndicator = 0x000A // 10
         val messageBytes = ByteArray(10) { 0x03 }
 
@@ -48,7 +48,7 @@ class EnvelopeTest {
 
         val bytes = envelope.getBytes()
 
-        assertThat(bytes.size).isEqualTo(128 + 2 + 12 + 2 + 10)
+        assertThat(bytes.size).isEqualTo(SECURITY_KEY_LENGTH + SEQUENCE_NUMBER_LENGTH + DEVICE_UID_LENGTH + LENGTH_INDICATOR_LENGTH + 10)
 
         assertThat(bytes.sliceArray(0 until 128)).isEqualTo(securityKey)
         assertThat(bytes.sliceArray(128 until 130)).isEqualTo(sequenceNumber.toByteArray(2))
@@ -61,18 +61,18 @@ class EnvelopeTest {
     fun `Test equals on two of the same envelopes should return true`() {
         val envelope =
             Envelope(
-                securityKey = ByteArray(128) { 1 },
+                securityKey = ByteArray(SECURITY_KEY_LENGTH) { 1 },
                 sequenceNumber = 42,
-                deviceUid = ByteArray(12) { 2 },
+                deviceUid = ByteArray(DEVICE_UID_LENGTH) { 2 },
                 lengthIndicator = 10,
                 messageBytes = testMessage.toByteArray(),
             )
 
         val envelope2 =
             Envelope(
-                securityKey = ByteArray(128) { 1 },
+                securityKey = ByteArray(SECURITY_KEY_LENGTH) { 1 },
                 sequenceNumber = 42,
-                deviceUid = ByteArray(12) { 2 },
+                deviceUid = ByteArray(DEVICE_UID_LENGTH) { 2 },
                 lengthIndicator = 10,
                 messageBytes = testMessage.toByteArray(),
             )
@@ -85,18 +85,18 @@ class EnvelopeTest {
     fun `Test equals on two different envelopes should return false`() {
         val envelope =
             Envelope(
-                securityKey = ByteArray(128) { 1 },
+                securityKey = ByteArray(SECURITY_KEY_LENGTH) { 1 },
                 sequenceNumber = 1,
-                deviceUid = ByteArray(12) { 2 },
+                deviceUid = ByteArray(DEVICE_UID_LENGTH) { 2 },
                 lengthIndicator = 10,
                 messageBytes = testMessage.toByteArray(),
             )
 
         val envelope2 =
             Envelope(
-                securityKey = ByteArray(128) { 1 },
+                securityKey = ByteArray(SECURITY_KEY_LENGTH) { 1 },
                 sequenceNumber = 42,
-                deviceUid = ByteArray(12) { 2 },
+                deviceUid = ByteArray(DEVICE_UID_LENGTH) { 2 },
                 lengthIndicator = 10,
                 messageBytes = testMessage.toByteArray(),
             )
@@ -107,13 +107,14 @@ class EnvelopeTest {
 
     @Test
     fun `parseFrom should correctly parse byte array into Envelope`() {
-        val securityKey = ByteArray(128) { 0x01 }
+        val securityKey = ByteArray(SECURITY_KEY_LENGTH) { 0x01 }
         val sequenceNumber = 0x2A // 42
-        val deviceUid = ByteArray(12) { 0x02 }
+        val deviceUid = ByteArray(DEVICE_UID_LENGTH) { 0x02 }
         val lengthIndicator = 0x000A // 10
         val messageBytes = ByteArray(10) { 0x03 }
 
-        val bytes = ByteArray(128 + 2 + 12 + 2 + 10)
+        val bytes =
+            ByteArray(SECURITY_KEY_LENGTH + SEQUENCE_NUMBER_LENGTH + DEVICE_UID_LENGTH + LENGTH_INDICATOR_LENGTH + 10)
         securityKey.copyInto(bytes, 0)
         sequenceNumber.toByteArray(2).copyInto(bytes, 128)
         deviceUid.copyInto(bytes, 130)
@@ -130,6 +131,10 @@ class EnvelopeTest {
     }
 
     companion object {
+        const val SECURITY_KEY_LENGTH = 128
+        const val DEVICE_UID_LENGTH = 12
+        const val SEQUENCE_NUMBER_LENGTH = 2
+        const val LENGTH_INDICATOR_LENGTH = 2
         val testMessage =
             Message
                 .newBuilder()

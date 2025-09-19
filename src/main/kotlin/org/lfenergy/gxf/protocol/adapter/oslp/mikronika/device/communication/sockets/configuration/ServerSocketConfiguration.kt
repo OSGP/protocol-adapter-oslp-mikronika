@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration
 @ConfigurationProperties(prefix = "server-socket")
 class ServerSocketConfiguration {
     lateinit var hostName: String
-    var port: Int = 12124
+    var port: Int = 12125
 }

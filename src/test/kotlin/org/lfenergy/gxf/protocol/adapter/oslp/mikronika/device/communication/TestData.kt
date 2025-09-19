@@ -6,7 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
 import java.time.Instant
 
-fun mikronikaDevice(): MikronikaDevice =
+fun mikronikaDevice() =
     MikronikaDevice(
         id = 1L,
         creationTime = Instant.now(),

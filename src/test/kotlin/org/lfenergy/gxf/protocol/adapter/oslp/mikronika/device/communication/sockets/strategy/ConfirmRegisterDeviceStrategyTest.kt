@@ -31,7 +31,7 @@ class ConfirmRegisterDeviceStrategyTest {
     private lateinit var confirmRegisterDeviceStrategy: ConfirmRegisterDeviceStrategy
 
     @Test
-    fun `handle with not matching random device number should throw InvalidRequestException`() {
+    fun `handle should throw InvalidRequestException when random device number does not match`() {
         val mikronikaDevice = mikronikaDevice()
         val unknownNumber = 999999
 
@@ -43,7 +43,7 @@ class ConfirmRegisterDeviceStrategyTest {
     }
 
     @Test
-    fun `handle with not matching random platform number should throw InvalidRequestException`() {
+    fun `handle should throw InvalidRequestException when random platform number does not match`() {
         val mikronikaDevice = mikronikaDevice()
         val unknownNumber = 999999
 
@@ -55,7 +55,7 @@ class ConfirmRegisterDeviceStrategyTest {
     }
 
     @Test
-    fun `handle with matching numbers should update the sequence number`() {
+    fun `handle should update the sequence number when random numbers match`() {
         val mikronikaDevice = mikronikaDevice()
 
         val envelopeMock =
@@ -88,8 +88,8 @@ class ConfirmRegisterDeviceStrategyTest {
     }
 
     private fun mockEnvelope(
-        randomDevice: Int = 1,
-        randomPlatform: Int = 1,
+        randomDevice: Int = 5,
+        randomPlatform: Int = 12,
     ): Envelope {
         val envelope = mockk<Envelope>(relaxed = true)
         val message = mockk<Oslp.Message>(relaxed = true)

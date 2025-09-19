@@ -10,6 +10,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sig
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
+import org.opensmartgridplatform.oslp.Oslp.Status
 import org.springframework.stereotype.Component
 
 @Component("ConfirmRegisterDeviceStrategy")
@@ -46,7 +47,7 @@ class ConfirmRegisterDeviceStrategy(
                         .setRandomDevice(mikronikaDevice.randomDevice ?: 0)
                         .setRandomPlatform(mikronikaDevice.randomPlatform ?: 0)
                         .setSequenceWindow(1)
-                        .setStatusValue(0)
+                        .setStatusValue(Status.OK_VALUE)
                         .build(),
                 ).build()
         return response

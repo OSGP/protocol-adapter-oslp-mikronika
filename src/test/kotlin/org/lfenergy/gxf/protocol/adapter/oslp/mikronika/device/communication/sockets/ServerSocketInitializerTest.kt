@@ -3,15 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
 
-import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.configuration.ServerSocketConfiguration
 
+@ExtendWith(MockKExtension::class)
 class ServerSocketInitializerTest {
     @MockK(relaxed = true)
     private lateinit var serverSocket: ServerSocket
@@ -24,7 +26,6 @@ class ServerSocketInitializerTest {
 
     @BeforeEach
     fun setUp() {
-        MockKAnnotations.init(this)
         every { serverSocketConfiguration.hostName } returns "localhost"
         every { serverSocketConfiguration.port } returns 1234
     }

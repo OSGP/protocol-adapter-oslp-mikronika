@@ -56,14 +56,14 @@ abstract class ReceiveStrategy(
 
     private fun validateSignature(
         requestEnvelope: Envelope,
-        key: Key,
+        verificationKey: Key,
     ): Boolean {
         val verified =
             with(requestEnvelope) {
                 signingService.verifySignature(
                     sequenceNumber.toByteArray(2) + deviceUid + lengthIndicator.toByteArray(2) + messageBytes,
                     securityKey,
-                    key,
+                    verificationKey,
                 )
             }
 

@@ -54,7 +54,7 @@ class KeyProviderTest {
     }
 
     @Test
-    fun `getPrivateKey returns PrivateKey`() {
+    fun `getPrivateKey should return PrivateKey`() {
         val privateKeyBytes = byteArrayOf(1, 2, 3)
         every { Files.readAllBytes(Paths.get("/fake/path")) } returns privateKeyBytes
 

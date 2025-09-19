@@ -8,12 +8,15 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
 import java.security.PrivateKey
+import java.security.PublicKey
 import java.security.Signature
 
 @ExtendWith(MockKExtension::class)
@@ -40,7 +43,7 @@ class SigningServiceTest {
 
     @AfterEach
     fun tearDown() {
-        mockkStatic(Signature::class)
+        unmockkStatic(Signature::class)
     }
 
     @Test
@@ -58,22 +61,22 @@ class SigningServiceTest {
 
     @Test
     fun `verifySignature calls getPublicKey and verifies signature`() {
-//        val data = byteArrayOf(1, 2, 3)
-//        val signature = byteArrayOf(4, 5, 6)
-//        val key = mockk<Key>()
-//        val publicKey = mockk<PublicKey>()
-//        val mockSignature = mockk<Signature>(relaxed = true)
-//
-//        every { keyProvider.getPublicKey(key) } returns publicKey
-//        mockkStatic(Signature::class)
-//        every { Signature.getInstance(any<String>(), any<String>()) } returns mockSignature
-//        every { mockSignature.verify(any()) } returns true
-//
-//        val result = signingService.verifySignature(data, signature, key)
-//
-//        verify { keyProvider.getPublicKey(key) }
-//        verify { Signature.getInstance("SHA256withECDSA", "SunEC") }
-//
-//        assert(result)
+        val data = byteArrayOf(1, 2, 3)
+        val signature = byteArrayOf(4, 5, 6)
+        val key = mockk<Key>()
+        val publicKey = mockk<PublicKey>()
+        val mockSignature = mockk<Signature>(relaxed = true)
+
+        every { keyProvider.getPublicKey(key) } returns publicKey
+        mockkStatic(Signature::class)
+        every { Signature.getInstance(any<String>(), any<String>()) } returns mockSignature
+        every { mockSignature.verify(any()) } returns true
+
+        val result = signingService.verifySignature(data, signature, key)
+
+        verify { keyProvider.getPublicKey(key) }
+        verify { Signature.getInstance("SHA256withECDSA", "SunEC") }
+
+        assert(result)
     }
 }

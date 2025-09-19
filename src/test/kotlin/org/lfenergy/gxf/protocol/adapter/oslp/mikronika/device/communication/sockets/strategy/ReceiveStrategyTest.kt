@@ -32,7 +32,7 @@ class ReceiveStrategyTest {
     private lateinit var eventNotificationRequestStrategy: EventNotificationRequestStrategy
 
     @Test
-    fun `Invoke should throw if the device Uid does not exist`() {
+    fun `invoke should throw an EntityNotFoundException when the device uid does not exist`() {
         val deviceUid = "unknown-device"
         val envelope = mockk<Envelope>()
         val expectedException = EntityNotFoundException("Device with identification $deviceUid not found")
@@ -46,7 +46,7 @@ class ReceiveStrategyTest {
     }
 
     @Test
-    fun `invalid signature should return false`() {
+    fun `invoke should return null when signature is invalid`() {
         val deviceUid = "device-uid"
         val envelope = mockEnvelope(deviceUid)
 
@@ -61,7 +61,7 @@ class ReceiveStrategyTest {
     }
 
     @Test
-    fun `handle should save and return as signed envelope`() {
+    fun `handle should save the device and return a signed envelope`() {
         val deviceUid = "device-uid2"
         val envelope = mockEnvelope(deviceUid)
 
