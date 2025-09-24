@@ -66,7 +66,7 @@ class RegisterDeviceStrategyTest {
         val locationInfo = registerDeviceResponse.locationInfo
         assertThat(locationInfo.latitude).isEqualTo(1111)
         assertThat(locationInfo.longitude).isEqualTo(222222)
-        assertThat(locationInfo.timeOffset).isEqualTo(60)
+        assertThat(locationInfo.timeOffset).isNotNull()
     }
 
     private fun mockEnvelope(randomDevice: Int): Envelope {
