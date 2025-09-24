@@ -10,6 +10,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.Mikronik
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.random.Random
 
 @Component("RegisterDeviceStrategy")
@@ -31,6 +33,13 @@ class RegisterDeviceStrategy(
         val randomPlatform = Random.nextInt(RANDOM_PLATFORM_MAX)
         mikronikaDevice.randomPlatform = randomPlatform
 
+        val offsetMinutes =
+            ZoneId
+                .systemDefault()
+                .rules
+                .getStandardOffset(Instant.now())
+                .totalSeconds / 60
+
         val response =
             Message
                 .newBuilder()
@@ -46,7 +55,7 @@ class RegisterDeviceStrategy(
                                 .newBuilder()
                                 .setLatitude(1111)
                                 .setLongitude(222222)
-                                .setTimeOffset(60),
+                                .setTimeOffset(offsetMinutes),
                         ).build(),
                 ).build()
 
