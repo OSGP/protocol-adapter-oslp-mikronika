@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database
 
+import java.time.Instant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
-import java.time.Instant
 
 class MikronikaDeviceTest {
     @Test
@@ -17,7 +17,6 @@ class MikronikaDeviceTest {
         val now = Instant.now()
         val expectedVersion = 10L
         val expectedDeviceIdentification = "expectedDeviceIdentification"
-        val expectedDeviceType = "expectedDeviceType"
         val expectedDeviceUid = "expectedDeviceUid"
         val expectedSequenceNumber = 55
         val expectedRandomDevice = 5923
@@ -30,7 +29,6 @@ class MikronikaDeviceTest {
             modificationTime = now
             version = expectedVersion
             deviceIdentification = expectedDeviceIdentification
-            deviceType = expectedDeviceType
             deviceUid = expectedDeviceUid
             sequenceNumber = expectedSequenceNumber
             randomDevice = expectedRandomDevice
@@ -43,7 +41,6 @@ class MikronikaDeviceTest {
         assertThat(device.modificationTime).isEqualTo(now)
         assertThat(device.version).isEqualTo(expectedVersion)
         assertThat(device.deviceIdentification).isEqualTo(expectedDeviceIdentification)
-        assertThat(device.deviceType).isEqualTo(expectedDeviceType)
         assertThat(device.deviceUid).isEqualTo(expectedDeviceUid)
         assertThat(device.sequenceNumber).isEqualTo(expectedSequenceNumber)
         assertThat(device.randomDevice).isEqualTo(expectedRandomDevice)

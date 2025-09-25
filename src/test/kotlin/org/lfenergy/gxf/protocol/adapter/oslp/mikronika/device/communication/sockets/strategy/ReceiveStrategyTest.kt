@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 
@@ -53,7 +53,13 @@ class ReceiveStrategyTest {
         val mikronikaDevice = mikronikaDevice()
         every { mikronikaDeviceService.findByDeviceUid(deviceUid) } returns mikronikaDevice
 
-        every { signingService.verifySignature(any<ByteArray>(), any<ByteArray>(), any<Key>()) } returns false
+        every {
+            signingService.verifySignature(
+                any<ByteArray>(),
+                any<ByteArray>(),
+                any<MikronikaDevicePublicKey>(),
+            )
+        } returns false
 
         val result = eventNotificationRequestStrategy.invoke(envelope)
 
@@ -68,7 +74,13 @@ class ReceiveStrategyTest {
         val mikronikaDevice = mikronikaDevice()
         every { mikronikaDeviceService.findByDeviceUid(deviceUid) } returns mikronikaDevice
 
-        every { signingService.verifySignature(any<ByteArray>(), any<ByteArray>(), any<Key>()) } returns true
+        every {
+            signingService.verifySignature(
+                any<ByteArray>(),
+                any<ByteArray>(),
+                any<MikronikaDevicePublicKey>(),
+            )
+        } returns true
         every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
         every { signingService.createSignature(any<ByteArray>()) } returns ByteArray(16) { 0x01 }
 

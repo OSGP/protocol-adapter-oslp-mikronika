@@ -47,8 +47,8 @@ class ServerSocketMessageProcessor(
         with(message) {
             return when {
                 hasRegisterDeviceRequest() -> strategyFactory.getStrategy(REGISTER_DEVICE_STRATEGY)
-                hasConfirmRegisterDeviceRequest() -> strategyFactory.getStrategy("ConfirmRegisterDeviceStrategy")
-                hasEventNotificationRequest() -> strategyFactory.getStrategy("EventNotificationRequestStrategy")
+                hasConfirmRegisterDeviceRequest() -> strategyFactory.getStrategy(CONFIRM_REGISTER_DEVICE_STRATEGY)
+                hasEventNotificationRequest() -> strategyFactory.getStrategy(EVENT_NOTIFICATION_STRATEGY)
                 else -> error("Unexpected request message: $message")
             }
         }

@@ -7,7 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
@@ -33,7 +33,7 @@ abstract class ReceiveStrategy(
         val deviceUid = String(requestEnvelope.deviceUid)
         val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUid)
 
-        if (!validateSignature(requestEnvelope, Key(mikronikaDevice.publicKey))) return null
+        if (!validateSignature(requestEnvelope, MikronikaDevicePublicKey(mikronikaDevice.publicKey))) return null
         try {
             handle(requestEnvelope, mikronikaDevice)
         } catch (e: InvalidRequestException) {
@@ -56,14 +56,14 @@ abstract class ReceiveStrategy(
 
     private fun validateSignature(
         requestEnvelope: Envelope,
-        verificationKey: Key,
+        verificationMikronikaDevicePublicKey: MikronikaDevicePublicKey,
     ): Boolean {
         val verified =
             with(requestEnvelope) {
                 signingService.verifySignature(
                     sequenceNumber.toByteArray(2) + deviceUid + lengthIndicator.toByteArray(2) + messageBytes,
                     securityKey,
-                    verificationKey,
+                    verificationMikronikaDevicePublicKey,
                 )
             }
 

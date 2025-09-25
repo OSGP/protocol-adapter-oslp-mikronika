@@ -13,7 +13,6 @@ fun mikronikaDevice() =
         modificationTime = Instant.now(),
         version = 1L,
         deviceIdentification = "TST-100",
-        deviceType = "Mikronika",
         deviceUid = "01000TST-100",
         sequenceNumber = 1,
         randomDevice = 1,

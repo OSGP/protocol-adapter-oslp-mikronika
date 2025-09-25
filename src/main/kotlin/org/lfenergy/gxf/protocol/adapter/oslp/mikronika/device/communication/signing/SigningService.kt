@@ -5,7 +5,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.si
 
 import com.gxf.utilities.oslp.message.signing.SigningUtil
 import com.gxf.utilities.oslp.message.signing.configuration.SigningProperties
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,11 +18,11 @@ class SigningService(
     fun verifySignature(
         data: ByteArray,
         signature: ByteArray,
-        key: Key,
+        mikronikaDevicePublicKey: MikronikaDevicePublicKey,
     ): Boolean =
         this.verifySignature(
             data,
             signature,
-            keyProvider.getPublicKey(key),
+            keyProvider.getPublicKey(mikronikaDevicePublicKey),
         )
 }

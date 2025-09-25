@@ -33,8 +33,6 @@ class MikronikaDevice(
     var version: Long? = null,
     @Column(name = "device_identification", length = 40, nullable = false)
     var deviceIdentification: String = "",
-    @Column(name = "device_type", length = 255)
-    var deviceType: String? = null,
     @Column(name = "device_uid", length = 255)
     var deviceUid: String? = null,
     @Column(name = "sequence_number")

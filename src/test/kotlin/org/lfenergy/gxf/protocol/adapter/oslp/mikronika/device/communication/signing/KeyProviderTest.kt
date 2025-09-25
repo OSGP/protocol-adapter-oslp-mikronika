@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PrivateKeyException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.PublicKeyException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.GeneralSecurityException
@@ -81,24 +81,26 @@ class KeyProviderTest {
 
     @Test
     fun `getPublicKey returns PublicKey`() {
-        val key = Key(Base64.getEncoder().encodeToString(byteArrayOf(4, 5, 6)))
+        val mikronikaDevicePublicKey =
+            MikronikaDevicePublicKey(Base64.getEncoder().encodeToString(byteArrayOf(4, 5, 6)))
 
         val keyFactory = mockk<KeyFactory>()
         val publicKey = mockk<PublicKey>()
         every { KeyFactory.getInstance("EC", "SunEC") } returns keyFactory
         every { keyFactory.generatePublic(any<X509EncodedKeySpec>()) } returns publicKey
 
-        val result = keyProvider.getPublicKey(key)
+        val result = keyProvider.getPublicKey(mikronikaDevicePublicKey)
         Assertions.assertNotNull(result)
     }
 
     @Test
     fun `getPublicKey throws PpublicKeyException when security exception is thrown`() {
-        val key = Key(Base64.getEncoder().encodeToString(byteArrayOf(4, 5, 6)))
+        val mikronikaDevicePublicKey =
+            MikronikaDevicePublicKey(Base64.getEncoder().encodeToString(byteArrayOf(4, 5, 6)))
 
         every { KeyFactory.getInstance("EC", "SunEC") } throws GeneralSecurityException("Test exception")
 
-        assertThatThrownBy { keyProvider.getPublicKey(key) }
+        assertThatThrownBy { keyProvider.getPublicKey(mikronikaDevicePublicKey) }
             .isInstanceOf(PublicKeyException::class.java)
             .hasMessageContaining("Security exception creating public key for algorithm")
     }

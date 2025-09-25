@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.Key
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.Signature
@@ -63,18 +63,18 @@ class SigningServiceTest {
     fun `verifySignature calls getPublicKey and verifies signature`() {
         val data = byteArrayOf(1, 2, 3)
         val signature = byteArrayOf(4, 5, 6)
-        val key = mockk<Key>()
+        val mikronikaDevicePublicKey = mockk<MikronikaDevicePublicKey>()
         val publicKey = mockk<PublicKey>()
         val mockSignature = mockk<Signature>(relaxed = true)
 
-        every { keyProvider.getPublicKey(key) } returns publicKey
+        every { keyProvider.getPublicKey(mikronikaDevicePublicKey) } returns publicKey
         mockkStatic(Signature::class)
         every { Signature.getInstance(any<String>(), any<String>()) } returns mockSignature
         every { mockSignature.verify(any()) } returns true
 
-        val result = signingService.verifySignature(data, signature, key)
+        val result = signingService.verifySignature(data, signature, mikronikaDevicePublicKey)
 
-        verify { keyProvider.getPublicKey(key) }
+        verify { keyProvider.getPublicKey(mikronikaDevicePublicKey) }
         verify { Signature.getInstance("SHA256withECDSA", "SunEC") }
 
         assert(result)
