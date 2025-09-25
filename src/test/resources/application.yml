@@ -2,3 +2,13 @@ spring:
   docker:
     compose:
       skip.in-tests: false
+
+signing:
+  security-algorithm: "SHA256withECDSA"
+  security-key-type: "EC"
+  security-provider: "SunEC"
+  private-key-path: "provide me"
+
+server-socket:
+  port: 12126
+  hostName: localhost
