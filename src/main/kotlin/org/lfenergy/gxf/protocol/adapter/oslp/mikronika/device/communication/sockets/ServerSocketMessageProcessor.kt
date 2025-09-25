@@ -46,11 +46,17 @@ class ServerSocketMessageProcessor(
     private fun getStrategyFor(message: Message): ReceiveStrategy {
         with(message) {
             return when {
-                hasRegisterDeviceRequest() -> strategyFactory.getStrategy("RegisterDeviceStrategy")
+                hasRegisterDeviceRequest() -> strategyFactory.getStrategy(REGISTER_DEVICE_STRATEGY)
                 hasConfirmRegisterDeviceRequest() -> strategyFactory.getStrategy("ConfirmRegisterDeviceStrategy")
                 hasEventNotificationRequest() -> strategyFactory.getStrategy("EventNotificationRequestStrategy")
                 else -> error("Unexpected request message: $message")
             }
         }
+    }
+
+    companion object {
+        const val REGISTER_DEVICE_STRATEGY = "RegisterDeviceStrategy"
+        const val CONFIRM_REGISTER_DEVICE_STRATEGY = "ConfirmRegisterDeviceStrategy"
+        const val EVENT_NOTIFICATION_STRATEGY = "EventNotificationRequestStrategy"
     }
 }

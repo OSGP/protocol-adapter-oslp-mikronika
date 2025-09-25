@@ -15,5 +15,5 @@ spring:
     show-sql: false
 
 server-socket:
-  port: 12122
+  port: 12126
   hostName: localhost

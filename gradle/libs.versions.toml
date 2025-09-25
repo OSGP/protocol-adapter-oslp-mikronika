@@ -25,6 +25,7 @@ kotlinLoggingJvm = { group = "io.github.oshai", name = "kotlin-logging-jvm", ver
 kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
 kotlinSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerializationJson" }
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
+micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
 oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing", version.ref = "gxfUtils" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 protobufJavaUtil = { group = "com.google.protobuf", name = "protobuf-java-util", version.ref = "protobuf" }
@@ -35,7 +36,6 @@ springBootStarterActuator = { group = "org.springframework.boot", name = "spring
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "springBoot" }
 springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
-micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
 
 # Test dependencies
 assertJ = { group = "org.assertj", name = "assertj-core" }
