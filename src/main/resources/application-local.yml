@@ -12,4 +12,8 @@ spring:
     baseline-on-migrate: true
 
   jpa:
-    show-sql: true
+    show-sql: false
+
+server-socket:
+  port: 12126
+  hostName: localhost

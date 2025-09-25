@@ -6,7 +6,8 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication class ProtocolAdapterOslpMikronikaApplication
+@SpringBootApplication
+class ProtocolAdapterOslpMikronikaApplication
 
 fun main(args: Array<String>) {
     runApplication<ProtocolAdapterOslpMikronikaApplication>(*args)
