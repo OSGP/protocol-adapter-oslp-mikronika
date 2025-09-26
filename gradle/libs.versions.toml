@@ -1,13 +1,13 @@
 [versions]
 dependencyManagement = "1.1.7"
-flyway = "11.13.1"
+flyway = "11.13.2"
 gradleWrapperUpgrade = "0.12"
 kotlin = "2.2.20"
 ktor = "3.3.0"
 micrometer = "1.15.4"
 postgresql = "42.7.8"
 sonarqube = "6.3.1.5724"
-spotless = "7.2.1"
+spotless = "8.0.0"
 springBoot = "3.5.6"
 testcontainers = "1.21.3"
 
