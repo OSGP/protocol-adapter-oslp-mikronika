@@ -38,7 +38,7 @@ class SigningServiceTest {
         every { signingUtil.createSignature(any(), any()) } returns data
         signingService.createSignature(data)
 
-        verify { signingUtil.createSignature(any(), any()) }
+        verify { signingUtil.createSignature(data, privateKey) }
     }
 
     @Test

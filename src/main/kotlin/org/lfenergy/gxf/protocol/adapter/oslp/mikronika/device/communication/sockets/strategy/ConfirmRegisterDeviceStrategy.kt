@@ -7,7 +7,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.ServerSocketMessageProcessor.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message

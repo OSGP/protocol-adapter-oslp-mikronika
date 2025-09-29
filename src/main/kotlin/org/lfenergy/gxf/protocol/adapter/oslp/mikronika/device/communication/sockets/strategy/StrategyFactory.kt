@@ -14,4 +14,10 @@ class StrategyFactory(
 
     fun getStrategy(messageType: String): ReceiveStrategy =
         strategyMap[messageType] ?: throw InvalidRequestException("Unable to find the correct strategy for the message")
+
+    companion object {
+        const val REGISTER_DEVICE_STRATEGY = "RegisterDeviceStrategy"
+        const val CONFIRM_REGISTER_DEVICE_STRATEGY = "ConfirmRegisterDeviceStrategy"
+        const val EVENT_NOTIFICATION_STRATEGY = "EventNotificationRequestStrategy"
+    }
 }

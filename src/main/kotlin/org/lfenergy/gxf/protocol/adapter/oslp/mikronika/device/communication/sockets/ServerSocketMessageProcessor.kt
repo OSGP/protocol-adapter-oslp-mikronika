@@ -10,6 +10,9 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.EVENT_NOTIFICATION_STRATEGY
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.REGISTER_DEVICE_STRATEGY
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 
@@ -52,11 +55,5 @@ class ServerSocketMessageProcessor(
                 else -> error("Unexpected request message: $message")
             }
         }
-    }
-
-    companion object {
-        const val REGISTER_DEVICE_STRATEGY = "RegisterDeviceStrategy"
-        const val CONFIRM_REGISTER_DEVICE_STRATEGY = "ConfirmRegisterDeviceStrategy"
-        const val EVENT_NOTIFICATION_STRATEGY = "EventNotificationRequestStrategy"
     }
 }

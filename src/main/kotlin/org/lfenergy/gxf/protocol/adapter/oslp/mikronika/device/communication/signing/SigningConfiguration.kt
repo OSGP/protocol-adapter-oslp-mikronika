@@ -11,9 +11,12 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class SigningConfiguration {
     @Bean
-    fun signingUtil(signingConfiguration: SigningConfigurationProperties): SigningUtil {
+    fun signingUtil(signingConfigurationProperties: SigningConfigurationProperties): SigningUtil {
         val signingProperties =
-            SigningProperties(signingConfiguration.securityProvider, signingConfiguration.securityAlgorithm)
+            SigningProperties(
+                signingConfigurationProperties.securityProvider,
+                signingConfigurationProperties.securityAlgorithm,
+            )
         return SigningUtil(signingProperties)
     }
 }
