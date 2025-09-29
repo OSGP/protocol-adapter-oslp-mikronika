@@ -17,6 +17,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exc
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ConfirmRegisterDeviceStrategy.Companion.SEQUENCE_WINDOW
 import org.opensmartgridplatform.oslp.Oslp
 
 @ExtendWith(MockKExtension::class)
@@ -83,7 +84,7 @@ class ConfirmRegisterDeviceStrategyTest {
         val response = actual.confirmRegisterDeviceResponse
         assertThat(response.randomDevice).isEqualTo(mikronikaDevice.randomDevice)
         assertThat(response.randomPlatform).isEqualTo(mikronikaDevice.randomPlatform)
-        assertThat(response.sequenceWindow).isEqualTo(1)
+        assertThat(response.sequenceWindow).isEqualTo(SEQUENCE_WINDOW)
         assertThat(response.status).isEqualTo(Oslp.Status.OK)
     }
 

@@ -10,6 +10,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -32,7 +33,7 @@ import java.util.Base64
 @ExtendWith(MockKExtension::class)
 class KeyProviderTest {
     @MockK
-    lateinit var signingConfig: SigningConfiguration
+    lateinit var signingConfig: SigningConfigurationProperties
 
     @InjectMockKs
     lateinit var keyProvider: KeyProvider
@@ -90,7 +91,7 @@ class KeyProviderTest {
         every { keyFactory.generatePublic(any<X509EncodedKeySpec>()) } returns publicKey
 
         val result = keyProvider.getPublicKey(mikronikaDevicePublicKey)
-        Assertions.assertNotNull(result)
+        assertThat(result).isNotNull()
     }
 
     @Test

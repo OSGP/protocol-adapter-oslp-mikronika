@@ -20,21 +20,24 @@ import java.util.Base64
 
 @Component
 class KeyProvider(
-    private val signingConfiguration: SigningConfiguration,
+    private val signingConfigurationProperties: SigningConfigurationProperties,
 ) {
     private val logger = KotlinLogging.logger {}
 
     fun getPrivateKey(): PrivateKey {
-        val bytes = Files.readAllBytes(File(signingConfiguration.privateKeyPath).toPath())
+        val bytes = Files.readAllBytes(File(signingConfigurationProperties.privateKeyPath).toPath())
         try {
             val privateKeySpec = PKCS8EncodedKeySpec(bytes)
             val privateKeyFactory =
-                KeyFactory.getInstance(signingConfiguration.securityKeyType, signingConfiguration.securityProvider)
+                KeyFactory.getInstance(
+                    signingConfigurationProperties.securityKeyType,
+                    signingConfigurationProperties.securityProvider,
+                )
             return privateKeyFactory.generatePrivate(privateKeySpec)
         } catch (ex: GeneralSecurityException) {
             val exception =
                 PrivateKeyException(
-                    "Security exception creating private key for algorithm ${signingConfiguration.securityAlgorithm} by provider ${signingConfiguration.securityProvider} and path ${signingConfiguration.privateKeyPath}, with message: ${ex.message}",
+                    "Security exception creating private key for algorithm ${signingConfigurationProperties.securityAlgorithm} by provider ${signingConfigurationProperties.securityProvider} and path ${signingConfigurationProperties.privateKeyPath}, with message: ${ex.message}",
                 )
             logger.error { exception.message }
             throw exception
@@ -49,12 +52,15 @@ class KeyProvider(
                     .decode(publicMikronikaDevicePublicKey.keyPath)
             val publicKeySpec = X509EncodedKeySpec(publicKeyBytes)
             val publicKeyFactory =
-                KeyFactory.getInstance(signingConfiguration.securityKeyType, signingConfiguration.securityProvider)
+                KeyFactory.getInstance(
+                    signingConfigurationProperties.securityKeyType,
+                    signingConfigurationProperties.securityProvider,
+                )
             return publicKeyFactory.generatePublic(publicKeySpec)
         } catch (ex: GeneralSecurityException) {
             val exception =
                 PublicKeyException(
-                    "Security exception creating public key for algorithm ${signingConfiguration.securityAlgorithm} by provider ${signingConfiguration.securityProvider}, with message: ${ex.message}",
+                    "Security exception creating public key for algorithm ${signingConfigurationProperties.securityAlgorithm} by provider ${signingConfigurationProperties.securityProvider}, with message: ${ex.message}",
                 )
             logger.error { exception.message }
             throw exception

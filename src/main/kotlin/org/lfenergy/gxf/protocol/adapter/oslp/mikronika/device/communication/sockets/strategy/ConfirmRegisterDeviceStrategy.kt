@@ -45,12 +45,16 @@ class ConfirmRegisterDeviceStrategy(
                 .setConfirmRegisterDeviceResponse(
                     Oslp.ConfirmRegisterDeviceResponse
                         .newBuilder()
-                        .setRandomDevice(mikronikaDevice.randomDevice ?: 0)
-                        .setRandomPlatform(mikronikaDevice.randomPlatform ?: 0)
-                        .setSequenceWindow(1)
+                        .setRandomDevice(mikronikaDevice.randomDevice)
+                        .setRandomPlatform(mikronikaDevice.randomPlatform)
+                        .setSequenceWindow(SEQUENCE_WINDOW)
                         .setStatusValue(Status.OK_VALUE)
                         .build(),
                 ).build()
         return response
+    }
+
+    companion object {
+        const val SEQUENCE_WINDOW = 6
     }
 }

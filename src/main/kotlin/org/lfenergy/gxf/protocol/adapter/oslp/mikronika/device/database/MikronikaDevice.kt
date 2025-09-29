@@ -38,9 +38,9 @@ class MikronikaDevice(
     @Column(name = "sequence_number")
     var sequenceNumber: Int? = null,
     @Column(name = "random_device")
-    var randomDevice: Int? = null,
+    var randomDevice: Int = 0,
     @Column(name = "random_platform")
-    var randomPlatform: Int? = null,
+    var randomPlatform: Int = 0,
     @Column(name = "public_key", length = 255, nullable = false)
     var publicKey: String = "",
 )
