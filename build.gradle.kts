@@ -67,7 +67,6 @@ dependencies {
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterWeb)
     implementation(libs.protoDefinitions)
-
     testAndDevelopmentOnly(libs.springBootCompose)
 
     testImplementation(libs.assertJ)
