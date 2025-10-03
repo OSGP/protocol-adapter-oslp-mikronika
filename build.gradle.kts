@@ -66,8 +66,7 @@ dependencies {
     implementation(libs.springBootStarterArtemis)
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterWeb)
-    implementation(project(":protobuf"))
-
+    implementation(libs.protoDefinitions)
     testAndDevelopmentOnly(libs.springBootCompose)
 
     testImplementation(libs.assertJ)
