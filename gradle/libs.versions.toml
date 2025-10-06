@@ -11,7 +11,6 @@ kotlinLogging = "7.0.13"
 kotlinSerializationJson = "1.9.0"
 mockk = "1.14.5"
 mockkSpring = "4.0.2"
-protobuf = "4.32.0"
 sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
 springBoot = "3.5.6"
@@ -28,7 +27,6 @@ ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
 micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
 oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing", version.ref = "gxfUtils" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
-protobufJavaUtil = { group = "com.google.protobuf", name = "protobuf-java-util", version.ref = "protobuf" }
 protobufKotlin = { group = "com.google.protobuf", name = "protobuf-kotlin", version.ref = "protobuf" }
 springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springBoot" }
 springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" }
