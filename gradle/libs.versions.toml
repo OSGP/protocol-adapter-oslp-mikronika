@@ -16,7 +16,7 @@ sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
 springBoot = "3.5.6"
 testcontainers = "1.21.3"
-protoDefinitions = "1.0.0"
+protoDefinitions = "0.6.1"
 
 [libraries]
 flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
@@ -34,7 +34,7 @@ springBootStarterActuator = { group = "org.springframework.boot", name = "spring
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "springBoot" }
 springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
-protoDefinitions = { group = "org.lfenergy.gxf.oslp-protobuf", name = "oslp-protobuf", version.ref = "protoDefinitions"}
+protoDefinitions = { group = "org.lfenergy.gxf.oslp-protobuf", name = "oslp-protobuf", version.ref = "protoDefinitions" }
 
 # Test dependencies
 assertJ = { group = "org.assertj", name = "assertj-core" }
