@@ -59,7 +59,6 @@ dependencies {
     implementation(libs.micrometerRegistryPrometheus)
     implementation(libs.oslpMessageSigning)
     implementation(libs.postgresql)
-    implementation(libs.protobufKotlin)
     implementation(libs.springBootStarter)
     implementation(libs.springBootStarterActuator)
     implementation(libs.springBootStarterArtemis)

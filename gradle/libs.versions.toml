@@ -11,12 +11,11 @@ kotlinLogging = "7.0.13"
 kotlinSerializationJson = "1.9.0"
 mockk = "1.14.5"
 mockkSpring = "4.0.2"
-protobuf = "4.32.0"
 sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
 springBoot = "3.5.6"
 testcontainers = "1.21.3"
-protoDefinitions = "0.6.1"
+protoDefinitions = "0.0.1-test"
 
 [libraries]
 flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
@@ -28,7 +27,6 @@ ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
 micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
 oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing", version.ref = "gxfUtils" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
-protobufKotlin = { group = "com.google.protobuf", name = "protobuf-kotlin", version.ref = "protobuf" }
 springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springBoot" }
 springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
