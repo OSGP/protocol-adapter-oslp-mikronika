@@ -15,7 +15,7 @@ sonarqube = "6.3.1.5724"
 spotless = "7.2.1"
 springBoot = "3.5.6"
 testcontainers = "1.21.3"
-protoDefinitions = "0.0.1-test"
+protoDefinitions = "0.6.1"
 
 [libraries]
 flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway" }
