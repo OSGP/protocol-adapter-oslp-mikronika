@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.core.CoreDevice
 import java.time.Instant
 
 fun mikronikaDevice() =
@@ -18,4 +19,12 @@ fun mikronikaDevice() =
         randomDevice = 1,
         randomPlatform = 1,
         publicKey = "TEST-KEY",
+    )
+
+fun coreDevice() =
+    CoreDevice(
+        id = 1L,
+        latitude = 50.0,
+        longitude = 51.0,
+        deviceIdentification = "TST-100",
     )

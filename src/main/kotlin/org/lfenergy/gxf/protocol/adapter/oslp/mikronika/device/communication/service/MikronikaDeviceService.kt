@@ -5,8 +5,8 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.se
 
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDeviceRepository
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDeviceRepository
 import org.springframework.stereotype.Service
 
 @Service

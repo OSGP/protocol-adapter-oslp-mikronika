@@ -10,7 +10,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.hel
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp.Message
 
 abstract class ReceiveStrategy(
