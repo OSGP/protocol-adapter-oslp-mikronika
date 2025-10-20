@@ -24,7 +24,7 @@ fun mikronikaDevice() =
 fun coreDevice() =
     CoreDevice(
         id = 1L,
-        latitude = 50.0,
-        longitude = 51.0,
+        latitude = 50.0f,
+        longitude = 51.0f,
         deviceIdentification = "TST-100",
     )

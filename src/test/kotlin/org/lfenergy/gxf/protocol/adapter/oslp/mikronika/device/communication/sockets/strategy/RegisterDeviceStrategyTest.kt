@@ -13,8 +13,10 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.coreDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
@@ -27,6 +29,9 @@ class RegisterDeviceStrategyTest {
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
+
+    @MockK
+    private lateinit var coreDeviceService: CoreDeviceService
 
     @InjectMockKs
     private lateinit var registerDeviceStrategy: RegisterDeviceStrategy
@@ -52,9 +57,13 @@ class RegisterDeviceStrategyTest {
         val mikronikaDevice = mockk<MikronikaDevice>(relaxed = true)
         val slot = slot<Int>()
 
+        every { mikronikaDevice.deviceIdentification } returns "TST-100"
+        every { coreDeviceService.getCoreDevice(any()) } returns coreDevice()
+
         val actualPayload = registerDeviceStrategy.buildResponsePayload(envelopeMock, mikronikaDevice)
 
         verify { mikronikaDevice.randomPlatform = capture(slot) }
+        verify { coreDeviceService.getCoreDevice("TST-100") }
 
         assertThat(actualPayload.hasRegisterDeviceResponse()).isTrue()
 
@@ -64,8 +73,8 @@ class RegisterDeviceStrategyTest {
         assertThat(registerDeviceResponse.randomPlatform).isEqualTo(slot.captured)
 
         val locationInfo = registerDeviceResponse.locationInfo
-        assertThat(locationInfo.latitude).isEqualTo(1111)
-        assertThat(locationInfo.longitude).isEqualTo(222222)
+        assertThat(locationInfo.latitude).isEqualTo(50000000)
+        assertThat(locationInfo.longitude).isEqualTo(51000000)
         assertThat(locationInfo.timeOffset).isNotNull()
     }
 

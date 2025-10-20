@@ -1,4 +1,17 @@
 spring:
+  datasource:
+    primary:
+      jdbcUrl: jdbc:postgresql://localhost:51360/osgp_adapter_protocol_oslp_mikronika
+      username: osp_admin
+      password: test
+      driver-class-name: org.postgresql.Driver
+    secondary:
+      jdbcUrl: jdbc:postgresql://localhost:51360/osgp_core
+      username: osp_admin
+      password: test
+      driver-class-name: org.postgresql.Driver
+      hibernate:
+        ddl-auto: create-drop
   docker:
     compose:
       skip.in-tests: false

@@ -41,15 +41,10 @@ class AdapterDbConfiguration {
 
         val vendorAdapter = HibernateJpaVendorAdapter()
         factory.jpaVendorAdapter = vendorAdapter
-        factory.setJpaProperties(jpaProperties())
+        factory.setJpaProperties(Properties())
 
         return factory
     }
-
-    private fun jpaProperties(): Properties =
-        Properties().apply {
-            setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect")
-        }
 
     @Bean
     @Primary

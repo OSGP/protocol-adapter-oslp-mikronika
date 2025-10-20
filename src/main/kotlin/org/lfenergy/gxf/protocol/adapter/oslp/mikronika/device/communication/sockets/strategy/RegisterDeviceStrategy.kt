@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.REGISTER_DEVICE_STRATEGY
@@ -17,6 +18,7 @@ import kotlin.random.Random
 
 @Component(REGISTER_DEVICE_STRATEGY)
 class RegisterDeviceStrategy(
+    val coreDeviceService: CoreDeviceService,
     signingService: SigningService,
     mikronikaDeviceService: MikronikaDeviceService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService) {
@@ -41,6 +43,8 @@ class RegisterDeviceStrategy(
                 .getStandardOffset(Instant.now())
                 .totalSeconds / 60
 
+        val coreDevice = coreDeviceService.getCoreDevice(mikronikaDevice.deviceIdentification)
+
         val response =
             Message
                 .newBuilder()
@@ -54,14 +58,16 @@ class RegisterDeviceStrategy(
                         .setLocationInfo(
                             Oslp.LocationInfo
                                 .newBuilder()
-                                .setLatitude(1111)
-                                .setLongitude(222222)
+                                .setLatitude(coreDevice.latitude.toCoordinatesInt())
+                                .setLongitude(coreDevice.longitude.toCoordinatesInt())
                                 .setTimeOffset(offsetMinutes),
                         ).build(),
                 ).build()
 
         return response
     }
+
+    private fun Float.toCoordinatesInt() = (this * 1000000).toInt()
 
     private companion object {
         const val RANDOM_PLATFORM_MAX = 65536

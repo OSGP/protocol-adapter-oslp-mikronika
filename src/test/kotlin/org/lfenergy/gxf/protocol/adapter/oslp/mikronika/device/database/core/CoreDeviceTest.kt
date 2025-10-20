@@ -13,8 +13,8 @@ class CoreDeviceTest {
         val device = coreDevice()
 
         val expectedId = 2L
-        val expectedLatitude = 1.0
-        val expectedLongitude = 2.0
+        val expectedLatitude = 1.0f
+        val expectedLongitude = 2.0f
         val expectedDeviceIdentification = "TST-202"
 
         device.apply {

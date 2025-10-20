@@ -49,7 +49,6 @@ class CoreDbConfiguration {
 
     private fun jpaProperties(): Properties =
         Properties().apply {
-            setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect")
             setProperty("hibernate.hbm2ddl.auto", ddlAuto)
         }
 
