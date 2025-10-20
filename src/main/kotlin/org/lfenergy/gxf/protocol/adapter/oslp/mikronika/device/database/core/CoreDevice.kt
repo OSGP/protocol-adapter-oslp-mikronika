@@ -9,7 +9,7 @@ import jakarta.persistence.Id
 
 @Entity(name = "device")
 data class CoreDevice(
-    @Id var id: Long? = null,
+    @Id var id: Long = 0L,
     var deviceIdentification: String,
     @Column(name = "gps_latitude") var latitude: Float,
     @Column(name = "gps_longitude") var longitude: Float,
