@@ -5,7 +5,6 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.core
 
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
@@ -25,9 +24,6 @@ import javax.sql.DataSource
     transactionManagerRef = "coreTransactionManager",
 )
 class CoreDbConfiguration {
-    @Value("\${spring.datasource.secondary.hibernate.ddl-auto:none}")
-    private lateinit var ddlAuto: String
-
     @Bean
     @ConfigurationProperties("spring.datasource.secondary")
     fun coreDataSource(): DataSource = DataSourceBuilder.create().build()
@@ -42,15 +38,10 @@ class CoreDbConfiguration {
 
         val vendorAdapter = HibernateJpaVendorAdapter()
         factory.jpaVendorAdapter = vendorAdapter
-        factory.setJpaProperties(jpaProperties())
+        factory.setJpaProperties(Properties())
 
         return factory
     }
-
-    private fun jpaProperties(): Properties =
-        Properties().apply {
-            setProperty("hibernate.hbm2ddl.auto", ddlAuto)
-        }
 
     @Bean
     fun coreTransactionManager(

@@ -13,6 +13,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.coreDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
@@ -57,13 +58,13 @@ class RegisterDeviceStrategyTest {
         val mikronikaDevice = mockk<MikronikaDevice>(relaxed = true)
         val slot = slot<Int>()
 
-        every { mikronikaDevice.deviceIdentification } returns "TST-100"
+        every { mikronikaDevice.deviceIdentification } returns DEVICE_IDENTIFICATION
         every { coreDeviceService.getCoreDevice(any()) } returns coreDevice()
 
         val actualPayload = registerDeviceStrategy.buildResponsePayload(envelopeMock, mikronikaDevice)
 
         verify { mikronikaDevice.randomPlatform = capture(slot) }
-        verify { coreDeviceService.getCoreDevice("TST-100") }
+        verify { coreDeviceService.getCoreDevice(DEVICE_IDENTIFICATION) }
 
         assertThat(actualPayload.hasRegisterDeviceResponse()).isTrue()
 

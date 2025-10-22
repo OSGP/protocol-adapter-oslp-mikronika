@@ -11,11 +11,9 @@ spring:
       driver-class-name: org.postgresql.Driver
     secondary:
       jdbcUrl: jdbc:postgresql://localhost:51360/osgp_core
-      username: osp_admin
+      username: osgp_core_db_api_user
       password: test
       driver-class-name: org.postgresql.Driver
-      hibernate:
-        ddl-auto: create-drop
 
   dev-tools:
     restart:

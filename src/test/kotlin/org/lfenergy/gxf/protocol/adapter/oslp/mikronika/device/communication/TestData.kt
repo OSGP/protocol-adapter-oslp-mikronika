@@ -13,7 +13,7 @@ fun mikronikaDevice() =
         creationTime = Instant.now(),
         modificationTime = Instant.now(),
         version = 1L,
-        deviceIdentification = "TST-100",
+        deviceIdentification = DEVICE_IDENTIFICATION,
         deviceUid = "01000TST-100",
         sequenceNumber = 1,
         randomDevice = 1,
@@ -26,5 +26,7 @@ fun coreDevice() =
         id = 1L,
         latitude = 50.0f,
         longitude = 51.0f,
-        deviceIdentification = "TST-100",
+        deviceIdentification = DEVICE_IDENTIFICATION,
     )
+
+const val DEVICE_IDENTIFICATION = "TST-100"
