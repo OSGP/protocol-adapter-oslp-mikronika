@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: osgp_adapter_protocol_oslp_mikronika
     ports:
       - "51360:5432"
+    volumes:
+      - ./docker-compose/init.sql:/docker-entrypoint-initdb.d/init.sql
   artemis:
     image: apache/activemq-artemis:2.41.0-alpine
     container_name: artemis_container

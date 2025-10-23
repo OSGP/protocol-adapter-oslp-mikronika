@@ -8,7 +8,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exc
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.opensmartgridplatform.oslp.Oslp.Status

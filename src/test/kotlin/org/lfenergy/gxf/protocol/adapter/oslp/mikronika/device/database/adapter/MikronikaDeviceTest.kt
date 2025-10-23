@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class MikronikaDeviceTest {
         val expectedSequenceNumber = 55
         val expectedRandomDevice = 5923
         val expectedRandomNumber = 5923
-        val expectedPublicKey = "ExpcetedKey"
+        val expectedPublicKey = "expectedPublicKey"
 
         device.apply {
             id = expectedId

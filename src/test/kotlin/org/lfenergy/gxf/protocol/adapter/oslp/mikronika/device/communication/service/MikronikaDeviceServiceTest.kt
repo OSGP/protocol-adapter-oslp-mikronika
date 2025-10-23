@@ -14,7 +14,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.MikronikaDeviceRepository
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDeviceRepository
 
 @ExtendWith(MockKExtension::class)
 class MikronikaDeviceServiceTest {

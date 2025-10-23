@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
