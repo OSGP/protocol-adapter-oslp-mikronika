@@ -50,6 +50,8 @@ repositories {
 dependencies {
     developmentOnly(libs.springBootDevtools)
 
+    implementation("org.lfenergy.gxf:gxf-publiclighting-contracts-internal")
+
     implementation(libs.flywayCore)
     implementation(libs.flywayPostgresql)
     implementation(libs.kotlinLoggingJvm)
