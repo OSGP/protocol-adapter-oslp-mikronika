@@ -18,3 +18,13 @@ signing:
   security-key-type: "EC"
   security-provider: "SunEC"
   private-key-path: "Provide me!"
+
+device-events:
+  enabled: true
+  producer:
+    outbound-queue: protocol-adapter-oslp-mikronika.device-events.outbound.IT
+    quality-of-service:
+      explicit-qos-enabled: true    # enable the use of deliveryMode, priority, and timeToLive
+      delivery-persistent: true     # whether messages are persistent or non-persistent
+      priority: 4                   # value between 0 (lowest) and 9 (highest), default is 4
+      time-to-live: 0               # time to live in milliseconds
