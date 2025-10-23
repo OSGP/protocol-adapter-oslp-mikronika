@@ -8,12 +8,10 @@ spring:
       jdbcUrl: jdbc:postgresql://localhost:51360/osgp_adapter_protocol_oslp_mikronika
       username: osp_admin
       password: test
-      driver-class-name: org.postgresql.Driver
     secondary:
       jdbcUrl: jdbc:postgresql://localhost:51360/osgp_core
       username: osgp_core_db_api_user
       password: test
-      driver-class-name: org.postgresql.Driver
 
   dev-tools:
     restart:
