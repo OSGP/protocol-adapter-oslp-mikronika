@@ -24,6 +24,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.ser
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
+
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.context.ApplicationEventPublisher
 

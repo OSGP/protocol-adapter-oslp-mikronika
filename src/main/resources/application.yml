@@ -1,6 +1,11 @@
 spring:
   application:
     name: protocol-adapter-oslp-mikronika
+  datasource:
+    primary:
+      driver-class-name: org.postgresql.Driver
+    secondary:
+      driver-class-name: org.postgresql.Driver
 
 management:
   server:
