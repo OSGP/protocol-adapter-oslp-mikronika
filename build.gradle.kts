@@ -98,3 +98,28 @@ extensions.configure<SpotlessExtension> {
 }
 
 tasks.named<Jar>("bootJar") { archiveFileName.set("protocol-adapter-oslp-mikronika.jar") }
+
+// Jacoco code coverage report of unit and integration tests
+tasks.register<JacocoReport>("aggregateTestCodeCoverageReport") {
+    description = "Generates code coverage report for all tests."
+    group = "Verification"
+//    dependsOn("test", "integrationTest")
+    dependsOn("test")
+
+    executionData(
+        fileTree(layout.buildDirectory.dir("jacoco")) {
+            include("test.exec", "test/*.exec", "*.exec")
+        },
+    )
+    sourceSets(sourceSets["main"])
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    // filter out generated classes if needed:
+    classDirectories.setFrom(
+        classDirectories.files.map {
+            fileTree(it) { exclude("**/generated/**") }
+        },
+    )
+}

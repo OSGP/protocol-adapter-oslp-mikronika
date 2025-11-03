@@ -19,6 +19,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mik
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.springframework.context.ApplicationEventPublisher
 
 @ExtendWith(MockKExtension::class)
 class ReceiveStrategyTest {
@@ -27,6 +28,9 @@ class ReceiveStrategyTest {
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
+
+    @MockK
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @InjectMockKs
     private lateinit var eventNotificationRequestStrategy: EventNotificationRequestStrategy
