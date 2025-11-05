@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+#
+# SPDX-License-Identifier: Apache-2.0
+
 spring:
   application:
     name: protocol-adapter-oslp-mikronika
@@ -6,6 +10,23 @@ spring:
       driver-class-name: org.postgresql.Driver
     secondary:
       driver-class-name: org.postgresql.Driver
+  artemis:
+    mode: native
+    ## Non-SSL:
+    broker-url: tcp://localhost:61616
+    ## SSL:
+    # broker-url: tcp://localhost:61617?sslEnabled=true&keyStorePath=${spring.jms.broker.keyStorePath}&keyStorePassword=${spring.jms.broker.keyStorePassword}&trustStorePath=${spring.jms.broker.trustStorePath}&trustStorePassword=${spring.jms.broker.trustStorePassword}
+    pool:
+      enabled: true
+      max-connections: 10
+
+  jms:
+  # SSL keystore/truststore configuration for broker connection
+  # broker:
+  #   keyStorePassword: ${JMS_KEY_STORE_PASSWORD}
+  #   keyStorePath: ${JMS_KEY_STORE_PATH}
+  #   trustStorePassword: ${JMS_TRUST_STORE_PASSWORD}
+  #   trustStorePath: ${JMS_TRUST_STORE_PATH}
 
 management:
   server:

@@ -1,4 +1,6 @@
 [versions]
+assertJ = "3.27.6"
+awaitility = "4.3.0"
 dependencyManagement = "1.1.7"
 flyway = "11.13.1"
 gxfUtils = "2.6.3"
@@ -6,7 +8,9 @@ gradleWrapperUpgrade = "0.12"
 kotlin = "2.2.20"
 ktor = "3.3.0"
 micrometer = "1.15.4"
+pooledJms = "3.1.7"
 postgresql = "42.7.8"
+protobufKotlin = "4.32.1"
 kotlinLogging = "7.0.13"
 kotlinSerializationJson = "1.9.0"
 mockk = "1.14.5"
@@ -26,7 +30,9 @@ kotlinSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-ser
 ktor = { group = "io.ktor", name = "ktor-network", version.ref = "ktor" }
 micrometerRegistryPrometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
 oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing", version.ref = "gxfUtils" }
+pooledJms = { group = "org.messaginghub", name = "pooled-jms", version.ref = "pooledJms" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+protobufKotlin = { group = "com.google.protobuf", name = "protobuf-kotlin", version.ref = "protobufKotlin" }
 springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springBoot" }
 springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
@@ -35,13 +41,17 @@ springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot
 protoDefinitions = { group = "org.lfenergy.gxf.oslp-protobuf", name = "oslp-protobuf", version.ref = "protoDefinitions" }
 
 # Test dependencies
-assertJ = { group = "org.assertj", name = "assertj-core" }
+assertJ = { group = "org.assertj", name = "assertj-core", version.ref = "assertJ" }
+awaitility = { group = "org.awaitility", name = "awaitility", version.ref = "awaitility" }
 junitLauncher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 kotlinJunit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
 mockkJvm = { group = "io.mockk", name = "mockk-jvm", version.ref = "mockk" }
 mockkSpring = { group = "com.ninja-squad", name = "springmockk", version.ref = "mockkSpring" }
 springBootStarterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springBoot" }
 springBootTestcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers", version.ref = "springBoot" }
+testContainers = { group = "org.testcontainers", name = "testcontainers", version.ref = "testcontainers" }
+testContainersArtemis = { group = "org.testcontainers", name = "activemq", version.ref = "testcontainers" }
+testContainersJUnit = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
 testcontainersPostgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
 
 # Development dependencies
