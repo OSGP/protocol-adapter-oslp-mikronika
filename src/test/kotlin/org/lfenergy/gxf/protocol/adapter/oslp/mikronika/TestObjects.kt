@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE_MIKRONIKA_OSLP
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
@@ -58,7 +58,7 @@ object TestObjects {
                     .setCorrelationUid(deviceNotificationReceivedEvent.correlationUid)
                     .setDeviceIdentification(DEVICE_IDENTIFICATION)
                     .setEventType(EventType.DEVICE_NOTIFICATION)
-                    .setDeviceType(DEVICE_TYPE_MIKRONIKA_OSLP),
+                    .setDeviceType(DEVICE_TYPE),
             ).setDeviceNotificationReceivedEvent(
                 ProtobufDeviceNotificationReceivedEvent
                     .newBuilder()
@@ -77,7 +77,7 @@ object TestObjects {
                     .setCorrelationUid(deviceNotificationReceivedEventWithEmptyValues.correlationUid)
                     .setDeviceIdentification(DEVICE_IDENTIFICATION)
                     .setEventType(EventType.DEVICE_NOTIFICATION)
-                    .setDeviceType(DEVICE_TYPE_MIKRONIKA_OSLP),
+                    .setDeviceType(DEVICE_TYPE),
             ).setDeviceNotificationReceivedEvent(
                 ProtobufDeviceNotificationReceivedEvent
                     .newBuilder()
@@ -90,7 +90,7 @@ object TestObjects {
         DeviceRegistrationReceivedEvent(
             deviceIdentification = DEVICE_IDENTIFICATION,
             ipAddress = NETWORK_ADDRESS,
-            deviceType = DEVICE_TYPE_MIKRONIKA_OSLP,
+            deviceType = DEVICE_TYPE,
             hasSchedule = HAS_SCHEDULE,
         )
 
@@ -103,7 +103,7 @@ object TestObjects {
                     .setCorrelationUid(deviceRegistrationReceivedEvent.correlationUid)
                     .setDeviceIdentification(DEVICE_IDENTIFICATION)
                     .setEventType(EventType.DEVICE_REGISTRATION)
-                    .setDeviceType(DEVICE_TYPE_MIKRONIKA_OSLP),
+                    .setDeviceType(DEVICE_TYPE),
             ).setDeviceRegistrationReceivedEvent(
                 ProtobufDeviceRegistrationReceivedEvent
                     .newBuilder()

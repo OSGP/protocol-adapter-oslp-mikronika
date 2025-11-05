@@ -12,7 +12,7 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE_MIKRONIKA_OSLP
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.HAS_SCHEDULE
@@ -50,7 +50,7 @@ class DeviceEventListenerTest {
                 withArg {
                     it.header.correlationUid == event.correlationUid
                     it.header.deviceIdentification == DEVICE_UID
-                    it.header.deviceType == DEVICE_TYPE_MIKRONIKA_OSLP
+                    it.header.deviceType == DEVICE_TYPE
                     it.header.eventType == EventType.DEVICE_NOTIFICATION
                     it.deviceNotificationReceivedEvent.notificationType.name == NOTIFICATION_TYPE
                     it.deviceNotificationReceivedEvent.description == NOTIFICATION_DESCRIPTION
@@ -76,7 +76,7 @@ class DeviceEventListenerTest {
                 withArg {
                     it.header.correlationUid == event.correlationUid
                     it.header.deviceIdentification == DEVICE_IDENTIFICATION
-                    it.header.deviceType == DEVICE_TYPE_MIKRONIKA_OSLP
+                    it.header.deviceType == DEVICE_TYPE
                     it.header.eventType == EventType.DEVICE_REGISTRATION
                     it.deviceRegistrationReceivedEvent.hasSchedule == HAS_SCHEDULE
                     it.deviceRegistrationReceivedEvent.networkAddress == NETWORK_ADDRESS

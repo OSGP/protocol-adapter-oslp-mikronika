@@ -4,7 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.domain
 
 import com.google.protobuf.Timestamp
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE_MIKRONIKA_OSLP
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
@@ -25,7 +25,7 @@ object DeviceEventMessageMapper {
                     .newBuilder()
                     .setCorrelationUid(this.correlationUid)
                     .setDeviceIdentification(this.deviceIdentification)
-                    .setDeviceType(DEVICE_TYPE_MIKRONIKA_OSLP)
+                    .setDeviceType(DEVICE_TYPE)
                     .setEventType(EventType.DEVICE_NOTIFICATION),
             ).setDeviceNotificationReceivedEvent(
                 ProtobufDeviceNotificationReceivedEvent
@@ -50,7 +50,7 @@ object DeviceEventMessageMapper {
                     .setCorrelationUid(this.correlationUid)
                     .setDeviceIdentification(this.deviceIdentification)
                     .setEventType(EventType.DEVICE_REGISTRATION)
-                    .setDeviceType(DEVICE_TYPE_MIKRONIKA_OSLP),
+                    .setDeviceType(DEVICE_TYPE),
             ).setDeviceRegistrationReceivedEvent(
                 ProtobufDeviceRegistrationReceivedEvent
                     .newBuilder()

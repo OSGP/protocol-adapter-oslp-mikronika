@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE_MIKRONIKA_OSLP
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
@@ -81,7 +81,7 @@ class RegisterDeviceStrategy(
                 DeviceRegistrationReceivedEvent(
                     mikronikaDevice.deviceIdentification,
                     ipAddress.toString(),
-                    DEVICE_TYPE_MIKRONIKA_OSLP,
+                    DEVICE_TYPE,
                     hasSchedule,
                 ),
             )
