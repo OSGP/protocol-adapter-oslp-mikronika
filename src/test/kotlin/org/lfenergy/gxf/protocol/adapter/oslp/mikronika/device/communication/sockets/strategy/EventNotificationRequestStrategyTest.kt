@@ -7,7 +7,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
+import io.mockk.verify
+import jdk.internal.joptsimple.internal.Messages.message
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -15,8 +19,11 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.context.ApplicationEventPublisher
+import java.time.format.DateTimeFormatter
 
 @ExtendWith(MockKExtension::class)
 class EventNotificationRequestStrategyTest {
@@ -39,21 +46,40 @@ class EventNotificationRequestStrategyTest {
         val envelope = mockk<Envelope>(relaxed = true)
         val mikronikaDevice = mikronikaDevice()
 
+        val message =
+            Oslp.Message
+                .newBuilder()
+                .setEventNotificationRequest(
+                    Oslp.EventNotificationRequest
+                        .newBuilder()
+                        .addNotifications(
+                            Oslp.EventNotification
+                                .newBuilder()
+                                .setEvent(Oslp.Event.DIAG_EVENTS_GENERAL)
+                                .setTimestamp(EVENT_DATETIME)
+                                .setDescription(EVENT_DESCRIPTION),
+                        ),
+                ).build()
+
         every { envelope.sequenceNumber } returns expectedSequenceNumber
-        // TODO: Implement publish event notification
-//        every { eventPublisher.publishEvent(any()) } just Runs
+        every { envelope.message } returns message
+        every { eventPublisher.publishEvent(any<DeviceNotificationReceivedEvent>()) } just runs
 
         eventNotificationRequestStrategy.handle(envelope, mikronikaDevice)
 
         assertThat(mikronikaDevice.sequenceNumber).isEqualTo(expectedSequenceNumber)
 
-//        verify {
-//            eventPublisher.publishEvent(
-//                withArg { it: DeviceNotificationReceivedEvent ->
-//                    it.deviceIdentification == mikronikaDevice.deviceIdentification
-//                },
-//            )
-//        }
+        verify(exactly = 1) {
+            eventPublisher.publishEvent(
+                withArg { it: DeviceNotificationReceivedEvent ->
+                    it.deviceIdentification == mikronikaDevice.deviceIdentification
+                    it.eventType == DeviceNotificationType.DIAG_EVENTS_GENERAL
+                    it.description == EVENT_DESCRIPTION
+                    it.dateTime.format(formatter) == EVENT_DATETIME
+                    it.index == null
+                },
+            )
+        }
     }
 
     @Test
@@ -69,5 +95,12 @@ class EventNotificationRequestStrategyTest {
 
         assertThat(eventNotificationResponse.status)
             .isEqualTo(Oslp.Status.OK)
+    }
+
+    companion object {
+        private const val EVENT_DESCRIPTION = "Test Event"
+        private const val EVENT_DATETIME = "20250615123045"
+
+        private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
     }
 }
