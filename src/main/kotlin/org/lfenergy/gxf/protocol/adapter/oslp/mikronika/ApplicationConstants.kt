@@ -4,6 +4,5 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika
 
 object ApplicationConstants {
-    // TODO verify the device type value
     const val DEVICE_TYPE = "SSLD"
 }
