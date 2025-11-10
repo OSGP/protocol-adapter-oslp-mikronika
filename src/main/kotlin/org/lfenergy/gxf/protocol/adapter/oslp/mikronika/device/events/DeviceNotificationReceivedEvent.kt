@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import java.time.ZonedDateTime
 
 class DeviceNotificationReceivedEvent(

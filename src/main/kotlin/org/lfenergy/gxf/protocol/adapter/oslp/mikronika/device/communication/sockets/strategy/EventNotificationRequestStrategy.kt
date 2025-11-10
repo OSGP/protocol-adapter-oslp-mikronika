@@ -61,7 +61,7 @@ class EventNotificationRequestStrategy(
         DeviceNotificationReceivedEvent(
             deviceIdentification = device.deviceIdentification,
             description = this.description,
-            index = this.index.let { if (it.isEmpty) 0 else it.byteAt(0).toInt() },
+            index = this.index.let { if (it.isEmpty) null else it.byteAt(0).toInt() },
             dateTime = this.timestamp.toZonedDateTime(),
             eventType = DeviceNotificationType.valueOf(this.event.name),
             deviceUid = device.deviceUid,
