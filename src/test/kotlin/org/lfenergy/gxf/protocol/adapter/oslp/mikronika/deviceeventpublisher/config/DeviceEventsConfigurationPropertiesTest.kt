@@ -20,11 +20,9 @@ class DeviceEventsConfigurationPropertiesTest {
 
         val props =
             DeviceEventsConfigurationProperties(
-                enabled = true,
                 producer = producer,
             )
 
-        assertThat(props.enabled).isTrue
         assertThat(props.producer.outboundQueue).isEqualTo("defaultQueue")
         assertThat(props.producer.qualityOfService.priority).isEqualTo(4)
         assertThat(props.producer.qualityOfService.timeToLive).isEqualTo(0L)
@@ -47,7 +45,6 @@ class DeviceEventsConfigurationPropertiesTest {
             )
         val props =
             DeviceEventsConfigurationProperties(
-                enabled = true,
                 producer = producer,
             )
 
@@ -101,11 +98,9 @@ class DeviceEventsConfigurationPropertiesTest {
             )
         val props =
             DeviceEventsConfigurationProperties(
-                enabled = true,
                 producer = producer,
             )
 
-        assertThat(props.enabled).isTrue
         assertThat(props.producer.outboundQueue).isEqualTo("testQueue")
         assertThat(props.producer.qualityOfService.priority).isEqualTo(7)
         assertThat(props.producer.qualityOfService.timeToLive).isEqualTo(1000L)
@@ -113,14 +108,12 @@ class DeviceEventsConfigurationPropertiesTest {
         assertThat(props.producer.qualityOfService.deliveryPersistent).isTrue
 
         // Change values
-        props.enabled = false
         props.producer.outboundQueue = "newQueue"
         props.producer.qualityOfService.priority = 1
         props.producer.qualityOfService.timeToLive = 2000L
         props.producer.qualityOfService.explicitQosEnabled = false
         props.producer.qualityOfService.deliveryPersistent = false
 
-        assertThat(props.enabled).isFalse
         assertThat(props.producer.outboundQueue).isEqualTo("newQueue")
         assertThat(props.producer.qualityOfService.priority).isEqualTo(1)
         assertThat(props.producer.qualityOfService.timeToLive).isEqualTo(2000L)

@@ -81,7 +81,6 @@ object TestObjects {
             ).setDeviceNotificationReceivedEvent(
                 ProtobufDeviceNotificationReceivedEvent
                     .newBuilder()
-                    .setDescription("")
                     .setNotificationType(NotificationType.valueOf(NOTIFICATION_TYPE))
                     .setTimestamp(timestamp),
             ).build()
