@@ -100,44 +100,10 @@ extensions.configure<SpotlessExtension> {
 
 tasks.named<Jar>("bootJar") { archiveFileName.set("protocol-adapter-oslp-mikronika.jar") }
 
-//testing {
-//    suites {
-//        val integrationTest by registering(JvmTestSuite::class) {
-//            useJUnitJupiter()
-//            dependencies {
-//                implementation(project())
-////                implementation(testFixtures(project()))
-//
-//                implementation("org.lfenergy.gxf:gxf-publiclighting-contracts-internal")
-//
-//                implementation("io.cucumber:cucumber-java:7.29.0")
-//                implementation("io.cucumber:cucumber-junit:7.29.0")
-//
-//                implementation(libs.assertJ)
-//                implementation(libs.awaitility)
-//                implementation(libs.pooledJms)
-//                implementation(libs.protobufKotlin)
-//                implementation(libs.protoDefinitions)
-//                implementation(libs.springBootStarterArtemis)
-//                implementation(libs.springBootStarterTest)
-//                implementation(libs.springBootTestcontainers)
-//                implementation(libs.testContainers)
-//                implementation(libs.testContainersJUnit)
-//                implementation(libs.testContainersArtemis)
-//            }
-//            targets { all { testTask.configure { shouldRunAfter("test") } } }
-//        }
-//    }
-//}
-//
-//// Make `check` run integration tests
-//tasks.named("check") { dependsOn("integrationTest") }
-//
 // Jacoco code coverage report of unit and integration tests
 tasks.register<JacocoReport>("aggregateTestCodeCoverageReport") {
     description = "Generates code coverage report for all tests."
     group = "Verification"
-//    dependsOn("test", "integrationTest")
     dependsOn("test")
 
     executionData(
@@ -150,7 +116,7 @@ tasks.register<JacocoReport>("aggregateTestCodeCoverageReport") {
         xml.required.set(true)
         html.required.set(true)
     }
-    // filter out generated classes if needed:
+    // filter out generated classes:
     classDirectories.setFrom(
         classDirectories.files.map {
             fileTree(it) { exclude("**/generated/**") }

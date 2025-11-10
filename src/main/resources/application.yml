@@ -12,21 +12,17 @@ spring:
       driver-class-name: org.postgresql.Driver
   artemis:
     mode: native
-    ## Non-SSL:
-    broker-url: tcp://localhost:61616
-    ## SSL:
-    # broker-url: tcp://localhost:61617?sslEnabled=true&keyStorePath=${spring.jms.broker.keyStorePath}&keyStorePassword=${spring.jms.broker.keyStorePassword}&trustStorePath=${spring.jms.broker.trustStorePath}&trustStorePassword=${spring.jms.broker.trustStorePassword}
+    broker-url: tcp://localhost:61617?sslEnabled=true&keyStorePath=${spring.jms.broker.keyStorePath}&keyStorePassword=${spring.jms.broker.keyStorePassword}&trustStorePath=${spring.jms.broker.trustStorePath}&trustStorePassword=${spring.jms.broker.trustStorePassword}
     pool:
       enabled: true
       max-connections: 10
 
   jms:
-  # SSL keystore/truststore configuration for broker connection
-  # broker:
-  #   keyStorePassword: ${JMS_KEY_STORE_PASSWORD}
-  #   keyStorePath: ${JMS_KEY_STORE_PATH}
-  #   trustStorePassword: ${JMS_TRUST_STORE_PASSWORD}
-  #   trustStorePath: ${JMS_TRUST_STORE_PATH}
+   broker:
+     keyStorePassword: ${JMS_KEY_STORE_PASSWORD}
+     keyStorePath: ${JMS_KEY_STORE_PATH}
+     trustStorePassword: ${JMS_TRUST_STORE_PASSWORD}
+     trustStorePath: ${JMS_TRUST_STORE_PATH}
 
 management:
   server:
@@ -46,7 +42,6 @@ signing:
   private-key-path: "Provide me!"
 
 device-events:
-  enabled: true
   producer:
     outbound-queue: protocol-adapter-oslp-mikronika.device-events.outbound.IT
     quality-of-service:

@@ -17,7 +17,6 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceRe
 
 object DeviceEventMessageMapper {
     fun DeviceNotificationReceivedEvent.toDeviceEventMessage(): DeviceEventMessage {
-        val index = this.index
         return DeviceEventMessage
             .newBuilder()
             .setHeader(
@@ -30,14 +29,10 @@ object DeviceEventMessageMapper {
             ).setDeviceNotificationReceivedEvent(
                 ProtobufDeviceNotificationReceivedEvent
                     .newBuilder()
-                    .setDescription(this.description ?: "")
+                    .apply { this@toDeviceEventMessage.description?.let { description -> setDescription(description) } }
                     .setNotificationType(NotificationType.valueOf(this.eventType.name))
                     .setTimestamp(dateTime.toProtobufTimestamp())
-                    .apply {
-                        if (index != null) {
-                            setIndex(index)
-                        }
-                    },
+                    .apply { this@toDeviceEventMessage.index?.let { index -> setIndex(index) } },
             ).build()
     }
 

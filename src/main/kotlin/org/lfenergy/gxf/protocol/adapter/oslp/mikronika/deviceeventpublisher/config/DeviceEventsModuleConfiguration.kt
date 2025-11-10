@@ -1,10 +1,6 @@
-// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
-//
-// SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.config
 
 import jakarta.jms.ConnectionFactory
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.config.DeviceEventsConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
