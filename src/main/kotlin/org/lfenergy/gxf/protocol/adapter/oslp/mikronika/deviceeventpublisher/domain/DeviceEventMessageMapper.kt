@@ -16,8 +16,8 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceNo
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceRegistrationReceivedEvent as ProtobufDeviceRegistrationReceivedEvent
 
 object DeviceEventMessageMapper {
-    fun DeviceNotificationReceivedEvent.toDeviceEventMessage(): DeviceEventMessage {
-        return DeviceEventMessage
+    fun DeviceNotificationReceivedEvent.toDeviceEventMessage(): DeviceEventMessage =
+        DeviceEventMessage
             .newBuilder()
             .setHeader(
                 Header
@@ -34,7 +34,6 @@ object DeviceEventMessageMapper {
                     .setTimestamp(dateTime.toProtobufTimestamp())
                     .apply { this@toDeviceEventMessage.index?.let { index -> setIndex(index) } },
             ).build()
-    }
 
     fun DeviceRegistrationReceivedEvent.toDeviceEventMessage(): DeviceEventMessage =
         DeviceEventMessage
