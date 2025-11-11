@@ -7,7 +7,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +23,9 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.ser
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.opensmartgridplatform.oslp.Oslp
+import org.springframework.context.ApplicationEventPublisher
 
 @ExtendWith(MockKExtension::class)
 class RegisterDeviceStrategyTest {
@@ -34,6 +38,9 @@ class RegisterDeviceStrategyTest {
     @MockK
     private lateinit var coreDeviceService: CoreDeviceService
 
+    @MockK
+    private lateinit var eventPublisher: ApplicationEventPublisher
+
     @InjectMockKs
     private lateinit var registerDeviceStrategy: RegisterDeviceStrategy
 
@@ -45,9 +52,19 @@ class RegisterDeviceStrategyTest {
 
         val mikronikaDevice = mikronikaDevice()
 
+        every { eventPublisher.publishEvent(any<DeviceRegistrationReceivedEvent>()) } just runs
+
         registerDeviceStrategy.handle(envelopeMock, mikronikaDevice)
 
         assertThat(mikronikaDevice.randomDevice).isEqualTo(randomDevice)
+
+        verify {
+            eventPublisher.publishEvent(
+                withArg { it: DeviceRegistrationReceivedEvent ->
+                    it.deviceIdentification == mikronikaDevice.deviceIdentification
+                },
+            )
+        }
     }
 
     @Test

@@ -1,0 +1,13 @@
+[versions]
+kotlin = "2.2.20"
+protobufCompiler = "4.32.1"
+protobufKotlin = "4.32.1"
+protobufGradlePlugin = "0.9.5"
+
+[libraries]
+protobufKotlin = { group = "com.google.protobuf", name = "protobuf-kotlin", version.ref = "protobufKotlin" }
+protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobufCompiler" }
+
+[plugins]
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufGradlePlugin" }

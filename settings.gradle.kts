@@ -3,3 +3,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
 rootProject.name = "protocol-adapter-oslp-mikronika"
+
+includeBuild("./gxf-publiclighting-contracts-internal")

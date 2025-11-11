@@ -54,6 +54,8 @@ repositories {
 dependencies {
     developmentOnly(libs.springBootDevtools)
 
+    implementation("org.lfenergy.gxf:gxf-publiclighting-contracts-internal")
+
     implementation(libs.flywayCore)
     implementation(libs.flywayPostgresql)
     implementation(libs.kotlinLoggingJvm)
@@ -62,6 +64,7 @@ dependencies {
     implementation(libs.ktor)
     implementation(libs.micrometerRegistryPrometheus)
     implementation(libs.oslpMessageSigning)
+    implementation(libs.pooledJms)
     implementation(libs.postgresql)
     implementation(libs.springBootStarter)
     implementation(libs.springBootStarterActuator)
@@ -96,3 +99,27 @@ extensions.configure<SpotlessExtension> {
 }
 
 tasks.named<Jar>("bootJar") { archiveFileName.set("protocol-adapter-oslp-mikronika.jar") }
+
+// Jacoco code coverage report of unit and integration tests
+tasks.register<JacocoReport>("aggregateTestCodeCoverageReport") {
+    description = "Generates code coverage report for all tests."
+    group = "Verification"
+    dependsOn("test")
+
+    executionData(
+        fileTree(layout.buildDirectory.dir("jacoco")) {
+            include("test.exec", "test/*.exec", "*.exec")
+        },
+    )
+    sourceSets(sourceSets["main"])
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    // filter out generated classes:
+    classDirectories.setFrom(
+        classDirectories.files.map {
+            fileTree(it) { exclude("**/generated/**") }
+        },
+    )
+}
