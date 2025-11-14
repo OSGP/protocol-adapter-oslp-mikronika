@@ -8,13 +8,11 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNoti
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.domain.DeviceEventMessageMapper.toDeviceEventMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.producer.DeviceEventMessageSender
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnProperty(name = ["device-events.enabled"], havingValue = "true")
 class DeviceEventListener(
     private val deviceEventMessageSender: DeviceEventMessageSender,
 ) {
