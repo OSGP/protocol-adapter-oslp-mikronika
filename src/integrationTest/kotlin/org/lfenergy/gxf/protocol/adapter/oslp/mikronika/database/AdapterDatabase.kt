@@ -30,17 +30,6 @@ class AdapterDatabase(
         )
     }
 
-    fun updateRandomDevice(
-        deviceIdentification: String,
-        randomDevice: Int,
-    ) {
-        adapterJdbcTemplate.update(
-            UPDATE_RANDOM_DEVICE_SQL,
-            randomDevice,
-            deviceIdentification,
-        )
-    }
-
     fun updateRandomPlatform(
         deviceIdentification: String,
         randomPlatform: Int,
@@ -69,11 +58,5 @@ const val SELECT_ADAPTER_DEVICE_SQL =
 const val UPDATE_DEVICE_KEY_SQL =
     "update oslp_mikronika_device set public_key = ? where device_identification = ?"
 
-const val UPDATE_RANDOM_DEVICE_SQL =
-    "update oslp_mikronika_device set random_device = ? where device_identification = ?"
-
 const val UPDATE_RANDOM_PLATFORM_SQL =
     "update oslp_mikronika_device set random_platform = ? where device_identification = ?"
-
-const val UPDATE_SEQUENCE_NUMBER_SQL =
-    "update oslp_mikronika_device set sequence_number = ? where device_identification = ?"
