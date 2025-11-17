@@ -31,13 +31,10 @@ class SecurityConfiguration(
             .genKeyPair()
 
     @Bean
-    fun keyProvider(): KeyProvider {
-        return object : KeyProvider(signingConfigurationProperties) {
-            override fun getPrivateKey(): PrivateKey {
-                return platformKeyPair().private
-            }
+    fun keyProvider(): KeyProvider =
+        object : KeyProvider(signingConfigurationProperties) {
+            override fun getPrivateKey(): PrivateKey = platformKeyPair().private
         }
-    }
 }
 
 fun PublicKey.encodedAsBase64(): String =
