@@ -107,9 +107,6 @@ testing {
 
                 implementation("org.lfenergy.gxf:gxf-publiclighting-contracts-internal")
 
-                implementation("io.cucumber:cucumber-java:7.29.0")
-                implementation("io.cucumber:cucumber-junit:7.29.0")
-
                 implementation(libs.assertJ)
                 implementation(libs.awaitility)
                 implementation(libs.oslpMessageSigning)
