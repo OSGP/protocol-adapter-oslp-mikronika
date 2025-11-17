@@ -103,9 +103,9 @@ class DeviceRegistrationIntegrationTest {
         assertThat(updatedDevice.randomDevice).isEqualTo(RANDOM_DEVICE)
     }
 
-    private fun Float.scaleToGpsInt(): Int = (this * GPS_SCALE_FACTOR).toInt()
-
     companion object {
         private const val GPS_SCALE_FACTOR = 1E6F
+
+        private fun Float.scaleToGpsInt(): Int = (this * GPS_SCALE_FACTOR).toInt()
     }
 }

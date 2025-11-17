@@ -8,6 +8,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.ContainerConfiguration
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.SecurityConfiguration
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RANDOM_PLATFORM
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.SEQUENCE_NUMBER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.AdapterDatabase
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
@@ -66,11 +69,5 @@ class DeviceRegistrationConfirmationIntegrationTest {
     private fun `then the device should be updated in the database`() {
         val updatedDevice = adapterDatabase.getAdapterDevice(DEVICE_IDENTIFICATION)!!
         assertThat(updatedDevice.sequenceNumber).isEqualTo(SEQUENCE_NUMBER)
-    }
-
-    companion object {
-        private const val DEVICE_IDENTIFICATION = "device_001"
-        private const val SEQUENCE_NUMBER = 1
-        private const val RANDOM_PLATFORM = 67890
     }
 }

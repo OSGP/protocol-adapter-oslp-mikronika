@@ -7,6 +7,8 @@ import jakarta.annotation.PostConstruct
 import jakarta.jms.BytesMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_EVENTS_QUEUE
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION_HEADER
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.springframework.jms.core.JmsTemplate
@@ -22,20 +24,20 @@ class MessageBroker(
     }
 
     fun receiveDeviceEventMessage(
-        deviceIdentification: String,
-        eventType: EventType,
+        expectedDeviceIdentification: String,
+        expectedEventType: EventType,
     ): DeviceEventMessage {
-        val bytesMessage = jmsTemplate.receive("gxf.publiclighting.oslp-mikronika.device-events") as BytesMessage?
+        val bytesMessage = jmsTemplate.receive(DEVICE_EVENTS_QUEUE) as BytesMessage?
 
         assertThat(bytesMessage).isNotNull
-        assertThat(bytesMessage!!.jmsType).isEqualTo(eventType.name)
-        assertThat(bytesMessage.getStringProperty("DeviceIdentification")).isEqualTo(deviceIdentification)
+        assertThat(bytesMessage!!.jmsType).isEqualTo(expectedEventType.name)
+        assertThat(bytesMessage.getStringProperty(DEVICE_IDENTIFICATION_HEADER)).isEqualTo(expectedDeviceIdentification)
 
         val eventMessage = bytesMessage.toDeviceEventMessage()
         with(eventMessage.header) {
             assertThat(this).isNotNull
-            assertThat(deviceIdentification).isEqualTo(deviceIdentification)
-            assertThat(eventType).isEqualTo(eventType)
+            assertThat(deviceIdentification).isEqualTo(expectedDeviceIdentification)
+            assertThat(eventType).isEqualTo(expectedEventType)
             assertThat(deviceType).isEqualTo(DEVICE_TYPE)
         }
         return eventMessage
