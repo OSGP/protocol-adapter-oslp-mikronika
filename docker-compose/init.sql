@@ -17,6 +17,6 @@ GRANT SELECT ON TABLE device TO osgp_core_db_api_user;
 
 INSERT INTO device (device_identification, gps_latitude, gps_longitude)
 SELECT 'MIK' || '-' || gen_id
-     , 52
-     , 52
+     , 51.985007
+     , 5.894768
 FROM generate_series(1, 10) gen_id;
