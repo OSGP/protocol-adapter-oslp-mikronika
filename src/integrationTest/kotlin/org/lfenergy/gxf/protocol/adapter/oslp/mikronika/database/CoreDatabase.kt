@@ -18,16 +18,16 @@ class CoreDatabase(
             ::mapCoreDevice,
             deviceIdentification,
         )
+
+    private fun mapCoreDevice(
+        rs: ResultSet,
+        @Suppress("UNUSED_PARAMETER") rowNum: Int,
+    ) = CoreDevice(
+        deviceIdentification = rs.getString("device_identification"),
+        latitude = rs.getFloat("gps_latitude"),
+        longitude = rs.getFloat("gps_longitude"),
+    )
 }
 
 const val SELECT_CORE_DEVICE_SQL =
     "select device_identification, gps_latitude, gps_longitude from device where device_identification = ?"
-
-fun mapCoreDevice(
-    rs: ResultSet,
-    @Suppress("UNUSED_PARAMETER") rowNum: Int,
-) = CoreDevice(
-    deviceIdentification = rs.getString("device_identification"),
-    latitude = rs.getFloat("gps_latitude"),
-    longitude = rs.getFloat("gps_longitude"),
-)

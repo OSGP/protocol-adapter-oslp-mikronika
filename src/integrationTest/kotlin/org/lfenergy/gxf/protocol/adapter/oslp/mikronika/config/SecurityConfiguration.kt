@@ -19,15 +19,15 @@ class SecurityConfiguration(
     @Bean
     fun deviceKeyPair(): KeyPair =
         KeyPairGenerator
-            .getInstance("EC")
-            .apply { initialize(256) }
+            .getInstance(ALGORITHM)
+            .apply { initialize(KEY_SIZE) }
             .genKeyPair()
 
     @Bean
     fun platformKeyPair(): KeyPair =
         KeyPairGenerator
-            .getInstance("EC")
-            .apply { this.initialize(256) }
+            .getInstance(ALGORITHM)
+            .apply { initialize(KEY_SIZE) }
             .genKeyPair()
 
     @Bean
@@ -37,7 +37,10 @@ class SecurityConfiguration(
         }
 }
 
+private const val ALGORITHM = "EC"
+private const val KEY_SIZE = 256
+
 fun PublicKey.encodedAsBase64(): String =
     java.util.Base64
         .getEncoder()
-        .encodeToString(this.encoded)
+        .encodeToString(encoded)

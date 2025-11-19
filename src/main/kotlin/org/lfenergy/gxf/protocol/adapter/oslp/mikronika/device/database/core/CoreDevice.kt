@@ -11,6 +11,6 @@ import jakarta.persistence.Id
 class CoreDevice(
     @Id var id: Long = 0L,
     @Column(name = "device_identification") var deviceIdentification: String = "",
-    @Column(name = "gps_latitude") var latitude: Float = 0F,
-    @Column(name = "gps_longitude") var longitude: Float = 0F,
+    @Column(name = "gps_latitude") var latitude: Float = 0f,
+    @Column(name = "gps_longitude") var longitude: Float = 0f,
 )
