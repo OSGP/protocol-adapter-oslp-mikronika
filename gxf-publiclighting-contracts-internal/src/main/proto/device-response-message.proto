@@ -1,0 +1,119 @@
+// SPDX-FileCopyrightText: Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+edition = "2024";
+
+package org.lfenergy.gxf.publiclighting.contracts.internal.device_responses;
+
+import "google/protobuf/timestamp.proto";
+
+message DeviceResponseMessage {
+  ResponseHeader header = 1;
+  Result result = 2;
+
+  // Omitted when response does not contain any data
+  oneof payload {
+    GetStatusResponse get_status_response = 3;
+    GetConfigurationResponse get_configuration_response = 4;
+    GetFirmwareVersionResponse get_firmware_version_response = 5;
+
+    ErrorResponse error_response = 99;
+  }
+}
+
+message ResponseHeader {
+  string correlation_uid = 1;
+  string device_identification = 2;
+  string device_type = 3;
+  string organization_identification = 4;
+  ResponseType response_type = 5;
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+enum ResponseType {
+  GET_STATUS_RESPONSE = 0;
+  SET_LIGHT_RESPONSE = 1;
+  REBOOT_RESPONSE = 2;
+  START_SELF_TEST_RESPONSE = 3;
+  STOP_SELF_TEST_RESPONSE = 4;
+  SET_SCHEDULE_RESPONSE = 5;
+  RESUME_SCHEDULE_RESPONSE = 6;
+  SET_TRANSITION_RESPONSE = 7;
+  SET_EVENT_NOTIFICATION_MASK_RESPONSE = 8;
+  GET_CONFIGURATION_RESPONSE = 9;
+  SET_CONFIGURATION_RESPONSE = 10;
+  GET_FIRMWARE_VERSION_RESPONSE = 11;
+}
+
+message ErrorResponse {
+  string error_message = 1;
+}
+
+message GetStatusResponse {
+  Result result = 1;
+  repeated LightValue light_values = 2;
+  // required fields
+  LinkType preferred_link_type = 3;
+  LinkType actual_link_type = 4;
+  LightType light_type = 5;
+  uint32 event_notification_mask = 6;             // Bitmask for max 32 events, using NotificationBit for bit positions.
+  // optional fields
+  uint32 number_of_outputs = 7;                   // Hardware - The number of outputs of this device.
+  uint32 dc_output_voltage_maximum = 8;           // Hardware - DC output voltage maximum (in mV).
+  uint32 dc_output_voltage_current = 9;           // Hardware - DC output current voltage (in mV).
+  uint32 maximum_output_power_on_dc_output = 10;  // Hardware - Maximum output power on DC output (mW).
+  bytes serial_number = 11;                       // Hardware - Serial number of this device.   (max_size = 18)
+  bytes mac_address = 12;                         // Hardware - MAC-address of this device.     (max_size = 6)
+  string hardware_id = 13;                        // Hardware - The hardware ID of this device. (min_size = 10, max_size = 25)
+  uint32 internal_flash_mem_size = 14;            // Hardware - The internal flash memory size.
+  uint32 external_flash_mem_size = 15;            // Hardware - The external flash memory size.
+  uint32 last_internal_test_result_code = 16;     // Hardware - The last internal test result code.
+  uint32 startup_counter = 17;                    // Hardware - The startup counter.
+  string boot_loader_version = 18;                // Software - The boot loader version.
+  string firmware_version = 19;                   // Software - The firmware version.
+  bytes current_configuration_back_used = 20;     // Software - The current configuration bank in use. (max_size = 6)
+  string name = 21;                               // Device - The name of this device.
+  string current_time = 22;                       // Device - Not UTC, the time used in timing operations (adjusted "offset" + summer timing). YYYYMMDDhhmmss format.
+  string current_ip = 23;                         // Device - The current IP address of this device.
+}
+
+message GetConfigurationResponse {
+  // TODO - define configuration response structure here
+}
+
+message GetFirmwareVersionResponse {
+  string firmware_version = 1;
+}
+
+message LightValue {
+  RelayIndex index = 1;
+  bool light_on = 2;
+}
+
+enum RelayIndex{
+  RELAY_ALL = 0;
+  RELAY_ONE = 1;
+  RELAY_TWO = 2;
+  RELAY_THREE = 3;
+  RELAY_FOUR = 4;
+}
+
+enum LightType {
+  RELAY = 1;
+  // Light types below are present in OSLP, but currently not used
+  ONE_TO_TEN_VOLT = 2;
+  ONE_TO_TEN_VOLT_REVERSE = 3;
+  DALI = 4;
+}
+
+enum LinkType {
+  GPRS = 1;
+  CDMA = 2;
+  ETHERNET = 3;
+}
+
+enum Result {
+  OK = 0;
+  NOT_OK = 1;
+}

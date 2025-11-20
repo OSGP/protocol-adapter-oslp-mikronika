@@ -1,0 +1,135 @@
+// SPDX-FileCopyrightText: Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+edition = "2024";
+
+package org.lfenergy.gxf.publiclighting.contracts.internal.device_requests;
+
+import "google/protobuf/timestamp.proto";
+
+message DeviceRequestMessage {
+  RequestHeader header = 1;
+
+  // Omitted when request does not contain any data
+  oneof payload {
+    SetLightRequest set_light_request = 2;
+    SetScheduleRequest set_schedule_request = 3;
+    ResumeScheduleRequest resume_schedule_request = 4;
+    SetTransitionRequest set_transition_request = 5;
+    SetEventNotificationMaskRequest set_event_notification_mask_request = 6;
+    SetConfigurationRequest set_configuration_command = 7;
+  }
+}
+
+message RequestHeader {
+  string correlation_uid = 1;
+  string device_identification = 2;
+  string device_type = 3;
+  string organization_identification = 4;
+  RequestType request_type = 5;
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+enum RequestType {
+  GET_STATUS_REQUEST = 0;
+  SET_LIGHT_REQUEST = 1;
+  REBOOT_REQUEST = 2;
+  START_SELF_TEST_REQUEST = 3;
+  STOP_SELF_TEST_REQUEST = 4;
+  SET_SCHEDULE_REQUEST = 5;
+  RESUME_SCHEDULE_REQUEST = 6;
+  SET_TRANSITION_REQUEST = 7;
+  SET_EVENT_NOTIFICATION_MASK_REQUEST = 8;
+  GET_CONFIGURATION_REQUEST = 9;
+  SET_CONFIGURATION_REQUEST = 10;
+  GET_FIRMWARE_VERSION_REQUEST = 11;
+}
+
+message SetLightRequest {
+  repeated LightValue light_values = 1;
+}
+
+message SetScheduleRequest {
+  repeated ScheduleEntry schedule_entries = 1; // maximum count of 50 entries
+}
+
+message ResumeScheduleRequest {
+  bytes index = 1;
+  bool immediate = 2;
+}
+
+message SetTransitionRequest {
+  TransitionType transition_type = 1;
+  string time = 2;  // Format: hhmmss UTC
+}
+
+message SetEventNotificationMaskRequest {
+  uint32 notification_mask = 1; // Bitmask for max 32 events, using NotificationBit for bit positions
+}
+
+message SetConfigurationRequest {
+  // TODO - define configuration structure here
+}
+
+message LightValue {
+  RelayIndex index = 1;
+  bool light_on = 2;
+}
+
+message ScheduleEntry {
+  Weekday weekday = 1;
+  string start_day = 2;           // Format YYYYMMDD UTC
+  string end_day = 3;             // Format YYYYMMDD UTC
+  ActionTime action_time = 4;
+  string time = 5;                // Format hhmmss local time, only set when action_time = ABSOLUTETIME
+  TriggerWindow window = 6;       // Window to wait for light sensor trigger
+  repeated LightValue value = 7;  // Maximum count of 6 light values
+  TriggerType trigger_type = 8;   // Switch on astronomical time or light transition
+  uint32 minimum_lights_on = 9;   // Minimal time (in seconds) the lights should burn before deciding to switch the lights on
+  uint32 index = 10;              // Index of schedule entry in the schedule list
+//  bool is_enabled = 11;           // Is this schedule entry enabled?}
+}
+
+message TriggerWindow {
+  uint32 minutes_before = 1;
+  uint32 minutes_after = 2;
+}
+
+enum TriggerType {
+  LIGHT_TRANSITION = 1;
+  ASTRONOMICAL = 2;
+}
+
+enum Weekday {
+  MONDAY = 1;
+  TUESDAY = 2;
+  WEDNESDAY = 3;
+  THURSDAY = 4;
+  FRIDAY = 5;
+  SATURDAY = 6;
+  SUNDAY = 7;
+  WEEKDAY = 8;
+  WEEKEND = 9;
+  ABSOLUTE_DAY = 10;
+  EVERY_DAY = 11;
+}
+
+enum ActionTime {
+  ABSOLUTE_TIME = 1;
+  SUNRISE_TIME = 2;
+  SUNSET_TIME = 3;
+}
+
+enum RelayIndex{
+  RELAY_ALL = 0;
+  RELAY_ONE = 1;
+  RELAY_TWO = 2;
+  RELAY_THREE = 3;
+  RELAY_FOUR = 4;
+}
+
+enum TransitionType {
+  SUNRISE = 0;
+  SUNSET = 1;
+}
