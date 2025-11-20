@@ -33,7 +33,6 @@ oslpMessageSigning = { group = "com.gxf.utilities", name = "oslp-message-signing
 pooledJms = { group = "org.messaginghub", name = "pooled-jms", version.ref = "pooledJms" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 protobufKotlin = { group = "com.google.protobuf", name = "protobuf-kotlin", version.ref = "protobufKotlin" }
-springBootStarter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springBoot" }
 springBootStarterActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" }
 springBootStarterArtemis = { group = "org.springframework.boot", name = "spring-boot-starter-artemis", version.ref = "springBoot" }
 springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "springBoot" }

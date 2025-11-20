@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
+import com.google.protobuf.ByteString
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -102,6 +103,7 @@ class RegisterDeviceStrategyTest {
         val registerDeviceRequest = mockk<Oslp.RegisterDeviceRequest>(relaxed = true)
 
         every { registerDeviceRequest.randomDevice } returns randomDevice
+        every { registerDeviceRequest.ipAddress } returns ByteString.copyFrom(byteArrayOf(127, 0, 0, 1))
         every { message.registerDeviceRequest } returns registerDeviceRequest
         every { envelope.message } returns message
 

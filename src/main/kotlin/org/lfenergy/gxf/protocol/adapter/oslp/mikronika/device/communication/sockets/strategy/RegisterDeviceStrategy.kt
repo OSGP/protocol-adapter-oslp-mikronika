@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy
 
+import com.google.protobuf.ByteString
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
@@ -15,6 +16,7 @@ import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
+import java.net.InetAddress
 import java.time.Instant
 import java.time.ZoneId
 import kotlin.random.Random
@@ -80,7 +82,7 @@ class RegisterDeviceStrategy(
             eventPublisher.publishEvent(
                 DeviceRegistrationReceivedEvent(
                     mikronikaDevice.deviceIdentification,
-                    ipAddress.toString(),
+                    ipAddress.toNetworkAddress(),
                     DEVICE_TYPE,
                     hasSchedule,
                 ),
@@ -88,7 +90,9 @@ class RegisterDeviceStrategy(
         }
     }
 
-    private fun Float.toCoordinatesInt() = (this * 1000000).toInt()
+    private fun ByteString.toNetworkAddress(): String = InetAddress.getByAddress(this.toByteArray()).hostAddress
+
+    private fun Float.toCoordinatesInt() = (this * 1_000_000).toInt()
 
     private companion object {
         const val RANDOM_PLATFORM_MAX = 65536
