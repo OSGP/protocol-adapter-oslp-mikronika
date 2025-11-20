@@ -100,17 +100,17 @@ enum RelayIndex{
 }
 
 enum LightType {
-  RELAY = 1;
+  RELAY = 0;
   // Light types below are present in OSLP, but currently not used
-  ONE_TO_TEN_VOLT = 2;
-  ONE_TO_TEN_VOLT_REVERSE = 3;
-  DALI = 4;
+  ONE_TO_TEN_VOLT = 1;
+  ONE_TO_TEN_VOLT_REVERSE = 2;
+  DALI = 3;
 }
 
 enum LinkType {
-  GPRS = 1;
-  CDMA = 2;
-  ETHERNET = 3;
+  GPRS = 0;
+  CDMA = 1;
+  ETHERNET = 2;
 }
 
 enum Result {
