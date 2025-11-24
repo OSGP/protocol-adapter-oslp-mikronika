@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.writeFully
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ReceiveStrategy
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.EVENT_NOTIFICATION_STRATEGY
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.StrategyFactory.Companion.REGISTER_DEVICE_STRATEGY
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.ReceiveStrategy
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory.Companion.EVENT_NOTIFICATION_STRATEGY
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory.Companion.REGISTER_DEVICE_STRATEGY
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.springframework.stereotype.Component
 

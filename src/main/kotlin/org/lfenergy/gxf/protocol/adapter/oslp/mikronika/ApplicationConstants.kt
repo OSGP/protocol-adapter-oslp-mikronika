@@ -5,4 +5,5 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika
 
 object ApplicationConstants {
     const val DEVICE_TYPE = "SSLD"
+    const val JMS_PROPERTY_DEVICE_IDENTIFICATION = "DeviceIdentification"
 }

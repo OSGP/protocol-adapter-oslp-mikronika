@@ -1,0 +1,34 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.devicerequest.config
+
+import jakarta.jms.ConnectionFactory
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.jms.core.JmsTemplate
+import org.springframework.scheduling.annotation.EnableAsync
+
+@Configuration
+@EnableAsync
+@EnableConfigurationProperties(DeviceRequestConfigurationProperties::class)
+class DeviceRequestModuleConfiguration(
+    private val connectionFactory: ConnectionFactory,
+    private val properties: DeviceRequestConfigurationProperties,
+) {
+    @Bean
+    fun jmsTemplate(): JmsTemplate {
+        val template = JmsTemplate(connectionFactory)
+        template.defaultDestinationName = properties.producer.outboundQueue
+        with(properties.producer.qualityOfService) {
+            if (explicitQosEnabled) {
+                template.isExplicitQosEnabled = explicitQosEnabled
+                template.setDeliveryPersistent(deliveryPersistent)
+                template.priority = priority
+                template.timeToLive = timeToLive
+            }
+        }
+        return template
+    }
+}

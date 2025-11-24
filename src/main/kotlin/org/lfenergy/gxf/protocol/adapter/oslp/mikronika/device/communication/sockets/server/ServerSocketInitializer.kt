@@ -1,10 +1,9 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server
 
 import jakarta.annotation.PostConstruct
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.configuration.ServerSocketConfiguration
 import org.springframework.stereotype.Component
 
 @Component

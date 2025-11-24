@@ -18,6 +18,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.EventNotificationRequestStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import org.opensmartgridplatform.oslp.Oslp
