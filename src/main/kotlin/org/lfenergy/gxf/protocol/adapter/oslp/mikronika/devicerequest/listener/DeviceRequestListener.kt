@@ -18,7 +18,7 @@ class DeviceRequestListener(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    @JmsListener(destination = $$"${device-commands.consumer.inbound-queue}")
+    @JmsListener(destination = $$"${device-request.consumer.inbound-queue}")
     fun onMessage(bytesMessage: BytesMessage) {
         val correlationId = bytesMessage.jmsCorrelationID
         val deviceId = bytesMessage.getStringProperty(JMS_PROPERTY_DEVICE_IDENTIFICATION)

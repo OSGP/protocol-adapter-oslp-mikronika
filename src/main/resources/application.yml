@@ -50,9 +50,11 @@ device-events:
       priority: 4
       time-to-live: 0
 
-device-request:
+device-requests:
+  consumer:
+    inbound-queue: protocol-adapter-oslp-mikronika.device-requests.inbound.IT
   producer:
-    outbound-queue: protocol-adapter-oslp-mikronika.device-events.outbound.IT
+    outbound-queue: protocol-adapter-oslp-mikronika.device-requests.outbound.IT
     quality-of-service:
       explicit-qos-enabled: true
       delivery-persistent: true

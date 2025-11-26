@@ -5,10 +5,15 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.devicerequest.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties(prefix = "device-request")
+@ConfigurationProperties(prefix = "device-requests")
 class DeviceRequestConfigurationProperties(
+    var consumer: ConsumerProperties,
     var producer: ProducerProperties,
 ) {
+    data class ConsumerProperties(
+        var inboundQueue: String,
+    )
+
     data class ProducerProperties(
         var outboundQueue: String,
         var qualityOfService: QualityOfService,
