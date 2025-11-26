@@ -18,7 +18,7 @@ class DeviceEventsModuleConfiguration(
     private val properties: DeviceEventsConfigurationProperties,
 ) {
     @Bean
-    fun jmsTemplate(): JmsTemplate {
+    fun deviceNotificationJmsTemplate(): JmsTemplate {
         val template = JmsTemplate(connectionFactory)
         template.defaultDestinationName = properties.producer.outboundQueue
         with(properties.producer.qualityOfService) {

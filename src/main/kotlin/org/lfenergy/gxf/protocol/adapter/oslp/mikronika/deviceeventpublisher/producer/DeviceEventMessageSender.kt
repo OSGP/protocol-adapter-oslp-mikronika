@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DeviceEventMessageSender(
-    val jmsTemplate: JmsTemplate,
+    val deviceNotificationJmsTemplate: JmsTemplate,
     val properties: DeviceEventsConfigurationProperties,
 ) {
     private val logger = KotlinLogging.logger {}
@@ -19,7 +19,7 @@ class DeviceEventMessageSender(
     fun send(message: DeviceEventMessage) {
         logger.info { "Sending device event message for device ${message.header.deviceIdentification} of type ${message.header.eventType}" }
 
-        jmsTemplate.send(properties.producer.outboundQueue) { session ->
+        deviceNotificationJmsTemplate.send(properties.producer.outboundQueue) { session ->
             val msg = session.createBytesMessage()
             msg.jmsType = message.header.eventType.name
             msg.jmsCorrelationID = message.header.correlationUid

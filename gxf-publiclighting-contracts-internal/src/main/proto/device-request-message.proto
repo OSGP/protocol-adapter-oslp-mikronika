@@ -29,6 +29,7 @@ message RequestHeader {
   string organization_identification = 4;
   RequestType request_type = 5;
   google.protobuf.Timestamp timestamp = 6;
+  string network_address = 7;
 }
 
 enum RequestType {

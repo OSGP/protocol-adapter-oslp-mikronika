@@ -18,7 +18,7 @@ class DeviceRequestModuleConfiguration(
     private val properties: DeviceRequestConfigurationProperties,
 ) {
     @Bean
-    fun jmsTemplate(): JmsTemplate {
+    fun deviceRequestJmsTemplate(): JmsTemplate {
         val template = JmsTemplate(connectionFactory)
         template.defaultDestinationName = properties.producer.outboundQueue
         with(properties.producer.qualityOfService) {

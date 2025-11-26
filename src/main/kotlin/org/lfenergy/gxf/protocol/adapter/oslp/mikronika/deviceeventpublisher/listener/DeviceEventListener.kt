@@ -35,7 +35,8 @@ class DeviceEventListener(
         deviceEventMessageSender.send(event.toDeviceEventMessage())
     }
 
-    private fun log(event: DeviceEvent) = logger.info {
-        "Received ${event.javaClass.name} with correlation uid: ${event.correlationUid} for device: ${event.deviceIdentification}"
-    }
+    private fun log(event: DeviceEvent) =
+        logger.info {
+            "Received ${event.javaClass.name} with correlation uid: ${event.correlationUid} for device: ${event.deviceIdentification}"
+        }
 }

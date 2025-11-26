@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.devicerequest.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties(prefix = "device-commands")
+@ConfigurationProperties(prefix = "device-request")
 class DeviceRequestConfigurationProperties(
     var producer: ProducerProperties,
 ) {

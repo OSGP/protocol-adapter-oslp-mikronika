@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.devicerequest.sender
 
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -8,13 +11,13 @@ import org.springframework.stereotype.Component
 
 @Component
 class DeviceResponseSender(
-    val jmsTemplate: JmsTemplate,
+    val deviceRequestJmsTemplate: JmsTemplate,
     val properties: DeviceRequestConfigurationProperties,
 ) {
     private val logger = KotlinLogging.logger {}
 
     fun send(message: DeviceResponseMessage) {
-        jmsTemplate.send(properties.producer.outboundQueue) { session ->
+        deviceRequestJmsTemplate.send(properties.producer.outboundQueue) { session ->
             val msg = session.createBytesMessage()
             msg.jmsType = message.header.responseType.name
             msg.jmsCorrelationID = message.header.correlationUid
