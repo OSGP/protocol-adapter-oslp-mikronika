@@ -7,10 +7,10 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.Reques
 import org.springframework.stereotype.Component
 
 @Component
-class DeviceReqResMapperFactory(
-    private val mappers: HashMap<String, DeviceReqResMapper>,
+class CommandMapperFactory(
+    private val mappers: HashMap<String, CommandMapper>,
 ) {
-    fun getMapperFor(requestType: RequestType): DeviceReqResMapper =
+    fun getMapperFor(requestType: RequestType): CommandMapper =
         mappers[requestType.name]
             ?: throw IllegalArgumentException("No request-response mapper found for request type: ${requestType.name}")
 

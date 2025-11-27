@@ -16,18 +16,18 @@ import org.springframework.stereotype.Component
 
 @Component
 class MessageBroker(
-    val jmsTemplate: JmsTemplate,
+    val deviceNotificationJmsTemplate: JmsTemplate,
 ) {
     @PostConstruct
     fun initialize() {
-        jmsTemplate.receiveTimeout = 2000
+        deviceNotificationJmsTemplate.receiveTimeout = 2000
     }
 
     fun receiveDeviceEventMessage(
         expectedDeviceIdentification: String,
         expectedEventType: EventType,
     ): DeviceEventMessage {
-        val bytesMessage = jmsTemplate.receive(DEVICE_EVENTS_QUEUE) as BytesMessage?
+        val bytesMessage = deviceNotificationJmsTemplate.receive(DEVICE_EVENTS_QUEUE) as BytesMessage?
 
         assertThat(bytesMessage).isNotNull
         assertThat(bytesMessage!!.jmsType).isEqualTo(expectedEventType.name)

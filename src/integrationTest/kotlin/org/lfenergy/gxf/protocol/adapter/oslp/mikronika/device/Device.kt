@@ -17,7 +17,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.SEQ
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.encodedAsBase64
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.configuration.ServerSocketConfiguration
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.ServerSocketConfiguration
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
 import java.net.InetAddress

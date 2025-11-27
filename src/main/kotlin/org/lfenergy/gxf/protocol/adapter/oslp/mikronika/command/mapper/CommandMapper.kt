@@ -11,7 +11,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Devic
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 
-abstract class DeviceReqResMapper {
+abstract class CommandMapper {
     abstract fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest
 
     abstract fun toResponse(
