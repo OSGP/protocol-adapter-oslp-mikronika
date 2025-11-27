@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.devicerequest.sender
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.devicerequest.config.DeviceRequestConfigurationProperties
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.config.DeviceRequestConfigurationProperties
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
