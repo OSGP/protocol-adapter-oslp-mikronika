@@ -37,7 +37,6 @@ class ClientSocket(
 
             if (bytesRead > 0) {
                 val responseEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
-//                    deviceStateService.updateSequenceNumber(responseEnvelope.sequenceNumber)
                 return responseEnvelope
             }
         }

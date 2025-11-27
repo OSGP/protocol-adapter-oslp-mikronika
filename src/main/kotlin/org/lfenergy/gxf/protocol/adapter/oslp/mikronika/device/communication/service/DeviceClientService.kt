@@ -82,9 +82,9 @@ class DeviceClientService(
         val signature =
             signingService.createSignature(
                 sequenceNumber.toByteArray(2) +
-                        deviceUidBytes +
-                        lengthIndicator.toByteArray(2) +
-                        messageBytes,
+                    deviceUidBytes +
+                    lengthIndicator.toByteArray(2) +
+                    messageBytes,
             )
 
         val envelope =
