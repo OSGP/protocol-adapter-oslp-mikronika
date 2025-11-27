@@ -7,6 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component
 class DeviceClientService(
     private val mikronikaDeviceService: MikronikaDeviceService,
     private val signingService: SigningService,
+    private val socketProperties: ClientSocketConfigurationProperties,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -33,7 +35,7 @@ class DeviceClientService(
 
             val requestEnvelope = createEnvelope(device, deviceRequest.toOslpMessage())
 
-            val sock = ClientSocket(deviceRequest.networkAddress, 12345) // TODO;
+            val sock = ClientSocket(deviceRequest.networkAddress, socketProperties.devicePort)
 
             val responseEnvelope = sock.sendAndReceive(requestEnvelope)
 
@@ -80,9 +82,9 @@ class DeviceClientService(
         val signature =
             signingService.createSignature(
                 sequenceNumber.toByteArray(2) +
-                    deviceUidBytes +
-                    lengthIndicator.toByteArray(2) +
-                    messageBytes,
+                        deviceUidBytes +
+                        lengthIndicator.toByteArray(2) +
+                        messageBytes,
             )
 
         val envelope =
