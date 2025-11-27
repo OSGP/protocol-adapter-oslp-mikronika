@@ -45,6 +45,20 @@ device-events:
       priority: 4
       time-to-live: 0
 
+commands:
+  consumer:
+    inbound-queue: protocol-adapter-oslp-mikronika.device-requests.inbound.IT
+  producer:
+    outbound-queue: protocol-adapter-oslp-mikronika.device-requests.outbound.IT
+    quality-of-service:
+      explicit-qos-enabled: true
+      delivery-persistent: true
+      priority: 4
+      time-to-live: 0
+
 server-socket:
   port: 12126
   hostName: localhost
+
+client-socket:
+  device-port: 12122

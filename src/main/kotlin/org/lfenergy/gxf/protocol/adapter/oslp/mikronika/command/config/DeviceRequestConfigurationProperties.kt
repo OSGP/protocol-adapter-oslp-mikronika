@@ -5,7 +5,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties(prefix = "device-requests")
+@ConfigurationProperties(prefix = "commands")
 class DeviceRequestConfigurationProperties(
     var consumer: ConsumerProperties,
     var producer: ProducerProperties,

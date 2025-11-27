@@ -39,7 +39,7 @@ device-events:
 client-socket:
   device-port: 12122
 
-device-requests:
+commands:
   consumer:
     inbound-queue: protocol-adapter-oslp-mikronika.device-requests.inbound.IT
   producer:
