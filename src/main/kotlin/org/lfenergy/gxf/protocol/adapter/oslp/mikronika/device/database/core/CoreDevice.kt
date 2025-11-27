@@ -8,7 +8,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
 @Entity(name = "device")
-data class CoreDevice(
+class CoreDevice(
     @Id var id: Long = 0L,
     @Column(name = "device_identification") var deviceIdentification: String = "",
     @Column(name = "gps_latitude") var latitude: Float = 0f,
