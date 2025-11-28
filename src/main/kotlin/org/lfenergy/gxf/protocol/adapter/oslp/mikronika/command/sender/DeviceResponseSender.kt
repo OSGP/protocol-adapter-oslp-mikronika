@@ -6,13 +6,11 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.config.DeviceRequestConfigurationProperties
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class DeviceResponseSender(
-    @param:Qualifier("deviceRequestJmsTemplate")
     val deviceRequestJmsTemplate: JmsTemplate,
     val properties: DeviceRequestConfigurationProperties,
 ) {

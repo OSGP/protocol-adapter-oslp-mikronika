@@ -12,6 +12,14 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEv
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.Header
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.NotificationType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceNotificationReceivedEvent as ProtobufDeviceNotificationReceivedEvent
@@ -109,4 +117,17 @@ object TestObjects {
                     .setNetworkAddress(NETWORK_ADDRESS)
                     .setHasSchedule(HAS_SCHEDULE),
             ).build()
+
+    val deviceGetStatusRequestMessage: DeviceRequestMessage = deviceRequestMessage {
+        header = requestHeader {
+            requestType = RequestType.GET_STATUS_REQUEST
+        }
+    }
+
+    val deviceGetStatusResponseMessage: DeviceResponseMessage = deviceResponseMessage {
+        header = responseHeader {
+            deviceIdentification = DEVICE_IDENTIFICATION
+            responseType = ResponseType.GET_STATUS_RESPONSE
+        }
+    }
 }
