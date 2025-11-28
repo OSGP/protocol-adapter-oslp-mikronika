@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidSignatureException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
@@ -28,27 +29,29 @@ class DeviceClientService(
 
     fun sendClientMessage(
         deviceRequest: DeviceRequest,
-        responseMapper: (Envelope) -> Unit,
+        responseMapper: (Result<Envelope>) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            val device = mikronikaDeviceService.findBydeviceIdentification(deviceRequest.deviceIdentification)
+            try {
+                val sock = ClientSocket(deviceRequest.networkAddress, socketProperties.devicePort)
+                val device = mikronikaDeviceService.findBydeviceIdentification(deviceRequest.deviceIdentification)
+                val requestEnvelope = createEnvelope(device, deviceRequest.toOslpMessage())
 
-            val requestEnvelope = createEnvelope(device, deviceRequest.toOslpMessage())
+                val responseEnvelope = sock.sendAndReceive(requestEnvelope)
 
-            val sock = ClientSocket(deviceRequest.networkAddress, socketProperties.devicePort)
+                if (!validateSignature(responseEnvelope, MikronikaDevicePublicKey(device.publicKey))) {
+                    throw InvalidSignatureException("Signature validation failed for message! DeviceUid: ${responseEnvelope.deviceUid}")
+                }
 
-            val responseEnvelope = sock.sendAndReceive(requestEnvelope)
+                device.sequenceNumber = responseEnvelope.sequenceNumber
 
-            if (!validateSignature(responseEnvelope, MikronikaDevicePublicKey(device.publicKey))) {
-                logger.error { "Signature validation failed for message! DeviceUid: ${responseEnvelope.deviceUid}" }
-                return@launch
+                responseMapper.invoke(Result.success(responseEnvelope))
+
+                mikronikaDeviceService.saveDevice(device)
+            } catch (exception: Exception) {
+                logger.error { exception.message }
+                responseMapper.invoke(Result.failure(exception))
             }
-
-            device.sequenceNumber = responseEnvelope.sequenceNumber
-
-            responseMapper.invoke(responseEnvelope)
-
-            mikronikaDeviceService.saveDevice(device)
         }
     }
 

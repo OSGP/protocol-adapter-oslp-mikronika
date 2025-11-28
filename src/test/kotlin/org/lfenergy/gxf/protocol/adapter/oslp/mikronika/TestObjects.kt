@@ -118,16 +118,24 @@ object TestObjects {
                     .setHasSchedule(HAS_SCHEDULE),
             ).build()
 
-    val deviceGetStatusRequestMessage: DeviceRequestMessage = deviceRequestMessage {
-        header = requestHeader {
-            requestType = RequestType.GET_STATUS_REQUEST
+    val deviceGetStatusRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.GET_STATUS_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
         }
-    }
 
-    val deviceGetStatusResponseMessage: DeviceResponseMessage = deviceResponseMessage {
-        header = responseHeader {
-            deviceIdentification = DEVICE_IDENTIFICATION
-            responseType = ResponseType.GET_STATUS_RESPONSE
+    val deviceGetStatusResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.GET_STATUS_RESPONSE
+                }
         }
-    }
 }

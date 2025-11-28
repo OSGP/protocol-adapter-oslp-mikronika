@@ -3,12 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceClientService
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.errorResponse
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,18 +20,39 @@ class DeviceRequestService(
     private val deviceResponseSender: DeviceResponseSender,
     private val mapperFactory: CommandMapperFactory,
 ) {
-    private val logger = KotlinLogging.logger {}
-
     fun handleDeviceRequestMessage(requestMessage: DeviceRequestMessage) {
         val requestHeader = requestMessage.header
         val mapper = mapperFactory.getMapperFor(requestHeader.requestType)
 
         val deviceRequest = mapper.toInternal(requestMessage)
 
-        deviceClientService.sendClientMessage(deviceRequest) { responseEnvelope: Envelope ->
-            val message = mapper.toResponse(requestHeader, responseEnvelope)
-
-            deviceResponseSender.send(message)
+        deviceClientService.sendClientMessage(deviceRequest) { result ->
+            result
+                .onSuccess { responseEnvelope ->
+                    val message = mapper.toResponse(requestHeader, responseEnvelope)
+                    deviceResponseSender.send(message)
+                }.onFailure { exception ->
+                    val message = createErrorMessage(requestHeader, exception)
+                    deviceResponseSender.send(message)
+                }
         }
     }
+
+    private fun createErrorMessage(
+        requestHeader: RequestHeader,
+        exception: Throwable,
+    ): DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    correlationUid = requestHeader.correlationUid
+                    deviceIdentification = requestHeader.deviceIdentification
+                    deviceType = requestHeader.deviceType
+                    organizationIdentification = requestHeader.organizationIdentification
+                }
+            errorResponse =
+                errorResponse {
+                    errorMessage = exception.message ?: "Unknown exception"
+                }
+        }
 }
