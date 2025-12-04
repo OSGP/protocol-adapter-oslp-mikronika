@@ -10,13 +10,13 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.StartSel
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = START_SELF_TEST_REQUEST)
-class StartSelfTestRequestCommandMapper : CommandMapper() {
+class StartSelfTestCommandMapper : CommandMapper() {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
