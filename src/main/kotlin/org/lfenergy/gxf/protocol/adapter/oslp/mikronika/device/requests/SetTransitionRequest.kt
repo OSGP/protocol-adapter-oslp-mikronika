@@ -13,17 +13,18 @@ class SetTransitionRequest(
     val transitionType: TransitionType,
     val time: String,
 ) : DeviceRequest(
-    deviceIdentification,
-    networkAddress,
-) {
+        deviceIdentification,
+        networkAddress,
+    ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
             setTransitionRequest {
                 time = this@SetTransitionRequest.time
-                transitionType = when (this@SetTransitionRequest.transitionType) {
-                    TransitionType.DAY_NIGHT -> Oslp.TransitionType.DAY_NIGHT
-                    TransitionType.NIGHT_DAY -> Oslp.TransitionType.NIGHT_DAY
-                }
+                transitionType =
+                    when (this@SetTransitionRequest.transitionType) {
+                        TransitionType.DAY_NIGHT -> Oslp.TransitionType.DAY_NIGHT
+                        TransitionType.NIGHT_DAY -> Oslp.TransitionType.NIGHT_DAY
+                    }
             }
         }
 

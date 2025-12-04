@@ -3,28 +3,26 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.RESUME_SCHEDULE_REQUEST
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_FIRMWARE_STATUS_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.ResumeScheduleRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetFirmwareVersionRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getFirmwareVersionResponse
 import org.springframework.stereotype.Component
 
-@Component(value = RESUME_SCHEDULE_REQUEST)
-class ResumeScheduleCommandMapper : CommandMapper() {
+@Component(value = GET_FIRMWARE_STATUS_REQUEST)
+class GetFirmwareVersionCommandMapper : CommandMapper() {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
 
-        return ResumeScheduleRequest(
+        return GetFirmwareVersionRequest(
             deviceIdentification,
             networkAddress,
-            requestMessage.resumeScheduleRequest.index.toStringUtf8(),
-            requestMessage.resumeScheduleRequest.immediate,
         )
     }
 
@@ -34,6 +32,11 @@ class ResumeScheduleCommandMapper : CommandMapper() {
     ): DeviceResponseMessage =
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
-            result = Result.OK
+            getFirmwareVersionResponse = getBody(envelope)
+        }
+
+    private fun getBody(envelope: Envelope) =
+        getFirmwareVersionResponse {
+            firmwareVersion = envelope.message.getFirmwareVersionResponse.firmwareVersion
         }
 }

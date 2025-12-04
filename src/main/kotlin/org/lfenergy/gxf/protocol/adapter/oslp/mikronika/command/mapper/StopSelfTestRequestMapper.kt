@@ -3,28 +3,28 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.RESUME_SCHEDULE_REQUEST
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.STOP_SELF_TEST_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.ResumeScheduleRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.StopSelfTestRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.errorResponse
+import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
-@Component(value = RESUME_SCHEDULE_REQUEST)
-class ResumeScheduleCommandMapper : CommandMapper() {
+@Component(value = STOP_SELF_TEST_REQUEST)
+class StopSelfTestRequestMapper : CommandMapper() {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
 
-        return ResumeScheduleRequest(
+        return StopSelfTestRequest(
             deviceIdentification,
             networkAddress,
-            requestMessage.resumeScheduleRequest.index.toStringUtf8(),
-            requestMessage.resumeScheduleRequest.immediate,
         )
     }
 
@@ -34,6 +34,17 @@ class ResumeScheduleCommandMapper : CommandMapper() {
     ): DeviceResponseMessage =
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
-            result = Result.OK
+            val response = envelope.message.stopSelfTestResponse
+            result =
+                when (response.status) {
+                    Oslp.Status.OK -> InternalResult.OK
+                    else -> InternalResult.NOT_OK
+                }
+
+            if (response.hasSelfTestResult()) {
+                errorResponse {
+                    errorMessage = response.selfTestResult.toStringUtf8()
+                }
+            }
         }
 }

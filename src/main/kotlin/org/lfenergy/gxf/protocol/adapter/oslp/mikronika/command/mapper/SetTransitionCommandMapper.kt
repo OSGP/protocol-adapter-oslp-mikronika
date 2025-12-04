@@ -21,11 +21,12 @@ class SetTransitionCommandMapper : CommandMapper() {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
 
-        val transitionType = when (requestMessage.setTransitionRequest.transitionType) {
-            TransitionType.SUNRISE -> SetTransitionRequest.TransitionType.NIGHT_DAY
-            TransitionType.SUNSET -> SetTransitionRequest.TransitionType.DAY_NIGHT
-            else -> SetTransitionRequest.TransitionType.DAY_NIGHT // TODO What if.
-        }
+        val transitionType =
+            when (requestMessage.setTransitionRequest.transitionType) {
+                TransitionType.SUNRISE -> SetTransitionRequest.TransitionType.NIGHT_DAY
+                TransitionType.SUNSET -> SetTransitionRequest.TransitionType.DAY_NIGHT
+                else -> SetTransitionRequest.TransitionType.DAY_NIGHT // TODO What if.
+            }
 
         val time = requestMessage.setTransitionRequest.time
 

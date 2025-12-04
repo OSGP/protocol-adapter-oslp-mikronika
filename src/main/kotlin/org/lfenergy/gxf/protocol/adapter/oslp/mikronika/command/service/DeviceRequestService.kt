@@ -9,6 +9,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.ser
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.errorResponse
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
@@ -53,9 +54,9 @@ class DeviceRequestService(
                     domainVersion = requestHeader.domainVersion
                     priority = requestHeader.priority
                 }
-            errorResponse =
-                errorResponse {
-                    errorMessage = exception.message ?: "Unknown exception"
-                }
+            result = Result.NOT_OK
+            errorResponse {
+                errorMessage = exception.message ?: "Unknown exception"
+            }
         }
 }

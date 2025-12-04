@@ -39,18 +39,17 @@ class GetStatusCommandMapper : CommandMapper() {
     ): DeviceResponseMessage =
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
+            result =
+                when (envelope.message.getStatusResponse.status) {
+                    Oslp.Status.OK -> InternalResult.OK
+                    else -> InternalResult.NOT_OK
+                }
             getStatusResponse = getBody(envelope)
         }
 
     private fun getBody(envelope: Envelope) =
         getStatusResponse {
             val response = envelope.message.getStatusResponse
-
-            result =
-                when (response.status) {
-                    Oslp.Status.OK -> InternalResult.OK
-                    else -> InternalResult.NOT_OK
-                }
 
             lightValues += response.valueList.map { it.toInternal() }
 
