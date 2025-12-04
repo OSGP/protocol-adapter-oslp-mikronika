@@ -25,5 +25,8 @@ abstract class CommandMapper {
             deviceIdentification = req.deviceIdentification
             deviceType = req.deviceType
             organizationIdentification = req.organizationIdentification
+            domain = req.domain
+            domainVersion = req.domainVersion
+            priority = req.priority
         }
 }

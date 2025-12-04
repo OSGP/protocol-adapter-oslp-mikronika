@@ -49,6 +49,9 @@ class DeviceRequestService(
                     deviceIdentification = requestHeader.deviceIdentification
                     deviceType = requestHeader.deviceType
                     organizationIdentification = requestHeader.organizationIdentification
+                    domain = requestHeader.domain
+                    domainVersion = requestHeader.domainVersion
+                    priority = requestHeader.priority
                 }
             errorResponse =
                 errorResponse {
