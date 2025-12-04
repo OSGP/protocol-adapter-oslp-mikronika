@@ -30,6 +30,9 @@ message RequestHeader {
   RequestType request_type = 5;
   google.protobuf.Timestamp timestamp = 6;
   string network_address = 7;
+  string domain = 8;
+  string domain_version = 9;
+  uint32 priority = 10;
 }
 
 enum RequestType {

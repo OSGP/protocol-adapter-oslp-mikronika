@@ -29,6 +29,9 @@ message ResponseHeader {
   string organization_identification = 4;
   ResponseType response_type = 5;
   google.protobuf.Timestamp timestamp = 6;
+  string domain = 7;
+  string domain_version = 8;
+  uint32 priority = 9;
 }
 
 enum ResponseType {
