@@ -16,5 +16,7 @@ class CommandMapperFactory(
 
     companion object {
         const val GET_STATUS_REQUEST = "GET_STATUS_REQUEST"
+        const val SET_TRANSITION_REQUEST = "SET_TRANSITION_REQUEST"
+        const val RESUME_SCHEDULE_REQUEST = "RESUME_SCHEDULE_REQUEST"
     }
 }
