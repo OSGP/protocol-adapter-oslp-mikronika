@@ -42,6 +42,9 @@ class DeviceRequestServiceTest {
     @MockK
     private lateinit var getStatusCommandMapper: GetStatusCommandMapper
 
+    @MockK
+    private lateinit var setConfigurationRequestService: SetConfigurationRequestService
+
     @InjectMockKs
     private lateinit var subject: DeviceRequestService
 
