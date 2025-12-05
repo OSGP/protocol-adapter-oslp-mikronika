@@ -65,24 +65,24 @@ class GetStatusCommandMapper : CommandMapper() {
                     Oslp.LightType.DALI -> InternalLightType.DALI
                     else -> InternalLightType.RELAY
                 }
-            eventNotificationMask = eventNotificationMask
-            numberOfOutputs = numberOfOutputs
-            dcOutputVoltageMaximum = dcOutputVoltageMaximum
-            dcOutputVoltageCurrent = dcOutputVoltageCurrent
-            maximumOutputPowerOnDcOutput = maximumOutputPowerOnDcOutput
-            serialNumber = serialNumber
-            macAddress = macAddress
-            hardwareId = hardwareId
-            internalFlashMemSize = internalFlashMemSize
-            externalFlashMemSize = externalFlashMemSize
-            lastInternalTestResultCode = lastInternalTestResultCode
-            startupCounter = startupCounter
-            bootLoaderVersion = bootLoaderVersion
-            firmwareVersion = firmwareVersion
-            currentConfigurationBackUsed = currentConfigurationBackUsed
-            name = name
-            currentTime = currentTime
-            currentIp = currentIp
+            eventNotificationMask = response.eventNotificationMask
+            numberOfOutputs = response.numberOfOutputs
+            dcOutputVoltageMaximum = response.dcOutputVoltageMaximum
+            dcOutputVoltageCurrent = response.dcOutputVoltageCurrent
+            maximumOutputPowerOnDcOutput = response.maximumOutputPowerOnDcOutput
+            serialNumber = response.serialNumber
+            macAddress = response.macAddress
+            hardwareId = response.hardwareId
+            internalFlashMemSize = response.internalFlashMemSize
+            externalFlashMemSize = response.externalFlashMemSize
+            lastInternalTestResultCode = response.lastInternalTestResultCode
+            startupCounter = response.startupCounter
+            bootLoaderVersion = response.bootLoaderVersion
+            firmwareVersion = response.firmwareVersion
+            currentConfigurationBackUsed = response.currentConfigurationBackUsed
+            name = response.name
+            currentTime = response.currentTime
+            currentIp = response.currentIp
         }
 
     private fun Oslp.LinkType.toInternal(): InternalLinkType =
