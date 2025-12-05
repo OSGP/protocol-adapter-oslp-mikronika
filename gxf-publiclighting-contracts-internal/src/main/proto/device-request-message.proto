@@ -19,6 +19,7 @@ message DeviceRequestMessage {
     SetTransitionRequest set_transition_request = 5;
     SetEventNotificationMaskRequest set_event_notification_mask_request = 6;
     SetConfigurationRequest set_configuration_command = 7;
+    SetRebootRequest set_reboot_request = 8;
   }
 }
 
@@ -56,6 +57,10 @@ message SetLightRequest {
 
 message SetScheduleRequest {
   repeated ScheduleEntry schedule_entries = 1; // maximum count of 50 entries
+}
+
+message SetRebootRequest {
+  bool present = 1 [default = true];
 }
 
 message ResumeScheduleRequest {

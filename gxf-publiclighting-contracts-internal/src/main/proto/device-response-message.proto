@@ -17,6 +17,7 @@ message DeviceResponseMessage {
     GetStatusResponse get_status_response = 3;
     GetConfigurationResponse get_configuration_response = 4;
     GetFirmwareVersionResponse get_firmware_version_response = 5;
+    SetRebootResponse set_reboot_response = 6;
 
     ErrorResponse error_response = 99;
   }
@@ -86,6 +87,10 @@ message GetConfigurationResponse {
 
 message GetFirmwareVersionResponse {
   string firmware_version = 1;
+}
+
+message SetRebootResponse {
+  Result result = 1;
 }
 
 message LightValue {
