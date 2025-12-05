@@ -106,28 +106,31 @@ message TriggerWindow {
 }
 
 enum TriggerType {
-  LIGHT_TRANSITION = 0;
-  ASTRONOMICAL = 1;
+  TT_NOT_SET = 0;
+  LIGHT_TRIGGER = 1;
+  ASTRONOMICAL = 2;
 }
 
 enum Weekday {
-  MONDAY = 0;
-  TUESDAY = 1;
-  WEDNESDAY = 2;
-  THURSDAY = 3;
-  FRIDAY = 4;
-  SATURDAY = 5;
-  SUNDAY = 6;
-  WEEKDAY = 7;
-  WEEKEND = 8;
-  ABSOLUTE_DAY = 9;
-  EVERY_DAY = 10;
+  WEEKDAY_UNSPECIFIED = 0;
+  MONDAY = 1;
+  TUESDAY = 2;
+  WEDNESDAY = 3;
+  THURSDAY = 4;
+  FRIDAY = 5;
+  SATURDAY = 6;
+  SUNDAY = 7;
+  WEEKDAY = 8;
+  WEEKEND = 9;
+  ABSOLUTEDAY = 10;
+  ALL = 11;
 }
 
 enum ActionTime {
-  ABSOLUTE_TIME = 0;
-  SUNRISE_TIME = 1;
-  SUNSET_TIME = 2;
+  AT_UNSPECIFIED = 0;
+  ABSOLUTETIME = 1;
+  SUNRISE_TIME = 2;
+  SUNSET_TIME = 3;
 }
 
 enum RelayIndex{
