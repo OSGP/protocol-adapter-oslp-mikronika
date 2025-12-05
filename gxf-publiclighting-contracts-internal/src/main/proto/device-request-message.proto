@@ -92,7 +92,7 @@ message ScheduleEntry {
   TriggerType trigger_type = 8;   // Switch on astronomical time or light transition
   uint32 minimum_lights_on = 9;   // Minimal time (in seconds) the lights should burn before deciding to switch the lights on
   uint32 index = 10;              // Index of schedule entry in the schedule list
-//  bool is_enabled = 11;           // Is this schedule entry enabled?}
+  //  bool is_enabled = 11;           // Is this schedule entry enabled?}
 }
 
 message TriggerWindow {

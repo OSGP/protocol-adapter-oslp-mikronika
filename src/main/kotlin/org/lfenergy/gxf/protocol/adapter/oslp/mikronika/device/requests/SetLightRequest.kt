@@ -5,9 +5,9 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.LightValue
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.lightValue
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setLightRequest
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
+import org.opensmartgridplatform.oslp.setLightRequest
 
 class SetLightRequest(
     deviceIdentification: String,
