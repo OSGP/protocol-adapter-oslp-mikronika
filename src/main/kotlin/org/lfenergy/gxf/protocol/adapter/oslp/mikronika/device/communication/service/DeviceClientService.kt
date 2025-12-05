@@ -44,10 +44,9 @@ class DeviceClientService(
                 }
 
                 device.sequenceNumber = responseEnvelope.sequenceNumber
+                mikronikaDeviceService.saveDevice(device)
 
                 responseMapper.invoke(Result.success(responseEnvelope))
-
-                mikronikaDeviceService.saveDevice(device)
             } catch (exception: Exception) {
                 logger.error { exception.message }
                 responseMapper.invoke(Result.failure(exception))
