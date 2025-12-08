@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
 import com.google.protobuf.kotlin.toByteStringUtf8
@@ -13,14 +16,14 @@ import org.opensmartgridplatform.oslp.stopSelfTestResponse
 import kotlin.test.assertEquals
 
 class StopSelfTestCommandMapperTest {
-
     private val subject: StopSelfTestCommandMapper = StopSelfTestCommandMapper()
 
     @Test
     fun `should map toInternal correctly`() {
-        val deviceRequestMessage = deviceRequestMessage {
-            header = requestHeader
-        }
+        val deviceRequestMessage =
+            deviceRequestMessage {
+                header = requestHeader
+            }
 
         val result = subject.toInternal(deviceRequestMessage)
 
@@ -32,12 +35,14 @@ class StopSelfTestCommandMapperTest {
     fun `should map toResponse correctly`() {
         val envelope = mockk<Envelope>()
 
-        val message = message {
-            stopSelfTestResponse = stopSelfTestResponse {
-                status = Oslp.Status.OK
-                selfTestResult = "".toByteStringUtf8()
+        val message =
+            message {
+                stopSelfTestResponse =
+                    stopSelfTestResponse {
+                        status = Oslp.Status.OK
+                        selfTestResult = "".toByteStringUtf8()
+                    }
             }
-        }
 
         every { envelope.message } returns message
 
@@ -48,5 +53,4 @@ class StopSelfTestCommandMapperTest {
         assertEquals(Result.OK, result.result)
         assertEquals("", result.errorResponse.errorMessage) // Empty string if result is OK
     }
-
 }

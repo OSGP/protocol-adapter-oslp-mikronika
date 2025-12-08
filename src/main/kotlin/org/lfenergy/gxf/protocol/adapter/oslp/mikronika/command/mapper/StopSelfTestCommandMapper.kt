@@ -42,9 +42,10 @@ class StopSelfTestCommandMapper : CommandMapper() {
                 }
 
             if (response.hasSelfTestResult()) {
-                errorResponse = errorResponse {
-                    errorMessage = response.selfTestResult.toStringUtf8()
-                }
+                errorResponse =
+                    errorResponse {
+                        errorMessage = response.selfTestResult.toStringUtf8()
+                    }
             }
         }
 }

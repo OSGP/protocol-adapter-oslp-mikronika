@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
 import io.mockk.every
@@ -12,14 +15,14 @@ import org.opensmartgridplatform.oslp.startSelfTestResponse
 import kotlin.test.assertEquals
 
 class StartSelfTestCommandMapperTest {
-
     private val subject: StartSelfTestCommandMapper = StartSelfTestCommandMapper()
 
     @Test
     fun `should map toInternal correctly`() {
-        val deviceRequestMessage = deviceRequestMessage {
-            header = requestHeader
-        }
+        val deviceRequestMessage =
+            deviceRequestMessage {
+                header = requestHeader
+            }
 
         val result = subject.toInternal(deviceRequestMessage)
 
@@ -31,11 +34,13 @@ class StartSelfTestCommandMapperTest {
     fun `should map toResponse correctly`() {
         val envelope = mockk<Envelope>()
 
-        val message = message {
-            startSelfTestResponse = startSelfTestResponse {
-                status = Oslp.Status.OK
+        val message =
+            message {
+                startSelfTestResponse =
+                    startSelfTestResponse {
+                        status = Oslp.Status.OK
+                    }
             }
-        }
 
         every { envelope.message } returns message
 
@@ -45,5 +50,4 @@ class StartSelfTestCommandMapperTest {
 
         assertEquals(Result.OK, result.result)
     }
-
 }

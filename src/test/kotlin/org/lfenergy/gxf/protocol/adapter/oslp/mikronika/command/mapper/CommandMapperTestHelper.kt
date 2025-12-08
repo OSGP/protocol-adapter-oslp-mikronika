@@ -1,9 +1,11 @@
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import kotlin.test.assertEquals
-
 
 internal const val DEVICE_IDENTIFICATION = "deviceIdentification"
 internal const val FIRMWARE_VERSION = "firmwareVersion"
@@ -24,15 +26,14 @@ internal fun assertRequestHeader(result: DeviceResponseMessage) {
     assertEquals(1, result.header.priority)
 }
 
-
-internal val requestHeader = requestHeader {
-    deviceIdentification = DEVICE_IDENTIFICATION
-    networkAddress = NETWORK_ADDRESS
-    correlationUid = CORRELATION_UID
-    deviceType = DEVICE_TYPE
-    organizationIdentification = ORGANIZATION_IDENTIFICATION
-    domain = DOMAIN
-    domainVersion = DOMAIN_VERSION
-    priority = 1
-}
-
+internal val requestHeader =
+    requestHeader {
+        deviceIdentification = DEVICE_IDENTIFICATION
+        networkAddress = NETWORK_ADDRESS
+        correlationUid = CORRELATION_UID
+        deviceType = DEVICE_TYPE
+        organizationIdentification = ORGANIZATION_IDENTIFICATION
+        domain = DOMAIN
+        domainVersion = DOMAIN_VERSION
+        priority = 1
+    }
