@@ -42,7 +42,7 @@ class StopSelfTestCommandMapper : CommandMapper() {
                 }
 
             if (response.hasSelfTestResult()) {
-                errorResponse {
+                errorResponse = errorResponse {
                     errorMessage = response.selfTestResult.toStringUtf8()
                 }
             }
