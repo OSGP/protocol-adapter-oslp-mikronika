@@ -10,6 +10,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceGetStatusRequestMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceGetStatusResponseMessage
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetConfigurationRequestMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.GetStatusCommandMapper
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
@@ -105,5 +107,15 @@ class DeviceRequestServiceTest {
         assertEquals(DEVICE_IDENTIFICATION, responseErrorMessage.header.deviceIdentification)
         assertEquals("deviceType", responseErrorMessage.header.deviceType)
         assertEquals("organizationIdentification", responseErrorMessage.header.organizationIdentification)
+    }
+
+    @Test
+    fun `should call setConfigurationRequestService when request is SetConfigurationRequest`() {
+        every { setConfigurationRequestService.handleSetConfigurationRequest(deviceSetConfigurationRequestMessage) } just runs
+        subject.handleDeviceRequestMessage(deviceSetConfigurationRequestMessage)
+
+        verify { setConfigurationRequestService.handleSetConfigurationRequest(deviceSetConfigurationRequestMessage) }
+
+        verify(exactly = 0) { deviceResponseSender.send(any()) }
     }
 }

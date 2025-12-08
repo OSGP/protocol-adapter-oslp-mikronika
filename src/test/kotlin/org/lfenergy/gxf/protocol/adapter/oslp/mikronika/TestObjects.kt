@@ -19,6 +19,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.reques
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getConfigurationResponse
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -127,6 +128,39 @@ object TestObjects {
                     deviceType = "deviceType"
                     requestType = RequestType.GET_STATUS_REQUEST
                     organizationIdentification = "organizationIdentification"
+                }
+        }
+
+    val deviceSetConfigurationRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.SET_CONFIGURATION_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+        }
+
+    val deviceGetConfigurationResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.GET_CONFIGURATION_RESPONSE
+                }
+            getConfigurationResponse {
+                relayRefreshing = true
+            }
+        }
+
+    val deviceSetConfigurationResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.SET_CONFIGURATION_RESPONSE
                 }
         }
 
