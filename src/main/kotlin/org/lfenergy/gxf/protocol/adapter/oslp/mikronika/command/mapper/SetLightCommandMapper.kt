@@ -10,9 +10,10 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetLight
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = SET_LIGHT_REQUEST)
 class SetLightCommandMapper : CommandMapper() {
@@ -33,6 +34,10 @@ class SetLightCommandMapper : CommandMapper() {
     ): DeviceResponseMessage =
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
-            result = Result.OK
+            result =
+                when (envelope.message.setLightResponse.status) {
+                    Oslp.Status.OK -> InternalResult.OK
+                    else -> InternalResult.NOT_OK
+                }
         }
 }

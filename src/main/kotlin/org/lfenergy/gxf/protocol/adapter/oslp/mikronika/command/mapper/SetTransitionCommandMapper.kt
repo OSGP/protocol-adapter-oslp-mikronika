@@ -11,9 +11,10 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.Device
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.TransitionType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = SET_TRANSITION_REQUEST)
 class SetTransitionCommandMapper : CommandMapper() {
@@ -44,6 +45,10 @@ class SetTransitionCommandMapper : CommandMapper() {
     ): DeviceResponseMessage =
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
-            result = Result.OK
+            result =
+                when (envelope.message.setTransitionResponse.status) {
+                    Oslp.Status.OK -> InternalResult.OK
+                    else -> InternalResult.NOT_OK
+                }
         }
 }

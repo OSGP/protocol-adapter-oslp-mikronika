@@ -25,6 +25,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.LinkT
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.LongTermIntervalType as InternalLongTermIntervalType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.MeterType as InternalMeterType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.RelayType as InternalRelayType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = GET_CONFIGURATION_REQUEST)
 class GetConfigurationCommandMapper : CommandMapper() {
@@ -44,6 +45,11 @@ class GetConfigurationCommandMapper : CommandMapper() {
     ): DeviceResponseMessage =
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
+            result =
+                when (envelope.message.getConfigurationResponse.status) {
+                    Oslp.Status.OK -> InternalResult.OK
+                    else -> InternalResult.NOT_OK
+                }
             getConfigurationResponse = getBody(envelope)
         }
 
@@ -52,9 +58,10 @@ class GetConfigurationCommandMapper : CommandMapper() {
             val response = envelope.message.getConfigurationResponse
             lightType = response.lightType.toInternal()
             daliConfiguration = mapOslpDaliConfigurationToInternal(response.daliConfiguration)
-            relayConfiguration {
-                addressMap.addAll(response.relayConfiguration.addressMapList.toInternal())
-            }
+            relayConfiguration =
+                relayConfiguration {
+                    addressMap.addAll(response.relayConfiguration.addressMapList.toInternal())
+                }
 
             shortTermHistoryIntervalMinutes = response.shortTermHistoryIntervalMinutes
             preferredLinkType = response.preferredLinkType.toInternal()
