@@ -16,8 +16,8 @@ import org.opensmartgridplatform.oslp.window
 class SetScheduleRequest(
     deviceIdentification: String,
     networkAddress: String,
-    private val scheduleEntries: List<ScheduleEntry>,
-    private val pageInfo: PageInfo,
+    val scheduleEntries: List<ScheduleEntry>,
+    val pageInfo: PageInfo,
 ) : DeviceRequest(
         deviceIdentification,
         networkAddress,
