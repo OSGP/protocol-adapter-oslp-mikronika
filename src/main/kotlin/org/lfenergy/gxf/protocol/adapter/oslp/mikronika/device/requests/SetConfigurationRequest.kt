@@ -28,47 +28,49 @@ class SetConfigurationRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            setConfigurationRequest {
-                lightType = getConfigurationResult.lightType.toOslp()
-                daliConfiguration = getConfigurationResult.daliConfiguration.toOslp()
-                relayConfiguration {
-                    addressMap.addAll(getConfigurationResult.relayConfiguration.addressMapList.toOslp())
-                }
-                shortTermHistoryIntervalMinutes = getConfigurationResult.shortTermHistoryIntervalMinutes
-                preferredLinkType = getConfigurationResult.preferredLinkType.toOslp()
-                meterType = getConfigurationResult.meterType.toOslp()
-                longTermHistoryInterval = getConfigurationResult.longTermHistoryInterval
-                longTermHistoryIntervalType = getConfigurationResult.longTermHistoryIntervalType.toOslp()
-                timeSyncFrequency = getConfigurationResult.timeSyncFrequency
-                deviceFixIpValue = getConfigurationResult.deviceFixIpValue
-                netMask = getConfigurationResult.netMask
-                gateWay = getConfigurationResult.gateWay
-                isDhcpEnabled = getConfigurationResult.isDhcpEnabled
-                communicationTimeout = getConfigurationResult.communicationTimeout
-                communicationNumberOfRetries = getConfigurationResult.communicationNumberOfRetries
-                communicationPauseTimeBetweenConnectionTrials =
-                    getConfigurationResult.communicationPauseTimeBetweenConnectionTrials
-                ospgIpAddress = getConfigurationResult.osgpIpAddress
-                osgpPortNumber = getConfigurationResult.osgpPortNumber
-                isTestButtonEnabled = getConfigurationResult.isTestButtonEnabled
-                isAutomaticSummerTimingEnabled = getConfigurationResult.isAutomaticSummerTimingEnabled
-                astroGateSunRiseOffset = getConfigurationResult.astroGateSunRiseOffset
-                astroGateSunSetOffset = getConfigurationResult.astroGateSunSetOffset
-                switchingDelay.addAll(getConfigurationResult.switchingDelayList)
-                relayLinking.addAll(
-                    getConfigurationResult.relayLinkingList.map {
-                        relayMatrix {
-                            masterRelayIndex = it.masterRelayIndex
-                            masterRelayOn = it.masterRelayOn
-                            indicesOfControlledRelaysOn = it.indicesOfControlledRelaysOn
-                            indicesOfControlledRelaysOff = it.indicesOfControlledRelaysOff
+            setConfigurationRequest =
+                setConfigurationRequest {
+                    lightType = getConfigurationResult.lightType.toOslp()
+                    daliConfiguration = getConfigurationResult.daliConfiguration.toOslp()
+                    relayConfiguration =
+                        relayConfiguration {
+                            addressMap.addAll(getConfigurationResult.relayConfiguration.addressMapList.toOslp())
                         }
-                    },
-                )
-                relayRefreshing = getConfigurationResult.relayRefreshing
-                summerTimeDetails = getConfigurationResult.summerTimeDetails
-                winterTimeDetails = getConfigurationResult.winterTimeDetails
-            }
+                    shortTermHistoryIntervalMinutes = getConfigurationResult.shortTermHistoryIntervalMinutes
+                    preferredLinkType = getConfigurationResult.preferredLinkType.toOslp()
+                    meterType = getConfigurationResult.meterType.toOslp()
+                    longTermHistoryInterval = getConfigurationResult.longTermHistoryInterval
+                    longTermHistoryIntervalType = getConfigurationResult.longTermHistoryIntervalType.toOslp()
+                    timeSyncFrequency = getConfigurationResult.timeSyncFrequency
+                    deviceFixIpValue = getConfigurationResult.deviceFixIpValue
+                    netMask = getConfigurationResult.netMask
+                    gateWay = getConfigurationResult.gateWay
+                    isDhcpEnabled = getConfigurationResult.isDhcpEnabled
+                    communicationTimeout = getConfigurationResult.communicationTimeout
+                    communicationNumberOfRetries = getConfigurationResult.communicationNumberOfRetries
+                    communicationPauseTimeBetweenConnectionTrials =
+                        getConfigurationResult.communicationPauseTimeBetweenConnectionTrials
+                    ospgIpAddress = getConfigurationResult.osgpIpAddress
+                    osgpPortNumber = getConfigurationResult.osgpPortNumber
+                    isTestButtonEnabled = getConfigurationResult.isTestButtonEnabled
+                    isAutomaticSummerTimingEnabled = getConfigurationResult.isAutomaticSummerTimingEnabled
+                    astroGateSunRiseOffset = getConfigurationResult.astroGateSunRiseOffset
+                    astroGateSunSetOffset = getConfigurationResult.astroGateSunSetOffset
+                    switchingDelay.addAll(getConfigurationResult.switchingDelayList)
+                    relayLinking.addAll(
+                        getConfigurationResult.relayLinkingList.map {
+                            relayMatrix {
+                                masterRelayIndex = it.masterRelayIndex
+                                masterRelayOn = it.masterRelayOn
+                                indicesOfControlledRelaysOn = it.indicesOfControlledRelaysOn
+                                indicesOfControlledRelaysOff = it.indicesOfControlledRelaysOff
+                            }
+                        },
+                    )
+                    relayRefreshing = getConfigurationResult.relayRefreshing
+                    summerTimeDetails = getConfigurationResult.summerTimeDetails
+                    winterTimeDetails = getConfigurationResult.winterTimeDetails
+                }
         }
 
     private fun LongTermIntervalType.toOslp(): Oslp.LongTermIntervalType =

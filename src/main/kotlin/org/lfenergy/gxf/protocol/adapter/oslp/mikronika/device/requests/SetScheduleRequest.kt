@@ -24,16 +24,17 @@ class SetScheduleRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            setScheduleRequest {
-                schedules.addAll(scheduleEntries.toSchedules())
-                pageInfo =
-                    pageInfo {
-                        currentPage = this@SetScheduleRequest.pageInfo.currentPage
-                        pageSize = this@SetScheduleRequest.pageInfo.pageSize
-                        totalPages = this@SetScheduleRequest.pageInfo.totalPages
-                    }
-                scheduleType = Oslp.RelayType.LIGHT
-            }
+            setScheduleRequest =
+                setScheduleRequest {
+                    schedules.addAll(scheduleEntries.toSchedules())
+                    pageInfo =
+                        pageInfo {
+                            currentPage = this@SetScheduleRequest.pageInfo.currentPage
+                            pageSize = this@SetScheduleRequest.pageInfo.pageSize
+                            totalPages = this@SetScheduleRequest.pageInfo.totalPages
+                        }
+                    scheduleType = Oslp.RelayType.LIGHT
+                }
         }
 
     data class PageInfo(
