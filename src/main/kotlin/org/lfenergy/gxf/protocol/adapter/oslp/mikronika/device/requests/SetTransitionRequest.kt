@@ -18,14 +18,15 @@ class SetTransitionRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            setTransitionRequest {
-                time = this@SetTransitionRequest.time
-                transitionType =
-                    when (this@SetTransitionRequest.transitionType) {
-                        TransitionType.DAY_NIGHT -> Oslp.TransitionType.DAY_NIGHT
-                        TransitionType.NIGHT_DAY -> Oslp.TransitionType.NIGHT_DAY
-                    }
-            }
+            setTransitionRequest =
+                setTransitionRequest {
+                    time = this@SetTransitionRequest.time
+                    transitionType =
+                        when (this@SetTransitionRequest.transitionType) {
+                            TransitionType.DAY_NIGHT -> Oslp.TransitionType.DAY_NIGHT
+                            TransitionType.NIGHT_DAY -> Oslp.TransitionType.NIGHT_DAY
+                        }
+                }
         }
 
     enum class TransitionType {
