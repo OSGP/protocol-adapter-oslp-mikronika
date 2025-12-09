@@ -16,6 +16,6 @@ class GetStatusRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            getStatusRequest { }
+            getStatusRequest = getStatusRequest { }
         }
 }

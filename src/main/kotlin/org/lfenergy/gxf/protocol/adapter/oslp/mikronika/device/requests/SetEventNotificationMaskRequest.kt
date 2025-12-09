@@ -17,8 +17,9 @@ class SetEventNotificationMaskRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            setEventNotificationsRequest {
-                notificationMask = this@SetEventNotificationMaskRequest.notificationMask
-            }
+            setEventNotificationsRequest =
+                setEventNotificationsRequest {
+                    notificationMask = this@SetEventNotificationMaskRequest.notificationMask
+                }
         }
 }

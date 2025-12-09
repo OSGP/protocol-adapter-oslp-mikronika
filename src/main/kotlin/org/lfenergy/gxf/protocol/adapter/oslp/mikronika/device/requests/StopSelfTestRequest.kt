@@ -16,6 +16,6 @@ class StopSelfTestRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            stopSelfTestRequest { }
+            stopSelfTestRequest = stopSelfTestRequest { }
         }
 }

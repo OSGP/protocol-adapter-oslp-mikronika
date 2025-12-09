@@ -17,8 +17,9 @@ class SetRebootRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            setRebootRequest {
-                present = this@SetRebootRequest.present
-            }
+            setRebootRequest =
+                setRebootRequest {
+                    present = this@SetRebootRequest.present
+                }
         }
 }

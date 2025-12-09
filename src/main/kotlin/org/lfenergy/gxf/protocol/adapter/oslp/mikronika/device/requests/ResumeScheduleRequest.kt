@@ -19,9 +19,10 @@ class ResumeScheduleRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            resumeScheduleRequest {
-                index = this@ResumeScheduleRequest.index.toByteStringUtf8()
-                immediate = this@ResumeScheduleRequest.immediate
-            }
+            resumeScheduleRequest =
+                resumeScheduleRequest {
+                    index = this@ResumeScheduleRequest.index.toByteStringUtf8()
+                    immediate = this@ResumeScheduleRequest.immediate
+                }
         }
 }

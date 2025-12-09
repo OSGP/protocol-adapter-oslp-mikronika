@@ -16,6 +16,6 @@ class GetConfigurationRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            getConfigurationRequest { }
+            getConfigurationRequest = getConfigurationRequest { }
         }
 }

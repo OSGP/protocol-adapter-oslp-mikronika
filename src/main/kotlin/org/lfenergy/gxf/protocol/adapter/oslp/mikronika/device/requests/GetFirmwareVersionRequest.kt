@@ -16,6 +16,6 @@ class GetFirmwareVersionRequest(
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {
-            getFirmwareVersionRequest { }
+            getFirmwareVersionRequest = getFirmwareVersionRequest { }
         }
 }
