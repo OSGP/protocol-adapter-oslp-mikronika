@@ -8,6 +8,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNoti
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.domain.DeviceEventMessageMapper.toProtobufTimestamp
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.relayConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.Header
@@ -151,7 +153,13 @@ object TestObjects {
                     responseType = ResponseType.GET_CONFIGURATION_RESPONSE
                 }
             getConfigurationResponse {
-                relayRefreshing = true
+                configuration =
+                    configuration {
+                        relayConfiguration =
+                            relayConfiguration {
+                                relayRefreshingEnabled = true
+                            }
+                    }
             }
         }
 

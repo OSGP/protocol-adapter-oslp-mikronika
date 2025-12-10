@@ -24,7 +24,7 @@ class ResumeScheduleCommandMapper : CommandMapper() {
         return ResumeScheduleRequest(
             deviceIdentification,
             networkAddress,
-            requestMessage.resumeScheduleRequest.index.toStringUtf8(),
+            requestMessage.resumeScheduleRequest.index.number,
             requestMessage.resumeScheduleRequest.immediate,
         )
     }

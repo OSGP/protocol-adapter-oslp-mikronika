@@ -15,7 +15,6 @@ class SetRebootRequestTest {
             SetRebootRequest(
                 DEVICE_IDENTIFICATION,
                 NETWORK_ADDRESS,
-                true,
             )
 
         val result = subject.toOslpMessage()

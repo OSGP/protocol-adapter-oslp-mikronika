@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
-import com.google.protobuf.kotlin.toByteStringUtf8
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.ResumeScheduleRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RelayIndex
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.resumeScheduleRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
@@ -27,7 +27,7 @@ class ResumeScheduleCommandMapperTest {
                 header = requestHeader
                 resumeScheduleRequest =
                     resumeScheduleRequest {
-                        index = "index".toByteStringUtf8()
+                        index = RelayIndex.RELAY_TWO
                         immediate = false
                     }
             }
@@ -36,7 +36,7 @@ class ResumeScheduleCommandMapperTest {
 
         assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
         assertEquals(NETWORK_ADDRESS, result.networkAddress)
-        assertEquals("index", result.index)
+        assertEquals(2, result.index)
         assertEquals(false, result.immediate)
     }
 

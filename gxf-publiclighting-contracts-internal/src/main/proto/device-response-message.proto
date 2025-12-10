@@ -7,6 +7,7 @@ edition = "2024";
 package org.lfenergy.gxf.publiclighting.contracts.internal.device_responses;
 
 import "google/protobuf/timestamp.proto";
+import "configuration.proto";
 
 message DeviceResponseMessage {
   ResponseHeader header = 1;
@@ -55,10 +56,12 @@ message ErrorResponse {
 
 message GetStatusResponse {
   repeated LightValue light_values = 1;
+  // required fields
   LinkType preferred_link_type = 2;
   LinkType actual_link_type = 3;
   LightType light_type = 4;
   uint32 event_notification_mask = 5;             // Bitmask for max 32 events, using NotificationBit for bit positions.
+  // optional fields
   uint32 number_of_outputs = 6;                   // Hardware - The number of outputs of this device.
   uint32 dc_output_voltage_maximum = 7;           // Hardware - DC output voltage maximum (in mV).
   uint32 dc_output_voltage_current = 8;           // Hardware - DC output current voltage (in mV).
@@ -79,75 +82,28 @@ message GetStatusResponse {
 }
 
 message GetConfigurationResponse {
-  LightType light_type = 1;
-  DaliConfiguration dali_configuration = 2;                                    // Contains specific configuration for DALI controllers.
-  RelayConfiguration relay_configuration = 3;                                  // Contains specific configuration for Relay.
-  uint32 short_term_history_interval_minutes = 4;                                 // Deprecated, no longer supported by the platform.
-  LinkType preferred_link_type = 5;
-  MeterType meter_type = 6;                                                    // Deprecated, no longer supported by the platform.
-  uint32 long_term_history_interval = 7;                                         // Deprecated, no longer supported by the platform.
-  LongTermIntervalType long_term_history_interval_type = 8;                       // Deprecated, no longer supported by the platform.
-  uint32 time_sync_frequency = 9 [default = 86400];                            // Time synch frequency (seconds).
-  bytes device_fix_ip_value = 10; // [(nanopb).max_count = 4];                   // The fixed IP address of this device.
-  bytes net_mask = 11; // [(nanopb).max_count = 4];                            // Network mask for fixed IP address.
-  bytes gate_way = 12; // [(nanopb).max_count = 4];                            // Gateway address for fixed IP address.
-  bool is_dhcp_enabled = 13 [default = true];                                   // Is DHCP enabled for this device?
-  uint32 communication_timeout = 14 [default = 20];                            // Communication Timeouts (seconds) (wait for answer, socket establish, or server response = comm watchdog for local mode).
-  uint32 communication_number_of_retries = 15 [default = 3];                     // Communication number of retries.
-  uint32 communication_pause_time_between_connection_trials = 16 [default = 60];   // Time between communication attempts.
-  bytes osgp_ip_address = 17; // [(nanopb).max_count = 4];                      // The IP address of the platform.
-  uint32 osgp_port_number = 18;                                                 // The port number of the platform.
-  bool is_test_button_enabled = 19 [default = true];                             // Is the test button enabled for this device?
-  bool is_automatic_summer_timing_enabled = 20 [default = true];                  // Is the automatic summer timing enabled for this device?
-  sint32 astro_gate_sun_rise_offset = 21 [default = 0];                           // The calculated sunrise time modified by this value. Time is moved earlier (if offset is negative) or later (if offset is positive). In seconds.
-  sint32 astro_gate_sun_set_offset = 22 [default = 0];                            // The calculated sunset time modified by this value. Time is moved earlier (if offset is negative) or later (if offset is positive). In seconds.
-  repeated uint32 switching_delay = 23; // [(nanopb).max_count = 4];                    // Switching delay (seconds), array of 4 values. Default 0, 0, 0, 0.
-  repeated RelayMatrix relay_linking = 24;                                              // Relay linking is a software linking, to may link each relay with each other relay. It is a matrix. Example, if relay 1 is linked with relay 3, if relay 1 will be switched (by OSGP or local by internal scheduler), the relay 3 will switch automatically (on or off, as it set) without new command.
-  bool relay_refreshing = 25 [default = true];                                 // Is relayRefreshing enabled for this device? Set minutely the nominal relay state and status according to active schedule after power outage and missed switching or anti manipulation.
-  string summer_time_details = 26 [default = '0360100']; //[default = '0360100',(nanopb).max_count = 7]; // The time point for DST for Europe is not identical in every country. It should be added as parameters the weekday, month and time point for DST/summer and winter.
-  string winter_time_details = 27 [default = '1060200']; //[default = '1060200',(nanopb).max_count = 7]; // The time point for DST for Europe is not identical in every country. It should be added as parameters the weekday, month and time point for DST/summer and winter.
-}
-
-message DaliConfiguration {
-  bytes number_of_lights = 1; // [(nanopb).max_size = 1]; // Number of lights connected to DALI controller.
-  repeated IndexAddressMap address_map = 2; // [(nanopb).max_count = 4];
-}
-
-message IndexAddressMap {
-  bytes index = 1; // [(nanopb).max_size = 1];   // External index, for example 1.
-  bytes address = 2; // [(nanopb).max_size = 1]; // Internal address, for example 2.
-  RelayType relay_type = 3;
-}
-
-enum RelayType {
-  RT_NOT_SET = 0;
-  LIGHT = 1;
-  TARIFF = 2;
-}
-
-// Deprecated, no longer supported by the platform.
-enum MeterType {
-  MT_NOT_SET = 0;
-  P1 = 1;
-  PULSE = 2;
-  AUX = 3;
-}
-
-message RelayConfiguration {
-  repeated IndexAddressMap address_map = 1; // [(nanopb).max_count = 6];
+  org.lfenergy.gxf.publiclighting.contracts.internal.configuration.Configuration configuration = 1;
 }
 
 message GetFirmwareVersionResponse {
-  string firmware_version = 1;
+  repeated FirmwareVersion firmware_versions = 1;
 }
 
-message SetRebootResponse {
-  Result result = 1;
+message FirmwareVersion {
+  FirmwareType firmware_type = 1;
+  string version = 2;
 }
 
 message LightValue {
   RelayIndex index = 1;
   bool light_on = 2;
+}
+
+enum FirmwareType {
+  FT_NOT_SET = 0;
+  COMMUNICATION = 1;
+  FUNCTIONAL = 2;
+  SECURITY = 3;
 }
 
 enum RelayIndex{
@@ -166,28 +122,13 @@ enum LightType {
   DALI = 3;
 }
 
-// Deprecated, no longer supported by the platform.
-enum LongTermIntervalType {
-  LT_INT_NOT_SET = 0;
-  DAYS = 1;
-  MONTHS = 2;
-}
-
 enum LinkType {
-  LINK_NOT_SET = 0;
-  GPRS = 1;
-  CDMA = 2;
-  ETHERNET = 3;
+  GPRS = 0;
+  CDMA = 1;
+  ETHERNET = 2;
 }
 
 enum Result {
   OK = 0;
   NOT_OK = 1;
-}
-
-message RelayMatrix {
-  bytes master_relay_index = 1;  // [(nanopb).max_count = 1];
-  bool master_relay_on = 2; // [(nanopb).max_count = 1];
-  bytes indices_of_controlled_relays_on = 3; // [(nanopb).max_count = 4];  // IndexNumber of output Relay to switch ON if Master Relay state changes as determined by masterRelayOn.
-  bytes indices_of_controlled_relays_off = 4; // [(nanopb).max_count = 4]; // IndexNumber of output Relay to switch OFF if Master Relay sate changes as determined by MasterRelayOff.
 }

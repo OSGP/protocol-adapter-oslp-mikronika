@@ -11,7 +11,7 @@ import org.opensmartgridplatform.oslp.resumeScheduleRequest
 class ResumeScheduleRequest(
     deviceIdentification: String,
     networkAddress: String,
-    val index: String,
+    val index: Int,
     val immediate: Boolean,
 ) : DeviceRequest(
         deviceIdentification,
@@ -21,7 +21,7 @@ class ResumeScheduleRequest(
         message {
             resumeScheduleRequest =
                 resumeScheduleRequest {
-                    index = this@ResumeScheduleRequest.index.toByteStringUtf8()
+                    index = this@ResumeScheduleRequest.index.toString().toByteStringUtf8()
                     immediate = this@ResumeScheduleRequest.immediate
                 }
         }

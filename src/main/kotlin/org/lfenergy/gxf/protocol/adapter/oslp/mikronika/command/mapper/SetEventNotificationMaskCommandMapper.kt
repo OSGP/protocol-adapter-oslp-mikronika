@@ -24,7 +24,7 @@ class SetEventNotificationMaskCommandMapper : CommandMapper() {
         return SetEventNotificationMaskRequest(
             deviceIdentification,
             networkAddress,
-            requestMessage.setEventNotificationMaskRequest.notificationMask,
+            requestMessage.setEventNotificationMaskRequest.notificationTypesList.sumOf { it.number },
         )
     }
 

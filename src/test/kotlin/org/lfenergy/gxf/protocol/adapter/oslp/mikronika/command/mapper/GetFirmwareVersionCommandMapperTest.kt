@@ -47,7 +47,7 @@ class GetFirmwareVersionCommandMapperTest {
 
         assertRequestHeader(result)
 
-        assertEquals(FIRMWARE_VERSION, result.getFirmwareVersionResponse.firmwareVersion)
+        assertEquals(FIRMWARE_VERSION, result.getFirmwareVersionResponse.getFirmwareVersions(0).version)
         assertEquals(Result.OK, result.result)
     }
 }

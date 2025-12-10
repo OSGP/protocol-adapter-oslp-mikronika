@@ -10,7 +10,6 @@ import org.opensmartgridplatform.oslp.setRebootRequest
 class SetRebootRequest(
     deviceIdentification: String,
     networkAddress: String,
-    val present: Boolean,
 ) : DeviceRequest(
         deviceIdentification,
         networkAddress,
@@ -19,7 +18,7 @@ class SetRebootRequest(
         message {
             setRebootRequest =
                 setRebootRequest {
-                    present = this@SetRebootRequest.present
+                    present = true
                 }
         }
 }

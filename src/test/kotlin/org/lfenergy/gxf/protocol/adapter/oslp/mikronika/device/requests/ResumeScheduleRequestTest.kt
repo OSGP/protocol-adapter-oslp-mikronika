@@ -17,7 +17,7 @@ class ResumeScheduleRequestTest {
             ResumeScheduleRequest(
                 DEVICE_IDENTIFICATION,
                 NETWORK_ADDRESS,
-                "index",
+                1,
                 true,
             )
 
@@ -25,6 +25,6 @@ class ResumeScheduleRequestTest {
 
         assertTrue(result.hasResumeScheduleRequest())
         assertTrue(result.resumeScheduleRequest.immediate)
-        assertEquals("index".toByteStringUtf8(), result.resumeScheduleRequest.index)
+        assertEquals("1".toByteStringUtf8(), result.resumeScheduleRequest.index)
     }
 }

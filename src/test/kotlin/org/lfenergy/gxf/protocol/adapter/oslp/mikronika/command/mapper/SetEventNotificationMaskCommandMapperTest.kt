@@ -8,6 +8,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetEventNotificationMaskRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.NotificationType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setEventNotificationMaskRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
@@ -26,7 +27,12 @@ class SetEventNotificationMaskCommandMapperTest {
                 header = requestHeader
                 setEventNotificationMaskRequest =
                     setEventNotificationMaskRequest {
-                        notificationMask = 2
+                        notificationTypes.addAll(
+                            listOf(
+                                NotificationType.TARIFF_EVENTS,
+                                NotificationType.MONITOR_EVENTS,
+                            ),
+                        )
                     }
             }
 
@@ -34,7 +40,7 @@ class SetEventNotificationMaskCommandMapperTest {
 
         assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
         assertEquals(NETWORK_ADDRESS, result.networkAddress)
-        assertEquals(2, result.notificationMask)
+        assertEquals(24, result.notificationMask)
     }
 
     @Test

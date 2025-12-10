@@ -24,7 +24,6 @@ class SetRebootCommandMapper : CommandMapper() {
         return SetRebootRequest(
             deviceIdentification,
             networkAddress,
-            requestMessage.setRebootRequest.present,
         )
     }
 
