@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component
 import java.net.InetAddress
 import java.net.Socket
 import java.security.KeyPair
+import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
 
 @Component
@@ -49,6 +50,8 @@ class Device(
     private val clientSocketConfiguration: ClientSocketConfigurationProperties,
 ) {
     val publicKey = deviceKeyPair.public.encodedAsBase64()
+
+    private val mockQueue: LinkedList<DeviceCallMock> = LinkedList()
 
     fun sendDeviceRegistrationRequest(): Envelope {
         Socket(serverSocketConfiguration.hostName, serverSocketConfiguration.port).use { socket ->
@@ -72,57 +75,9 @@ class Device(
         }
     }
 
-    fun withMock(
-        mock: DeviceCallMock,
-        block: () -> Unit,
-    ) {
-        withMocks(listOf(mock), block)
+    fun addMock(deviceCallMock: DeviceCallMock) {
+        mockQueue.push(deviceCallMock)
     }
-
-    fun withMocks(
-        mocks: List<DeviceCallMock>,
-        block: () -> Unit,
-    ) {
-        val job = setupMocks(mocks)
-        block()
-        job.awaitOrFail()
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun setupMocks(mocks: List<DeviceCallMock>): Job =
-        GlobalScope.launch {
-            val serverSocket =
-                aSocket(ActorSelectorManager(Dispatchers.IO))
-                    .tcp()
-                    .bind(InetSocketAddress("localhost", clientSocketConfiguration.devicePort))
-
-            for (mockedCall in mocks) {
-                val socket = serverSocket.accept()
-
-                val input = socket.openReadChannel()
-                val output = socket.openWriteChannel(autoFlush = true)
-
-                try {
-                    val buffer = ByteArray(1024)
-                    val bytesRead = input.readAvailable(buffer)
-
-                    if (bytesRead > 0) {
-                        val requestEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
-                        val responseMessage = mockedCall.handler(requestEnvelope)
-
-                        val responseEnvelope = toEnvelope(responseMessage)
-
-                        output.writeFully(responseEnvelope.getBytes())
-
-                        mockedCall.capturedRequest.set(requestEnvelope)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                } finally {
-                    socket.close()
-                }
-            }
-        }
 
     private fun deviceRegistrationRequestMessage() =
         Oslp.Message
@@ -188,6 +143,42 @@ class Device(
     private fun Job.awaitOrFail(timeoutMillis: Long = 2000) =
         runBlocking {
             withTimeoutOrNull(timeoutMillis) { join() } ?: fail("Mocks were not called within ${timeoutMillis}ms")
+        }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private val job =
+        GlobalScope.launch {
+            val serverSocket =
+                aSocket(ActorSelectorManager(Dispatchers.IO))
+                    .tcp()
+                    .bind(InetSocketAddress("localhost", clientSocketConfiguration.devicePort))
+
+            while (true) {
+                val socket = serverSocket.accept()
+
+                val input = socket.openReadChannel()
+                val output = socket.openWriteChannel(autoFlush = true)
+
+                try {
+                    val buffer = ByteArray(1024)
+                    val bytesRead = input.readAvailable(buffer)
+
+                    if (bytesRead > 0) {
+                        val requestEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
+                        val mockedCall = mockQueue.pop()
+
+                        val responseMessage = mockedCall.handler(requestEnvelope)
+                        val responseEnvelope = toEnvelope(responseMessage)
+
+                        output.writeFully(responseEnvelope.getBytes())
+                        mockedCall.capturedRequest.set(requestEnvelope)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    socket.close()
+                }
+            }
         }
 
     data class DeviceCallMock(

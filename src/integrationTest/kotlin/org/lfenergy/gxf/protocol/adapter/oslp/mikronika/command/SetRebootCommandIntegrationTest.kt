@@ -55,15 +55,14 @@ class SetRebootCommandIntegrationTest {
 
         var result: DeviceResponseMessage? = null
 
-        device.withMock(okMock) {
-            messageBroker.sendDeviceRequestMessage(input)
+        device.addMock(okMock)
+        messageBroker.sendDeviceRequestMessage(input)
 
-            result =
-                messageBroker.receiveDeviceResponseMessage(
-                    DEVICE_IDENTIFICATION,
-                    ResponseType.REBOOT_RESPONSE,
-                )
-        }
+        result =
+            messageBroker.receiveDeviceResponseMessage(
+                DEVICE_IDENTIFICATION,
+                ResponseType.REBOOT_RESPONSE,
+            )
 
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
@@ -82,20 +81,19 @@ class SetRebootCommandIntegrationTest {
 
         var result: DeviceResponseMessage? = null
 
-        device.withMock(rejectedMock) {
-            messageBroker.sendDeviceRequestMessage(input)
+        device.addMock(rejectedMock)
+        messageBroker.sendDeviceRequestMessage(input)
 
-            result =
-                messageBroker.receiveDeviceResponseMessage(
-                    DEVICE_IDENTIFICATION,
-                    ResponseType.REBOOT_RESPONSE,
-                )
-        }
+        result =
+            messageBroker.receiveDeviceResponseMessage(
+                DEVICE_IDENTIFICATION,
+                ResponseType.REBOOT_RESPONSE,
+            )
 
         assertNotNull(result)
         assertEquals(Result.NOT_OK, result.result)
 
-        val receivedRequest = okMock.capturedRequest.get()
+        val receivedRequest = rejectedMock.capturedRequest.get()
 
         assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
     }
@@ -103,17 +101,16 @@ class SetRebootCommandIntegrationTest {
     private val okMock =
         Device.DeviceCallMock {
             message {
-                setRebootResponse =
-                    setRebootResponse {
-                        status = Oslp.Status.OK
-                    }
+                setRebootResponse = setRebootResponse {
+                    status = Oslp.Status.OK
+                }
             }
         }
 
     private val rejectedMock =
         Device.DeviceCallMock {
             message {
-                setRebootResponse {
+                setRebootResponse = setRebootResponse {
                     status = Oslp.Status.REJECTED
                 }
             }

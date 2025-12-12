@@ -56,15 +56,14 @@ class SetConfigurationCommandIntegrationTest {
 
         var result: DeviceResponseMessage? = null
 
-        device.withMock(okMock) {
-            messageBroker.sendDeviceRequestMessage(input)
+        device.addMock(okMock)
+        messageBroker.sendDeviceRequestMessage(input)
 
-            result =
-                messageBroker.receiveDeviceResponseMessage(
-                    DEVICE_IDENTIFICATION,
-                    ResponseType.SET_CONFIGURATION_RESPONSE,
-                )
-        }
+        result =
+            messageBroker.receiveDeviceResponseMessage(
+                DEVICE_IDENTIFICATION,
+                ResponseType.SET_CONFIGURATION_RESPONSE,
+            )
 
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
