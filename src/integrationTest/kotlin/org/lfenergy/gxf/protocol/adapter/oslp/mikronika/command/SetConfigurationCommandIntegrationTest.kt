@@ -5,52 +5,35 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.ContainerConfiguration
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.SecurityConfiguration
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.AdapterDatabase
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.messagebroker.MessageBroker
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setConfigurationRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
 import org.opensmartgridplatform.oslp.setConfigurationResponse
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.scheduling.annotation.EnableAsync
-import org.springframework.test.context.ContextConfiguration
 
-@SpringBootTest
-@EnableAsync
-@ContextConfiguration(classes = [ContainerConfiguration::class, SecurityConfiguration::class])
-class SetConfigurationCommandIntegrationTest {
-    @Autowired
-    private lateinit var adapterDatabase: AdapterDatabase
-
-    @Autowired
-    private lateinit var messageBroker: MessageBroker
-
-    @Autowired
-    private lateinit var device: Device
-
-    @BeforeEach
-    fun setup() {
-        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, device.publicKey)
-    }
-
+class SetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
     @Test
     fun `should handle successful set configuration request`() {
         val input =
             deviceRequestMessage {
                 header = createHeader(RequestType.SET_CONFIGURATION_REQUEST)
+                setConfigurationCommand =
+                    setConfigurationRequest {
+                        configuration =
+                            configuration {
+                                testButtonEnabled = true
+                            }
+                    }
             }
 
         device.addMock(okMock)
@@ -64,6 +47,7 @@ class SetConfigurationCommandIntegrationTest {
 
         val receivedRequest = okMock.capturedRequest.get()
         assertTrue(receivedRequest.message.hasSetConfigurationRequest())
+        assertTrue(receivedRequest.message.setConfigurationRequest.isTestButtonEnabled)
         assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
 
         assertNotNull(result)

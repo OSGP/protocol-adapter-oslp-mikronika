@@ -42,6 +42,7 @@ class SetConfigurationCommandMapperTest {
         assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
         assertEquals(NETWORK_ADDRESS, result.networkAddress)
         assertTrue(result.setConfigurationRequest.configuration.testButtonEnabled)
+        TODO("more fields here plz")
     }
 
     @ParameterizedTest
