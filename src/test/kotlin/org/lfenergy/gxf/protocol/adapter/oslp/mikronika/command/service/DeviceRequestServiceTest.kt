@@ -19,7 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceGetStatusRequestMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceGetStatusResponseMessage
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetConfigurationRequestMessage
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetScheduleRequestMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.GetStatusCommandMapper
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
@@ -45,7 +45,7 @@ class DeviceRequestServiceTest {
     private lateinit var getStatusCommandMapper: GetStatusCommandMapper
 
     @MockK
-    private lateinit var setConfigurationRequestService: SetConfigurationRequestService
+    private lateinit var setScheduleRequestService: SetScheduleRequestService
 
     @InjectMockKs
     private lateinit var subject: DeviceRequestService
@@ -110,11 +110,11 @@ class DeviceRequestServiceTest {
     }
 
     @Test
-    fun `should call setConfigurationRequestService when request is SetConfigurationRequest`() {
-        every { setConfigurationRequestService.handleSetConfigurationRequest(deviceSetConfigurationRequestMessage) } just runs
-        subject.handleDeviceRequestMessage(deviceSetConfigurationRequestMessage)
+    fun `should call setScheduleRequestService when request is SetScheduleRequest`() {
+        every { setScheduleRequestService.handleSetScheduleRequest(deviceSetScheduleRequestMessage) } just runs
+        subject.handleDeviceRequestMessage(deviceSetScheduleRequestMessage)
 
-        verify { setConfigurationRequestService.handleSetConfigurationRequest(deviceSetConfigurationRequestMessage) }
+        verify { setScheduleRequestService.handleSetScheduleRequest(deviceSetScheduleRequestMessage) }
 
         verify(exactly = 0) { deviceResponseSender.send(any()) }
     }

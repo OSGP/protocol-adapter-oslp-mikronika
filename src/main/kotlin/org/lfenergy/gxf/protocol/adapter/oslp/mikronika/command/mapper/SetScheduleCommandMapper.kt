@@ -22,11 +22,12 @@ class SetScheduleCommandMapper : CommandMapper() {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
         val scheduleEntries = requestMessage.setScheduleRequest.scheduleEntriesList
+
         return SetScheduleRequest(
             deviceIdentification,
             networkAddress,
             scheduleEntries,
-            SetScheduleRequest.PageInfo(1, scheduleEntries.size, 1), // TODO when implementing multi call
+            SetScheduleRequest.PageInfo(1, scheduleEntries.size, 1),
         )
     }
 

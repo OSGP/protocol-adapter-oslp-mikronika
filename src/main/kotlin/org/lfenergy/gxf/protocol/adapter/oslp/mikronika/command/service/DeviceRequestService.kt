@@ -4,10 +4,10 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.SET_CONFIGURATION_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceClientService
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,12 +15,12 @@ class DeviceRequestService(
     deviceClientService: DeviceClientService,
     private val deviceResponseSender: DeviceResponseSender,
     private val mapperFactory: CommandMapperFactory,
-    private val setConfigurationRequestService: SetConfigurationRequestService,
+    private val setScheduleRequestService: SetScheduleRequestService,
 ) : RequestService(deviceClientService) {
     fun handleDeviceRequestMessage(requestMessage: DeviceRequestMessage) {
         val requestHeader = requestMessage.header
-        if (requestHeader.requestType.name == SET_CONFIGURATION_REQUEST) {
-            return setConfigurationRequestService.handleSetConfigurationRequest(requestMessage)
+        if (requestHeader.requestType == RequestType.SET_SCHEDULE_REQUEST) {
+            return this.setScheduleRequestService.handleSetScheduleRequest(requestMessage)
         }
 
         val mapper = mapperFactory.getMapperFor(requestHeader.requestType)

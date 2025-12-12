@@ -5,17 +5,22 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetConfigurationRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setConfigurationRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getConfigurationResponse
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
 import org.opensmartgridplatform.oslp.setConfigurationResponse
+import java.util.stream.Stream
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SetConfigurationCommandMapperTest {
     private val subject: SetConfigurationCommandMapper = SetConfigurationCommandMapper()
@@ -25,26 +30,33 @@ class SetConfigurationCommandMapperTest {
         val deviceRequestMessage =
             deviceRequestMessage {
                 header = requestHeader
+                setConfigurationRequest {
+                    configuration {
+                        testButtonEnabled = true
+                    }
+                }
             }
 
-        val getConfigurationResponse = getConfigurationResponse { }
-
-        val result = subject.toInternal(deviceRequestMessage, getConfigurationResponse) as SetConfigurationRequest
+        val result = subject.toInternal(deviceRequestMessage) as SetConfigurationRequest
 
         assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
         assertEquals(NETWORK_ADDRESS, result.networkAddress)
-        assertEquals(getConfigurationResponse, result.getConfigurationResult)
+        assertTrue(result.setConfigurationRequest.configuration.testButtonEnabled)
     }
 
-    @Test
-    fun `should map toResponse correctly`() {
+    @ParameterizedTest
+    @MethodSource("oslpStatus")
+    fun `should map toResponse correctly`(
+        status: Oslp.Status,
+        expectedResult: Result,
+    ) {
         val envelope = mockk<Envelope>()
 
         val message =
             message {
                 setConfigurationResponse =
                     setConfigurationResponse {
-                        status = Oslp.Status.OK
+                        this.status = status
                     }
             }
 
@@ -53,19 +65,15 @@ class SetConfigurationCommandMapperTest {
         val result = subject.toResponse(requestHeader, envelope)
 
         assertRequestHeader(result)
-
-        assertEquals(Result.OK, result.result)
+        assertEquals(expectedResult, result.result)
     }
 
-    @Test
-    fun `should throw error when wrong toInternal overload is called`() {
-        val deviceRequestMessage =
-            deviceRequestMessage {
-                header = requestHeader
-            }
-
-        assertThrows(NotImplementedError::class.java) {
-            subject.toInternal(deviceRequestMessage)
-        }
+    companion object {
+        @JvmStatic
+        fun oslpStatus(): Stream<Arguments> =
+            listOf(
+                Arguments.of(Oslp.Status.OK, Result.OK),
+                Arguments.of(Oslp.Status.FAILURE, Result.NOT_OK),
+            ).stream()
     }
 }

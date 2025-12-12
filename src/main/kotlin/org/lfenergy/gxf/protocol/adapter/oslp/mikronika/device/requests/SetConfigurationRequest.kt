@@ -5,7 +5,6 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LightType
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LinkType
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.GetConfigurationResponse
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.indexAddressMap
 import org.opensmartgridplatform.oslp.message
@@ -13,11 +12,12 @@ import org.opensmartgridplatform.oslp.relayConfiguration
 import org.opensmartgridplatform.oslp.relayMatrix
 import org.opensmartgridplatform.oslp.setConfigurationRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.RelayType as InternalRelayType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.SetConfigurationRequest as InternalSetConfigurationRequest
 
 class SetConfigurationRequest(
     deviceIdentification: String,
     networkAddress: String,
-    val getConfigurationResult: GetConfigurationResponse,
+    val setConfigurationRequest: InternalSetConfigurationRequest,
 ) : DeviceRequest(
         deviceIdentification,
         networkAddress,
@@ -26,10 +26,10 @@ class SetConfigurationRequest(
         message {
             setConfigurationRequest =
                 setConfigurationRequest {
-                    val resultConfig = getConfigurationResult.configuration
+                    val setConfigRequest = this@SetConfigurationRequest.setConfigurationRequest.configuration
 
                     relayLinking.addAll(
-                        resultConfig.relayConfiguration.relayLinking.relayLinkMatrixList.map {
+                        setConfigRequest.relayConfiguration.relayLinking.relayLinkMatrixList.map {
                             relayMatrix {
                                 masterRelayIndex = it.masterRelayIndex
                                 masterRelayOn = it.masterRelayOn
@@ -42,7 +42,7 @@ class SetConfigurationRequest(
                     relayConfiguration =
                         relayConfiguration {
                             addressMap.addAll(
-                                resultConfig.relayConfiguration.relayMapping.relayMapList.map {
+                                setConfigRequest.relayConfiguration.relayMapping.relayMapList.map {
                                     indexAddressMap {
                                         index = it.index
                                         address = it.address
@@ -52,34 +52,30 @@ class SetConfigurationRequest(
                             )
                         }
 
-                    relayRefreshing = resultConfig.relayConfiguration.relayRefreshingEnabled
+                    relayRefreshing = setConfigRequest.relayConfiguration.relayRefreshingEnabled
 
-                    deviceFixIpValue = resultConfig.deviceAddressConfiguration.ipAddress
-                    netMask = resultConfig.deviceAddressConfiguration.netMask
-                    gateWay = resultConfig.deviceAddressConfiguration.gateway
-                    isDhcpEnabled = resultConfig.deviceAddressConfiguration.dhcpEnabled
-
-                    ospgIpAddress = resultConfig.platformAddressConfiguration.ipAddress
-                    osgpPortNumber = resultConfig.platformAddressConfiguration.portNumber
-
-                    preferredLinkType = resultConfig.communicationConfiguration.preferredLinkType.toOslp()
-                    communicationTimeout = resultConfig.communicationConfiguration.connectionTimeout
-                    communicationNumberOfRetries = resultConfig.communicationConfiguration.numberOfRetries
+                    deviceFixIpValue = setConfigRequest.deviceAddressConfiguration.ipAddress
+                    netMask = setConfigRequest.deviceAddressConfiguration.netMask
+                    gateWay = setConfigRequest.deviceAddressConfiguration.gateway
+                    isDhcpEnabled = setConfigRequest.deviceAddressConfiguration.dhcpEnabled
+                    ospgIpAddress = setConfigRequest.platformAddressConfiguration.ipAddress
+                    osgpPortNumber = setConfigRequest.platformAddressConfiguration.portNumber
+                    preferredLinkType = setConfigRequest.communicationConfiguration.preferredLinkType.toOslp()
+                    communicationTimeout = setConfigRequest.communicationConfiguration.connectionTimeout
+                    communicationNumberOfRetries = setConfigRequest.communicationConfiguration.numberOfRetries
                     communicationPauseTimeBetweenConnectionTrials =
-                        resultConfig.communicationConfiguration.numberOfRetries
-
+                        setConfigRequest.communicationConfiguration.numberOfRetries
                     isAutomaticSummerTimingEnabled =
-                        resultConfig.daylightSavingsTimeConfiguration.automaticSummerTimingEnabled
-                    summerTimeDetails = resultConfig.daylightSavingsTimeConfiguration.summerTimeDetails
-                    winterTimeDetails = resultConfig.daylightSavingsTimeConfiguration.winterTimeDetails
+                        setConfigRequest.daylightSavingsTimeConfiguration.automaticSummerTimingEnabled
+                    summerTimeDetails = setConfigRequest.daylightSavingsTimeConfiguration.summerTimeDetails
+                    winterTimeDetails = setConfigRequest.daylightSavingsTimeConfiguration.winterTimeDetails
+                    astroGateSunRiseOffset = setConfigRequest.astronomicalOffsetsConfiguration.sunriseOffset
+                    astroGateSunSetOffset = setConfigRequest.astronomicalOffsetsConfiguration.sunsetOffset
 
-                    astroGateSunRiseOffset = resultConfig.astronomicalOffsetsConfiguration.sunriseOffset
-                    astroGateSunSetOffset = resultConfig.astronomicalOffsetsConfiguration.sunsetOffset
-
-                    lightType = resultConfig.lightType.toOslp()
-                    isTestButtonEnabled = resultConfig.testButtonEnabled
-                    timeSyncFrequency = resultConfig.timeSyncFrequency
-                    switchingDelay.addAll(resultConfig.switchingDelayList)
+                    lightType = setConfigRequest.lightType.toOslp()
+                    isTestButtonEnabled = setConfigRequest.testButtonEnabled
+                    timeSyncFrequency = setConfigRequest.timeSyncFrequency
+                    switchingDelay.addAll(setConfigRequest.switchingDelayList)
                 }
         }
 

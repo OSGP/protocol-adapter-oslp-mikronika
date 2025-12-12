@@ -11,7 +11,6 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetConfi
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.GetConfigurationResponse
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
@@ -19,22 +18,16 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 
 @Component(value = SET_CONFIGURATION_REQUEST)
 class SetConfigurationCommandMapper : CommandMapper() {
-    fun toInternal(
-        requestMessage: DeviceRequestMessage,
-        getConfigurationResponse: GetConfigurationResponse,
-    ): DeviceRequest {
+    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
 
         return SetConfigurationRequest(
             deviceIdentification,
             networkAddress,
-            getConfigurationResponse,
+            requestMessage.setConfigurationCommand,
         )
     }
-
-    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
-        throw NotImplementedError("Setting the configuration requires values from the getConfiguration command.")
 
     override fun toResponse(
         requestHeader: RequestHeader,

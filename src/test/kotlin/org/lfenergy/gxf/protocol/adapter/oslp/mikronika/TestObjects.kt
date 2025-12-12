@@ -18,6 +18,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.Device
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setScheduleRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
@@ -133,15 +134,32 @@ object TestObjects {
                 }
         }
 
-    val deviceSetConfigurationRequestMessage: DeviceRequestMessage =
+    val deviceSetScheduleRequestMessage: DeviceRequestMessage =
         deviceRequestMessage {
             header =
                 requestHeader {
                     correlationUid = "correlationUid"
                     deviceIdentification = DEVICE_IDENTIFICATION
                     deviceType = "deviceType"
-                    requestType = RequestType.SET_CONFIGURATION_REQUEST
+                    requestType = RequestType.SET_SCHEDULE_REQUEST
                     organizationIdentification = "organizationIdentification"
+                }
+        }
+
+    val deviceSetScheduleRequestMessageWithAstromicalOffsets: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.SET_SCHEDULE_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+            setScheduleRequest =
+                setScheduleRequest {
+                    astronomicalSunsetOffset = 1
+                    astronomicalSunriseOffset = 1
                 }
         }
 
@@ -169,6 +187,15 @@ object TestObjects {
                 responseHeader {
                     deviceIdentification = DEVICE_IDENTIFICATION
                     responseType = ResponseType.SET_CONFIGURATION_RESPONSE
+                }
+        }
+
+    val deviceSetScheduleResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.SET_SCHEDULE_RESPONSE
                 }
         }
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.NETWORK_ADDRESS
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getConfigurationResponse
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setConfigurationRequest
 
 class SetConfigurationRequestTest {
     @Test
@@ -16,7 +16,7 @@ class SetConfigurationRequestTest {
             SetConfigurationRequest(
                 DEVICE_IDENTIFICATION,
                 NETWORK_ADDRESS,
-                getConfigurationResult = getConfigurationResponse { },
+                setConfigurationRequest = setConfigurationRequest { },
             )
 
         val result = subject.toOslpMessage()
