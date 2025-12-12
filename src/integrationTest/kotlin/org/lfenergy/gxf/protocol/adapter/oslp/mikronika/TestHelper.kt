@@ -4,10 +4,6 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika
 
 import com.google.protobuf.timestamp
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeoutOrNull
-import org.junit.jupiter.api.Assertions.fail
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.CORRELATION_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_TYPE
@@ -15,9 +11,6 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.NET
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.ORGANIZATION_IDENTIFICATION
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
-
-fun Job.awaitOrFail(timeoutMillis: Long = 2000) =
-    runBlocking { withTimeoutOrNull(timeoutMillis) { join() } ?: fail("Job did not join within given timeframe") }
 
 fun createHeader(reqType: RequestType) =
     requestHeader {

@@ -17,6 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
+import org.junit.jupiter.api.Assertions.fail
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.EVENT_DESCRIPTION
@@ -69,7 +72,21 @@ class Device(
         }
     }
 
-    fun setupMock(mock: DeviceCallMock): Job = setupMocks(listOf(mock))
+    fun withMock(
+        mock: DeviceCallMock,
+        block: () -> Unit,
+    ) {
+        withMocks(listOf(mock), block)
+    }
+
+    fun withMocks(
+        mocks: List<DeviceCallMock>,
+        block: () -> Unit,
+    ) {
+        val job = setupMocks(mocks)
+        block()
+        job.awaitOrFail()
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun setupMocks(mocks: List<DeviceCallMock>): Job =
@@ -167,6 +184,11 @@ class Device(
             securityKey = signature,
         )
     }
+
+    private fun Job.awaitOrFail(timeoutMillis: Long = 2000) =
+        runBlocking {
+            withTimeoutOrNull(timeoutMillis) { join() } ?: fail("Mocks were not called within ${timeoutMillis}ms")
+        }
 
     data class DeviceCallMock(
         val handler: (requestEnvelope: Envelope) -> Oslp.Message,

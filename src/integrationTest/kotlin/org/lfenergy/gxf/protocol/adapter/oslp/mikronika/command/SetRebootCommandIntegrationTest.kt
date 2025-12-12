@@ -6,7 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.awaitOrFail
+import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.ContainerConfiguration
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.SecurityConfiguration
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
@@ -47,21 +47,25 @@ class SetRebootCommandIntegrationTest {
     }
 
     @Test
-    fun `should handle reboot request`() {
+    fun `should handle successful reboot request`() {
         val input =
             deviceRequestMessage {
                 header = createHeader(RequestType.REBOOT_REQUEST)
             }
 
-        val mockedCallsJob = device.setupMock(okMock)
+        var result: DeviceResponseMessage? = null
 
-        messageBroker.sendDeviceRequestMessage(input)
+        device.withMock(okMock) {
+            messageBroker.sendDeviceRequestMessage(input)
 
-        val result: DeviceResponseMessage =
-            messageBroker.receiveDeviceResponseMessage(DEVICE_IDENTIFICATION, ResponseType.REBOOT_RESPONSE)
+            result =
+                messageBroker.receiveDeviceResponseMessage(
+                    DEVICE_IDENTIFICATION,
+                    ResponseType.REBOOT_RESPONSE,
+                )
+        }
 
-        mockedCallsJob.awaitOrFail()
-
+        assertNotNull(result)
         assertEquals(Result.OK, result.result)
 
         val receivedRequest = okMock.capturedRequest.get()
@@ -69,13 +73,49 @@ class SetRebootCommandIntegrationTest {
         assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
     }
 
-    val okMock =
+    @Test
+    fun `should handle failed reboot request`() {
+        val input =
+            deviceRequestMessage {
+                header = createHeader(RequestType.REBOOT_REQUEST)
+            }
+
+        var result: DeviceResponseMessage? = null
+
+        device.withMock(rejectedMock) {
+            messageBroker.sendDeviceRequestMessage(input)
+
+            result =
+                messageBroker.receiveDeviceResponseMessage(
+                    DEVICE_IDENTIFICATION,
+                    ResponseType.REBOOT_RESPONSE,
+                )
+        }
+
+        assertNotNull(result)
+        assertEquals(Result.NOT_OK, result.result)
+
+        val receivedRequest = okMock.capturedRequest.get()
+
+        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+    }
+
+    private val okMock =
         Device.DeviceCallMock {
             message {
                 setRebootResponse =
                     setRebootResponse {
                         status = Oslp.Status.OK
                     }
+            }
+        }
+
+    private val rejectedMock =
+        Device.DeviceCallMock {
+            message {
+                setRebootResponse {
+                    status = Oslp.Status.REJECTED
+                }
             }
         }
 }
