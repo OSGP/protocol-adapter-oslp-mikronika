@@ -18,12 +18,11 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.messagebroker.MessageBroker
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
-import org.opensmartgridplatform.oslp.setRebootResponse
+import org.opensmartgridplatform.oslp.setConfigurationResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.scheduling.annotation.EnableAsync
@@ -48,39 +47,71 @@ class SetConfigurationCommandIntegrationTest {
     }
 
     @Test
-    fun `should handle set configuration request`() {
+    fun `should handle successful set configuration request`() {
         val input =
             deviceRequestMessage {
                 header = createHeader(RequestType.SET_CONFIGURATION_REQUEST)
             }
 
-        var result: DeviceResponseMessage? = null
-
         device.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
-        result =
+        val result =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
                 ResponseType.SET_CONFIGURATION_RESPONSE,
             )
 
+        val receivedRequest = okMock.capturedRequest.get()
+        assertTrue(receivedRequest.message.hasSetConfigurationRequest())
+        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
         assertEquals(ResponseType.SET_CONFIGURATION_RESPONSE, result.header.responseType)
+    }
 
-        val receivedRequest = okMock.capturedRequest.get()
+    @Test
+    fun `should handle failed set configuration request`() {
+        val input =
+            deviceRequestMessage {
+                header = createHeader(RequestType.SET_CONFIGURATION_REQUEST)
+            }
 
+        device.addMock(rejectedMock)
+        messageBroker.sendDeviceRequestMessage(input)
+
+        val result =
+            messageBroker.receiveDeviceResponseMessage(
+                DEVICE_IDENTIFICATION,
+                ResponseType.SET_CONFIGURATION_RESPONSE,
+            )
+
+        val receivedRequest = rejectedMock.capturedRequest.get()
         assertTrue(receivedRequest.message.hasSetConfigurationRequest())
         assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+
+        assertNotNull(result)
+        assertEquals(Result.NOT_OK, result.result)
+        assertEquals(ResponseType.SET_CONFIGURATION_RESPONSE, result.header.responseType)
     }
 
     val okMock =
         Device.DeviceCallMock {
             message {
-                setRebootResponse =
-                    setRebootResponse {
+                setConfigurationResponse =
+                    setConfigurationResponse {
                         status = Oslp.Status.OK
+                    }
+            }
+        }
+
+    val rejectedMock =
+        Device.DeviceCallMock {
+            message {
+                setConfigurationResponse =
+                    setConfigurationResponse {
+                        status = Oslp.Status.REJECTED
                     }
             }
         }

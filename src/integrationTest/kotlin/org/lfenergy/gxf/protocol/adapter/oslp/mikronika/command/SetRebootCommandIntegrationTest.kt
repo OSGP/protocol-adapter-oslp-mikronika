@@ -79,12 +79,10 @@ class SetRebootCommandIntegrationTest {
                 header = createHeader(RequestType.REBOOT_REQUEST)
             }
 
-        var result: DeviceResponseMessage? = null
-
         device.addMock(rejectedMock)
         messageBroker.sendDeviceRequestMessage(input)
 
-        result =
+        val result =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
                 ResponseType.REBOOT_RESPONSE,
