@@ -15,11 +15,7 @@ import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeoutOrNull
-import org.junit.jupiter.api.Assertions.fail
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.EVENT_DESCRIPTION
@@ -125,9 +121,9 @@ class Device(
         val deviceUid = DEVICE_UID
         val byteArray =
             sequenceNumber.toByteArray(2) +
-                deviceUid.toByteArray() +
-                payload.size.toByteArray(2) +
-                payload
+                    deviceUid.toByteArray() +
+                    payload.size.toByteArray(2) +
+                    payload
 
         val signature = signingUtil.createSignature(byteArray, deviceKeyPair.private)
 
@@ -139,11 +135,6 @@ class Device(
             securityKey = signature,
         )
     }
-
-    private fun Job.awaitOrFail(timeoutMillis: Long = 2000) =
-        runBlocking {
-            withTimeoutOrNull(timeoutMillis) { join() } ?: fail("Mocks were not called within ${timeoutMillis}ms")
-        }
 
     @OptIn(DelicateCoroutinesApi::class)
     private val job =

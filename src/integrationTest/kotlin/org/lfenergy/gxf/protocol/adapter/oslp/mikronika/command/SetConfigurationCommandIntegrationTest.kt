@@ -67,6 +67,7 @@ class SetConfigurationCommandIntegrationTest {
 
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
+        assertEquals(ResponseType.SET_CONFIGURATION_RESPONSE, result.header.responseType)
 
         val receivedRequest = okMock.capturedRequest.get()
 
