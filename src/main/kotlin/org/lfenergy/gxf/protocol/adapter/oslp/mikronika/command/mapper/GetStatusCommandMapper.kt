@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_STATUS_REQUEST
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetStatusRequest

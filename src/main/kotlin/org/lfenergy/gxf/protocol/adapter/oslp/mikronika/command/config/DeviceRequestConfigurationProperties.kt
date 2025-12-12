@@ -12,6 +12,8 @@ class DeviceRequestConfigurationProperties(
 ) {
     data class ConsumerProperties(
         var inboundQueue: String,
+        var minConcurrency: Int,
+        var maxConcurrency: Int,
     )
 
     data class ProducerProperties(

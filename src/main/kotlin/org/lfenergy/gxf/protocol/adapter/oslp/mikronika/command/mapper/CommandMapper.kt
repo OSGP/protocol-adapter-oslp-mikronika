@@ -8,8 +8,6 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRe
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseHeader
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 
 abstract class CommandMapper {
     abstract fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest
@@ -18,15 +16,4 @@ abstract class CommandMapper {
         requestHeader: RequestHeader,
         envelope: Envelope,
     ): DeviceResponseMessage
-
-    protected fun buildResponseHeader(req: RequestHeader): ResponseHeader =
-        responseHeader {
-            correlationUid = req.correlationUid
-            deviceIdentification = req.deviceIdentification
-            deviceType = req.deviceType
-            organizationIdentification = req.organizationIdentification
-            domain = req.domain
-            domainVersion = req.domainVersion
-            priority = req.priority
-        }
 }

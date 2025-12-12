@@ -18,7 +18,10 @@ class DeviceRequestListener(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    @JmsListener(destination = $$"${device-request.consumer.inbound-queue}")
+    @JmsListener(
+        destination = "gxf.publiclighting.oslp-mikronika.device-requests",
+        containerFactory = "deviceRequestJmsListenerContainerFactory",
+    )
     fun onMessage(bytesMessage: BytesMessage) {
         val correlationId = bytesMessage.jmsCorrelationID
         val deviceId = bytesMessage.getStringProperty(JMS_PROPERTY_DEVICE_IDENTIFICATION)

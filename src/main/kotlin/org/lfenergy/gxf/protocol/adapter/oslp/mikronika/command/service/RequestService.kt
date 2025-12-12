@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
 
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceClientService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
@@ -11,7 +12,6 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Devic
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.errorResponse
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 
 sealed class RequestService(
     protected val deviceClientService: DeviceClientService,
@@ -33,16 +33,7 @@ sealed class RequestService(
         exception: Throwable,
     ): DeviceResponseMessage =
         deviceResponseMessage {
-            header =
-                responseHeader {
-                    correlationUid = requestHeader.correlationUid
-                    deviceIdentification = requestHeader.deviceIdentification
-                    deviceType = requestHeader.deviceType
-                    organizationIdentification = requestHeader.organizationIdentification
-                    domain = requestHeader.domain
-                    domainVersion = requestHeader.domainVersion
-                    priority = requestHeader.priority
-                }
+            header = buildResponseHeader(requestHeader)
             result = Result.NOT_OK
             errorResponse {
                 errorMessage = exception.message ?: "Unknown exception"

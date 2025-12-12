@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.SET_REBOOT_REQUEST
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.REBOOT_REQUEST
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetRebootRequest
@@ -15,7 +16,7 @@ import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
-@Component(value = SET_REBOOT_REQUEST)
+@Component(value = REBOOT_REQUEST)
 class SetRebootCommandMapper : CommandMapper() {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification

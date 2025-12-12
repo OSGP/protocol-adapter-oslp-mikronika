@@ -56,6 +56,8 @@ client-socket:
 commands:
   consumer:
     inbound-queue: protocol-adapter-oslp-mikronika.device-requests.inbound.IT
+    min-concurrency: 1
+    max-concurrency: 5
   producer:
     outbound-queue: protocol-adapter-oslp-mikronika.device-requests.outbound.IT
     quality-of-service:

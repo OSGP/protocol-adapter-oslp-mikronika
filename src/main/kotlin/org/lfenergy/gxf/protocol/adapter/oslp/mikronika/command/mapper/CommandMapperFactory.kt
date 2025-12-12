@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CommandMapperFactory(
-    private val mappers: HashMap<String, CommandMapper>,
+    private val mappers: Map<String, CommandMapper>,
 ) {
     fun getMapperFor(requestType: RequestType): CommandMapper =
         mappers[requestType.name]
@@ -25,7 +25,7 @@ class CommandMapperFactory(
         const val START_SELF_TEST_REQUEST = "START_SELF_TEST_REQUEST"
         const val STOP_SELF_TEST_REQUEST = "STOP_SELF_TEST_REQUEST"
         const val SET_EVENT_NOTIFICATION_MASK_REQUEST = "SET_EVENT_NOTIFICATION_MASK_REQUEST"
-        const val SET_REBOOT_REQUEST = "SET_REBOOT_REQUEST"
+        const val REBOOT_REQUEST = "REBOOT_REQUEST"
         const val SET_SCHEDULE_REQUEST = "SET_SCHEDULE_REQUEST"
     }
 }
