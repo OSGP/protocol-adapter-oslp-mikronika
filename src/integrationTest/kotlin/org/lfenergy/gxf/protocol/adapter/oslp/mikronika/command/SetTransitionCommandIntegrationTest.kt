@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command
 
-import com.google.protobuf.kotlin.toByteStringUtf8
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
@@ -12,19 +12,26 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEV
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.TransitionType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setTransitionRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
-import org.opensmartgridplatform.oslp.stopSelfTestResponse
+import org.opensmartgridplatform.oslp.setTransitionResponse
 
-class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
+class SetTransitionCommandIntegrationTest : CommandIntegrationTest() {
     @Test
-    fun `should handle successful stop self test request`() {
+    fun `should handle successful set transition command`() {
         val input =
             deviceRequestMessage {
-                header = createHeader(RequestType.STOP_SELF_TEST_REQUEST)
+                header = createHeader(RequestType.SET_TRANSITION_REQUEST)
+                setTransitionRequest =
+                    setTransitionRequest {
+                        transitionType = TransitionType.SUNSET
+                        time = "time"
+                    }
             }
 
         device.addMock(okMock)
@@ -33,22 +40,28 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
         val result =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
-                ResponseType.STOP_SELF_TEST_RESPONSE,
+                ResponseType.SET_TRANSITION_RESPONSE,
             )
+
+        val receivedRequest = okMock.capturedRequest.get()
+        assertTrue(receivedRequest.message.hasSetTransitionRequest())
+        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
 
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
-
-        val receivedRequest = okMock.capturedRequest.get()
-
-        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+        assertEquals(ResponseType.SET_TRANSITION_RESPONSE, result.header.responseType)
     }
 
     @Test
-    fun `should handle failed stop self test request`() {
+    fun `should handle failed set transition command`() {
         val input =
             deviceRequestMessage {
-                header = createHeader(RequestType.STOP_SELF_TEST_REQUEST)
+                header = createHeader(RequestType.SET_TRANSITION_REQUEST)
+                setTransitionRequest =
+                    setTransitionRequest {
+                        transitionType = TransitionType.SUNSET
+                        time = "time"
+                    }
             }
 
         device.addMock(rejectedMock)
@@ -57,35 +70,34 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
         val result =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
-                ResponseType.STOP_SELF_TEST_RESPONSE,
+                ResponseType.SET_TRANSITION_RESPONSE,
             )
+
+        val receivedRequest = rejectedMock.capturedRequest.get()
+        assertTrue(receivedRequest.message.hasSetTransitionRequest())
+        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
 
         assertNotNull(result)
         assertEquals(Result.NOT_OK, result.result)
-
-        val receivedRequest = rejectedMock.capturedRequest.get()
-
-        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+        assertEquals(ResponseType.SET_TRANSITION_RESPONSE, result.header.responseType)
     }
 
-    private val okMock =
+    val okMock =
         Device.DeviceCallMock {
             message {
-                stopSelfTestResponse =
-                    stopSelfTestResponse {
+                setTransitionResponse =
+                    setTransitionResponse {
                         status = Oslp.Status.OK
-                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required.
                     }
             }
         }
 
-    private val rejectedMock =
+    val rejectedMock =
         Device.DeviceCallMock {
             message {
-                stopSelfTestResponse =
-                    stopSelfTestResponse {
-                        status = Oslp.Status.FAILURE
-                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required.
+                setTransitionResponse =
+                    setTransitionResponse {
+                        status = Oslp.Status.REJECTED
                     }
             }
         }

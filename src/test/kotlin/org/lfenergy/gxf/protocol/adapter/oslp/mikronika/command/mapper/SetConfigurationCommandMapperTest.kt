@@ -21,6 +21,7 @@ import org.opensmartgridplatform.oslp.setConfigurationResponse
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LightType as InternalLightType
 
 class SetConfigurationCommandMapperTest {
     private val subject: SetConfigurationCommandMapper = SetConfigurationCommandMapper()
@@ -30,11 +31,16 @@ class SetConfigurationCommandMapperTest {
         val deviceRequestMessage =
             deviceRequestMessage {
                 header = requestHeader
-                setConfigurationRequest {
-                    configuration {
-                        testButtonEnabled = true
+                setConfigurationCommand =
+                    setConfigurationRequest {
+                        configuration =
+                            configuration {
+                                testButtonEnabled = true
+                                lightType = InternalLightType.RELAY
+                                timeSyncFrequency = 100
+                                switchingDelay.addAll(listOf(150))
+                            }
                     }
-                }
             }
 
         val result = subject.toInternal(deviceRequestMessage) as SetConfigurationRequest
@@ -42,7 +48,10 @@ class SetConfigurationCommandMapperTest {
         assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
         assertEquals(NETWORK_ADDRESS, result.networkAddress)
         assertTrue(result.setConfigurationRequest.configuration.testButtonEnabled)
-        TODO("more fields here plz")
+        assertEquals(InternalLightType.RELAY, result.setConfigurationRequest.configuration.lightType)
+        assertEquals(100, result.setConfigurationRequest.configuration.timeSyncFrequency)
+        assertEquals(1, result.setConfigurationRequest.configuration.switchingDelayCount)
+        assertEquals(150, result.setConfigurationRequest.configuration.switchingDelayList[0])
     }
 
     @ParameterizedTest

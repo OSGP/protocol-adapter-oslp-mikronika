@@ -25,3 +25,5 @@ fun createHeader(reqType: RequestType) =
         domainVersion = ""
         priority = 1
     }
+
+const val FIRMWARE_VERSION = "V01"

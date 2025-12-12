@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_FIRMWARE_STATUS_REQUEST
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_FIRMWARE_VERSION_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
@@ -17,7 +17,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.firmw
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getFirmwareVersionResponse
 import org.springframework.stereotype.Component
 
-@Component(value = GET_FIRMWARE_STATUS_REQUEST)
+@Component(value = GET_FIRMWARE_VERSION_REQUEST)
 class GetFirmwareVersionCommandMapper : CommandMapper() {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification

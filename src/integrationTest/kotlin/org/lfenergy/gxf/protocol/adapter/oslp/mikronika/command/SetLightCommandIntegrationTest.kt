@@ -11,28 +11,37 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEV
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
-import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RelayIndex
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setConfigurationRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.lightValue
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setLightRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
-import org.opensmartgridplatform.oslp.setConfigurationResponse
+import org.opensmartgridplatform.oslp.setLightResponse
 
-class SetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
+class SetLightCommandIntegrationTest : CommandIntegrationTest() {
     @Test
-    fun `should handle successful set configuration command`() {
+    fun `should handle successful set light command`() {
         val input =
             deviceRequestMessage {
-                header = createHeader(RequestType.SET_CONFIGURATION_REQUEST)
-                setConfigurationCommand =
-                    setConfigurationRequest {
-                        configuration =
-                            configuration {
-                                testButtonEnabled = true
-                            }
+                header = createHeader(RequestType.SET_LIGHT_REQUEST)
+                setLightRequest =
+                    setLightRequest {
+                        lightValues.addAll(
+                            listOf(
+                                lightValue {
+                                    index = RelayIndex.RELAY_ONE
+                                    lightOn = true
+                                },
+                                lightValue {
+                                    index = RelayIndex.RELAY_TWO
+                                    lightOn = false
+                                },
+                            ),
+                        )
                     }
             }
 
@@ -42,24 +51,38 @@ class SetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
         val result =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
-                ResponseType.SET_CONFIGURATION_RESPONSE,
+                ResponseType.SET_LIGHT_RESPONSE,
             )
 
         val receivedRequest = okMock.capturedRequest.get()
-        assertTrue(receivedRequest.message.hasSetConfigurationRequest())
-        assertTrue(receivedRequest.message.setConfigurationRequest.isTestButtonEnabled)
+        assertTrue(receivedRequest.message.hasSetLightRequest())
         assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
 
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
-        assertEquals(ResponseType.SET_CONFIGURATION_RESPONSE, result.header.responseType)
+        assertEquals(ResponseType.SET_LIGHT_RESPONSE, result.header.responseType)
     }
 
     @Test
-    fun `should handle failed set configuration command`() {
+    fun `should handle failed set light command`() {
         val input =
             deviceRequestMessage {
-                header = createHeader(RequestType.SET_CONFIGURATION_REQUEST)
+                header = createHeader(RequestType.SET_LIGHT_REQUEST)
+                setLightRequest =
+                    setLightRequest {
+                        lightValues.addAll(
+                            listOf(
+                                lightValue {
+                                    index = RelayIndex.RELAY_ONE
+                                    lightOn = true
+                                },
+                                lightValue {
+                                    index = RelayIndex.RELAY_TWO
+                                    lightOn = false
+                                },
+                            ),
+                        )
+                    }
             }
 
         device.addMock(rejectedMock)
@@ -68,23 +91,23 @@ class SetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
         val result =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
-                ResponseType.SET_CONFIGURATION_RESPONSE,
+                ResponseType.SET_LIGHT_RESPONSE,
             )
 
         val receivedRequest = rejectedMock.capturedRequest.get()
-        assertTrue(receivedRequest.message.hasSetConfigurationRequest())
+        assertTrue(receivedRequest.message.hasSetLightRequest())
         assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
 
         assertNotNull(result)
         assertEquals(Result.NOT_OK, result.result)
-        assertEquals(ResponseType.SET_CONFIGURATION_RESPONSE, result.header.responseType)
+        assertEquals(ResponseType.SET_LIGHT_RESPONSE, result.header.responseType)
     }
 
     val okMock =
         Device.DeviceCallMock {
             message {
-                setConfigurationResponse =
-                    setConfigurationResponse {
+                setLightResponse =
+                    setLightResponse {
                         status = Oslp.Status.OK
                     }
             }
@@ -93,8 +116,8 @@ class SetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
     val rejectedMock =
         Device.DeviceCallMock {
             message {
-                setConfigurationResponse =
-                    setConfigurationResponse {
+                setLightResponse =
+                    setLightResponse {
                         status = Oslp.Status.REJECTED
                     }
             }

@@ -21,18 +21,16 @@ import org.opensmartgridplatform.oslp.setRebootResponse
 
 class SetRebootCommandIntegrationTest : CommandIntegrationTest() {
     @Test
-    fun `should handle successful reboot request`() {
+    fun `should handle successful reboot command`() {
         val input =
             deviceRequestMessage {
                 header = createHeader(RequestType.REBOOT_REQUEST)
             }
 
-        var result: DeviceResponseMessage? = null
-
         device.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
-        result =
+        val result: DeviceResponseMessage =
             messageBroker.receiveDeviceResponseMessage(
                 DEVICE_IDENTIFICATION,
                 ResponseType.REBOOT_RESPONSE,
@@ -47,7 +45,7 @@ class SetRebootCommandIntegrationTest : CommandIntegrationTest() {
     }
 
     @Test
-    fun `should handle failed reboot request`() {
+    fun `should handle failed reboot command`() {
         val input =
             deviceRequestMessage {
                 header = createHeader(RequestType.REBOOT_REQUEST)
