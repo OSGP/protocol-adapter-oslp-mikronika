@@ -121,9 +121,9 @@ class Device(
         val deviceUid = DEVICE_UID
         val byteArray =
             sequenceNumber.toByteArray(2) +
-                    deviceUid.toByteArray() +
-                    payload.size.toByteArray(2) +
-                    payload
+                deviceUid.toByteArray() +
+                payload.size.toByteArray(2) +
+                payload
 
         val signature = signingUtil.createSignature(byteArray, deviceKeyPair.private)
 

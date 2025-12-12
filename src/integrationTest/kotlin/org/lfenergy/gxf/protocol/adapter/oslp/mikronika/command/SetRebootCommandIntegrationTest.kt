@@ -101,18 +101,20 @@ class SetRebootCommandIntegrationTest {
     private val okMock =
         Device.DeviceCallMock {
             message {
-                setRebootResponse = setRebootResponse {
-                    status = Oslp.Status.OK
-                }
+                setRebootResponse =
+                    setRebootResponse {
+                        status = Oslp.Status.OK
+                    }
             }
         }
 
     private val rejectedMock =
         Device.DeviceCallMock {
             message {
-                setRebootResponse = setRebootResponse {
-                    status = Oslp.Status.REJECTED
-                }
+                setRebootResponse =
+                    setRebootResponse {
+                        status = Oslp.Status.REJECTED
+                    }
             }
         }
 }
