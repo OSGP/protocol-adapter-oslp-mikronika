@@ -40,6 +40,6 @@ class ClientSocket(
                 return responseEnvelope
             }
         }
-        throw Exception() // TODO: Decent exception handling
+        throw Exception() // TODO: Decent exception handling -> FDP-3593
     }
 }

@@ -74,7 +74,7 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
                 stopSelfTestResponse =
                     stopSelfTestResponse {
                         status = Oslp.Status.OK
-                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required.
+                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required. -> FDP-3595
                     }
             }
         }
@@ -85,7 +85,7 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
                 stopSelfTestResponse =
                     stopSelfTestResponse {
                         status = Oslp.Status.FAILURE
-                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required.
+                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required. -> FDP-3595
                     }
             }
         }

@@ -65,16 +65,16 @@ class SetScheduleRequest(
                 triggerType = Oslp.TriggerType.forNumber(entry.triggerType.number)
                 minimumLightsOn = entry.minimumLightsOn
                 index = entry.index
-                isEnabled = true // TODO should the be default?
+                isEnabled = true // TODO should the be default? -> FDP-3594
             }
         }
 
     private fun List<LightValue>.toOslpLightValues() =
         map { entry ->
             lightValue {
-                index // TODO: What should this be? bytes in oslp <> enum in internal
+                index // TODO: What should this be? bytes in oslp <> enum in internal -> FDP-3594
                 on = entry.lightOn
-                dimValue // TODO: Same as the above, bytes as type is impossible to use
+                dimValue // TODO: Same as the above, bytes as type is impossible to use -> FDP-3594
             }
         }
 }

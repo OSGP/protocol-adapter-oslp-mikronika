@@ -27,7 +27,7 @@ class SetTransitionCommandMapper : CommandMapper() {
             when (requestMessage.setTransitionRequest.transitionType) {
                 TransitionType.SUNRISE -> SetTransitionRequest.TransitionType.NIGHT_DAY
                 TransitionType.SUNSET -> SetTransitionRequest.TransitionType.DAY_NIGHT
-                else -> SetTransitionRequest.TransitionType.DAY_NIGHT // TODO What if.
+                else -> SetTransitionRequest.TransitionType.DAY_NIGHT // TODO What if. -> FDP-3596
             }
 
         val time = requestMessage.setTransitionRequest.time
