@@ -40,8 +40,8 @@ class GetStatusCommandMapperTest {
             message {
                 getStatusResponse =
                     getStatusResponse {
-                        preferredLinktype = Oslp.LinkType.LINK_NOT_SET
-                        actualLinktype = Oslp.LinkType.LINK_NOT_SET
+                        preferredLinktype = Oslp.LinkType.CDMA
+                        actualLinktype = Oslp.LinkType.CDMA
                         lightType = Oslp.LightType.LT_NOT_SET
                         eventNotificationMask = 2
                         status = Oslp.Status.OK

@@ -41,6 +41,7 @@ class GetConfigurationCommandMapperTest {
                 getConfigurationResponse =
                     getConfigurationResponse {
                         status = Oslp.Status.OK
+                        preferredLinkType = Oslp.LinkType.ETHERNET
                     }
             }
 

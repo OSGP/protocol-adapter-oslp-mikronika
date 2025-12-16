@@ -76,6 +76,7 @@ class GetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
                 getConfigurationResponse =
                     getConfigurationResponse {
                         status = Oslp.Status.OK
+                        preferredLinkType = Oslp.LinkType.CDMA
                     }
             }
         }
