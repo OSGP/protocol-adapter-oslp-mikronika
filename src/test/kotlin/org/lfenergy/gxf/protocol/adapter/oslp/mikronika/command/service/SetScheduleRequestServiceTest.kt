@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetScheduleRequestMessage
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetScheduleRequestMessageWithAstromicalOffsets
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetScheduleRequestMessageWithAstronomicalOffsets
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetScheduleResponseMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.SetScheduleCommandMapper
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
@@ -41,7 +41,7 @@ class SetScheduleRequestServiceTest {
     private lateinit var subject: SetScheduleRequestService
 
     @Test
-    fun `should call setConfiguration with data from the getConfigurationRequest`() {
+    fun `should call setConfiguration to update astro data for setSchedule`() {
         val setScheduleRequest: SetScheduleRequest = mockk()
         every { setScheduleCommandMapper.toResponse(any(), any()) } returns deviceSetScheduleResponseMessage
         every { setScheduleCommandMapper.toInternal(any()) } returns setScheduleRequest
@@ -65,11 +65,11 @@ class SetScheduleRequestServiceTest {
     }
 
     @Test
-    fun `should call deviceClientService with error message if setConfiguration fails failed`() {
+    fun `should call deviceClientService with error message if setConfiguration fails`() {
         every { deviceClientService.sendClientMessage(any(), any()) } just Runs
         every { deviceResponseSender.send(any()) } just Runs
 
-        subject.handleSetScheduleRequest(deviceSetScheduleRequestMessageWithAstromicalOffsets)
+        subject.handleSetScheduleRequest(deviceSetScheduleRequestMessageWithAstronomicalOffsets)
 
         val responseMapperSlot = slot<(Result<Envelope>) -> Unit>()
         verify {

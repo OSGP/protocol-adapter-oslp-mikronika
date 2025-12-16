@@ -41,11 +41,11 @@ client-socket:
 
 commands:
   consumer:
-    inbound-queue: protocol-adapter-oslp-mikronika.device-requests.inbound.IT
+    inbound-queue: gxf.publiclighting.oslp-mikronika.device-requests
     min-concurrency: 1
     max-concurrency: 5
   producer:
-    outbound-queue: protocol-adapter-oslp-mikronika.device-events.outbound.IT
+    outbound-queue: gxf.publiclighting.oslp-mikronika.device-responses
     quality-of-service:
       explicit-qos-enabled: true
       delivery-persistent: true

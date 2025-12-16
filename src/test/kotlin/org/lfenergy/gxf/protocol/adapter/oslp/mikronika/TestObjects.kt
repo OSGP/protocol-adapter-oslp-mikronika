@@ -146,7 +146,7 @@ object TestObjects {
                 }
         }
 
-    val deviceSetScheduleRequestMessageWithAstromicalOffsets: DeviceRequestMessage =
+    val deviceSetScheduleRequestMessageWithAstronomicalOffsets: DeviceRequestMessage =
         deviceRequestMessage {
             header =
                 requestHeader {

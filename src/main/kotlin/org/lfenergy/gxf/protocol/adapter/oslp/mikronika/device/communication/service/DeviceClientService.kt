@@ -34,7 +34,7 @@ class DeviceClientService(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val sock = ClientSocket(deviceRequest.networkAddress, socketProperties.devicePort)
-                val device = mikronikaDeviceService.findBydeviceIdentification(deviceRequest.deviceIdentification)
+                val device = mikronikaDeviceService.findByDeviceIdentification(deviceRequest.deviceIdentification)
                 val requestEnvelope = createEnvelope(device, deviceRequest.toOslpMessage())
 
                 val responseEnvelope = sock.sendAndReceive(requestEnvelope)

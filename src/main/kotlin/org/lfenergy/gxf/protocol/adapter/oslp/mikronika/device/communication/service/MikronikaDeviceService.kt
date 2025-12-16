@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class MikronikaDeviceService(
     private val mikronikaDeviceRepository: MikronikaDeviceRepository,
 ) {
-    fun findBydeviceIdentification(deviceIdentification: String): MikronikaDevice =
+    fun findByDeviceIdentification(deviceIdentification: String): MikronikaDevice =
         mikronikaDeviceRepository.findByDeviceIdentification(deviceIdentification)
             ?: throw EntityNotFoundException("Device with identification $deviceIdentification not found")
 

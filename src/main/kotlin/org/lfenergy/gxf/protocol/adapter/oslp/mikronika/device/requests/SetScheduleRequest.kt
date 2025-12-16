@@ -65,7 +65,7 @@ class SetScheduleRequest(
                 triggerType = Oslp.TriggerType.forNumber(entry.triggerType.number)
                 minimumLightsOn = entry.minimumLightsOn
                 index = entry.index
-                isEnabled = true // TODO should the be default? -> FDP-3594
+                isEnabled = true // TODO should this be default? -> FDP-3594
             }
         }
 
