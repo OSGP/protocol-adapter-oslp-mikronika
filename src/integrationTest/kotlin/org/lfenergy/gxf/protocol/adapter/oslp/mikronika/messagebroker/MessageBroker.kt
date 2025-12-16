@@ -27,7 +27,7 @@ class MessageBroker(
     @PostConstruct
     fun initialize() {
         deviceNotificationJmsTemplate.receiveTimeout = 2000
-        deviceRequestJmsTemplate.receiveTimeout = 200000
+        deviceRequestJmsTemplate.receiveTimeout = 2000
     }
 
     fun sendDeviceRequestMessage(request: DeviceRequestMessage) {

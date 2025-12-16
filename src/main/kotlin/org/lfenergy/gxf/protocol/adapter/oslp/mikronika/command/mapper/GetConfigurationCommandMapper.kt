@@ -127,6 +127,6 @@ class GetConfigurationCommandMapper : CommandMapper() {
             Oslp.LinkType.GPRS -> InternalLinkType.GPRS
             Oslp.LinkType.CDMA -> InternalLinkType.CDMA
             Oslp.LinkType.ETHERNET -> InternalLinkType.ETHERNET
-            else -> InternalLinkType.GPRS // Default?
+            else -> throw IllegalArgumentException("Unknown LinkType: $this")
         }
 }
