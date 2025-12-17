@@ -10,11 +10,11 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.HAS_SCHEDULE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.INDEX
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.NETWORK_ADDRESS
@@ -26,8 +26,6 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.timestamp
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.producer.DeviceEventMessageSender
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.deviceRegistrationReceivedEvent
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.header
 
 @ExtendWith(MockKExtension::class)
 class DeviceEventListenerTest {
@@ -50,14 +48,14 @@ class DeviceEventListenerTest {
         verify(exactly = 1) {
             deviceEventMessageSender.send(
                 withArg {
-                    it.header.correlationUid == event.correlationUid
-                    it.header.deviceIdentification == DEVICE_UID
-                    it.header.deviceType == DEVICE_TYPE
-                    it.header.eventType == EventType.DEVICE_NOTIFICATION
-                    it.deviceNotificationReceivedEvent.notificationType.name == NOTIFICATION_TYPE
-                    it.deviceNotificationReceivedEvent.description == NOTIFICATION_DESCRIPTION
-                    it.deviceNotificationReceivedEvent.index == INDEX
-                    it.deviceNotificationReceivedEvent.timestamp == timestamp
+                    assertThat(it.header.correlationUid).isEqualTo(event.correlationUid)
+                    assertThat(it.header.deviceIdentification).isEqualTo(DEVICE_IDENTIFICATION)
+                    assertThat(it.header.deviceType).isEqualTo(DEVICE_TYPE)
+                    assertThat(it.header.eventType).isEqualTo(EventType.DEVICE_NOTIFICATION)
+                    assertThat(it.deviceNotificationReceivedEvent.notificationType.name).isEqualTo(NOTIFICATION_TYPE)
+                    assertThat(it.deviceNotificationReceivedEvent.description).isEqualTo(NOTIFICATION_DESCRIPTION)
+                    assertThat(it.deviceNotificationReceivedEvent.index).isEqualTo(INDEX)
+                    assertThat(it.deviceNotificationReceivedEvent.timestamp).isEqualTo(timestamp)
                 },
             )
         }
@@ -76,16 +74,12 @@ class DeviceEventListenerTest {
         verify(exactly = 1) {
             deviceEventMessageSender.send(
                 withArg {
-                    header {
-                        correlationUid = event.correlationUid
-                        deviceIdentification = DEVICE_IDENTIFICATION
-                        deviceType = DEVICE_TYPE
-                        eventType = EventType.DEVICE_REGISTRATION
-                    }
-                    deviceRegistrationReceivedEvent {
-                        hasSchedule = HAS_SCHEDULE
-                        networkAddress = NETWORK_ADDRESS
-                    }
+                    assertThat(it.header.correlationUid).isEqualTo(event.correlationUid)
+                    assertThat(it.header.deviceIdentification).isEqualTo(DEVICE_IDENTIFICATION)
+                    assertThat(it.header.deviceType).isEqualTo(DEVICE_TYPE)
+                    assertThat(it.header.eventType).isEqualTo(EventType.DEVICE_REGISTRATION)
+                    assertThat(it.deviceRegistrationReceivedEvent.hasSchedule).isEqualTo(HAS_SCHEDULE)
+                    assertThat(it.deviceRegistrationReceivedEvent.networkAddress).isEqualTo(NETWORK_ADDRESS)
                 },
             )
         }
