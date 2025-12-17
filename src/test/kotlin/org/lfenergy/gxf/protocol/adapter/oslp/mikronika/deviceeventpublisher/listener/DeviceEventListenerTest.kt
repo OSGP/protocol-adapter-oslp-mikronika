@@ -26,6 +26,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.timestamp
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.producer.DeviceEventMessageSender
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.deviceRegistrationReceivedEvent
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.header
 
 @ExtendWith(MockKExtension::class)
 class DeviceEventListenerTest {
@@ -74,12 +76,16 @@ class DeviceEventListenerTest {
         verify(exactly = 1) {
             deviceEventMessageSender.send(
                 withArg {
-                    it.header.correlationUid == event.correlationUid
-                    it.header.deviceIdentification == DEVICE_IDENTIFICATION
-                    it.header.deviceType == DEVICE_TYPE
-                    it.header.eventType == EventType.DEVICE_REGISTRATION
-                    it.deviceRegistrationReceivedEvent.hasSchedule == HAS_SCHEDULE
-                    it.deviceRegistrationReceivedEvent.networkAddress == NETWORK_ADDRESS
+                    header {
+                        correlationUid = event.correlationUid
+                        deviceIdentification = DEVICE_IDENTIFICATION
+                        deviceType = DEVICE_TYPE
+                        eventType = EventType.DEVICE_REGISTRATION
+                    }
+                    deviceRegistrationReceivedEvent {
+                        hasSchedule = HAS_SCHEDULE
+                        networkAddress = NETWORK_ADDRESS
+                    }
                 },
             )
         }
