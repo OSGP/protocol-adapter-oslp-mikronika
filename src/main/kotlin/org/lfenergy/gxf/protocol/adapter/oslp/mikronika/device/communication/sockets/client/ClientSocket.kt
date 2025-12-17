@@ -13,6 +13,7 @@ import io.ktor.utils.io.readAvailable
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.ClientSocketException
 
 class ClientSocket(
     val clientAddress: String,
@@ -35,11 +36,11 @@ class ClientSocket(
             val buffer = ByteArray(1024)
             val bytesRead = input.readAvailable(buffer)
 
-            if (bytesRead > 0) {
-                val responseEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
-                return responseEnvelope
+            return when {
+                bytesRead < 0 -> throw ClientSocketException("Connection was closed prematurely!")
+                bytesRead == 0 -> throw ClientSocketException("No bytes received!")
+                else -> Envelope.parseFrom(buffer.copyOf(bytesRead))
             }
         }
-        throw Exception() // TODO: Decent exception handling -> FDP-3593
     }
 }
