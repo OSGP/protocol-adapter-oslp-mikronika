@@ -63,7 +63,7 @@ class RegisterDeviceStrategyTest {
         verify {
             eventPublisher.publishEvent(
                 withArg { it: DeviceRegistrationReceivedEvent ->
-                    it.deviceIdentification == mikronikaDevice.deviceIdentification
+                    assertThat(it.deviceIdentification).isEqualTo(mikronikaDevice.deviceIdentification)
                 },
             )
         }
