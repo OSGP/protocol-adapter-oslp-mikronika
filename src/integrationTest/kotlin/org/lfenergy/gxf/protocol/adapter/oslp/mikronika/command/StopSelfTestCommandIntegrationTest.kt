@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command
 
-import com.google.protobuf.kotlin.toByteStringUtf8
+import com.google.protobuf.kotlin.toByteString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
@@ -11,6 +11,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEV
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
@@ -62,6 +63,7 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
 
         assertNotNull(result)
         assertEquals(Result.NOT_OK, result.result)
+        assertEquals(123.toChar().toString(), result.errorResponse.errorMessage)
 
         val receivedRequest = rejectedMock.capturedRequest.get()
 
@@ -74,7 +76,7 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
                 stopSelfTestResponse =
                     stopSelfTestResponse {
                         status = Oslp.Status.OK
-                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required. -> FDP-3595
+                        selfTestResult = 0.toByteArray(1).toByteString()
                     }
             }
         }
@@ -85,7 +87,7 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
                 stopSelfTestResponse =
                     stopSelfTestResponse {
                         status = Oslp.Status.FAILURE
-                        selfTestResult = "".toByteStringUtf8() // TODO: This is mapped only if failed, but its required. -> FDP-3595
+                        selfTestResult = 123.toByteArray(1).toByteString()
                     }
             }
         }
