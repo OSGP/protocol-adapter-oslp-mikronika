@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
-import com.google.protobuf.kotlin.toByteStringUtf8
+import com.google.protobuf.kotlin.toByteString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.NETWORK_ADDRESS
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 
 class ResumeScheduleRequestTest {
     @Test
@@ -25,6 +26,6 @@ class ResumeScheduleRequestTest {
 
         assertTrue(result.hasResumeScheduleRequest())
         assertTrue(result.resumeScheduleRequest.immediate)
-        assertEquals("1".toByteStringUtf8(), result.resumeScheduleRequest.index)
+        assertEquals(1.toByteArray(1).toByteString(), result.resumeScheduleRequest.index)
     }
 }

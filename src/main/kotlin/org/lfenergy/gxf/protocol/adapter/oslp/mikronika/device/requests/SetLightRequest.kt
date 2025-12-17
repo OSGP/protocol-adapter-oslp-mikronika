@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
-import com.google.protobuf.kotlin.toByteStringUtf8
+import com.google.protobuf.kotlin.toByteString
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.LightValue
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.lightValue
@@ -27,8 +28,8 @@ class SetLightRequest(
                             lightValue {
                                 index =
                                     it.index.number
-                                        .toString()
-                                        .toByteStringUtf8()
+                                        .toByteArray(1)
+                                        .toByteString()
                                 on = it.lightOn
                             }
                         },
