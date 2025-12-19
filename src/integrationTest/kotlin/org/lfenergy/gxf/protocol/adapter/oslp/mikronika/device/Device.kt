@@ -5,6 +5,17 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device
 
 import com.google.protobuf.ByteString
 import com.gxf.utilities.oslp.message.signing.SigningUtil
+import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.writeFully
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.EVENT_DESCRIPTION
@@ -15,33 +26,39 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RAN
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RANDOM_PLATFORM
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.SEQUENCE_NUMBER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.encodedAsBase64
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.configuration.ServerSocketConfiguration
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.ServerSocketConfiguration
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
 import java.net.InetAddress
 import java.net.Socket
 import java.security.KeyPair
+import java.util.LinkedList
+import java.util.concurrent.atomic.AtomicReference
 
 @Component
 class Device(
     private val signingUtil: SigningUtil,
     private val deviceKeyPair: KeyPair,
     private val serverSocketConfiguration: ServerSocketConfiguration,
+    private val clientSocketConfiguration: ClientSocketConfigurationProperties,
 ) {
     val publicKey = deviceKeyPair.public.encodedAsBase64()
 
+    private val mockQueue: LinkedList<DeviceCallMock> = LinkedList()
+
     fun sendDeviceRegistrationRequest(): Envelope {
         Socket(serverSocketConfiguration.hostName, serverSocketConfiguration.port).use { socket ->
-            socket.getOutputStream().write(requestEnvelope(deviceRegistrationRequestMessage()).getBytes())
+            socket.getOutputStream().write(toEnvelope(deviceRegistrationRequestMessage()).getBytes())
             return Envelope.parseFrom(socket.getInputStream().readBytes())
         }
     }
 
     fun sendDeviceRegistrationConfirmationRequest(): Envelope {
         Socket(serverSocketConfiguration.hostName, serverSocketConfiguration.port).use { socket ->
-            socket.getOutputStream().write(requestEnvelope(deviceRegistrationConfirmationRequestMessage()).getBytes())
+            socket.getOutputStream().write(toEnvelope(deviceRegistrationConfirmationRequestMessage()).getBytes())
             return Envelope.parseFrom(socket.getInputStream().readBytes())
         }
     }
@@ -49,9 +66,13 @@ class Device(
     fun sendEventNotificationRequest(): Envelope {
         eventNotificationRequestMessage()
         Socket(serverSocketConfiguration.hostName, serverSocketConfiguration.port).use { socket ->
-            socket.getOutputStream().write(requestEnvelope(eventNotificationRequestMessage()).getBytes())
+            socket.getOutputStream().write(toEnvelope(eventNotificationRequestMessage()).getBytes())
             return Envelope.parseFrom(socket.getInputStream().readBytes())
         }
+    }
+
+    fun addMock(deviceCallMock: DeviceCallMock) {
+        mockQueue.push(deviceCallMock)
     }
 
     private fun deviceRegistrationRequestMessage() =
@@ -94,7 +115,7 @@ class Device(
                     ),
             ).build()
 
-    private fun requestEnvelope(message: Oslp.Message): Envelope {
+    private fun toEnvelope(message: Oslp.Message): Envelope {
         val payload = message.toByteArray()
         val sequenceNumber = SEQUENCE_NUMBER
         val deviceUid = DEVICE_UID
@@ -113,5 +134,47 @@ class Device(
             messageBytes = payload,
             securityKey = signature,
         )
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private val job =
+        GlobalScope.launch {
+            val serverSocket =
+                aSocket(ActorSelectorManager(Dispatchers.IO))
+                    .tcp()
+                    .bind(InetSocketAddress("localhost", clientSocketConfiguration.devicePort))
+
+            while (true) {
+                val socket = serverSocket.accept()
+
+                val input = socket.openReadChannel()
+                val output = socket.openWriteChannel(autoFlush = true)
+
+                try {
+                    val buffer = ByteArray(1024)
+                    val bytesRead = input.readAvailable(buffer)
+
+                    if (bytesRead > 0) {
+                        val requestEnvelope = Envelope.parseFrom(buffer.copyOf(bytesRead))
+                        val mockedCall = mockQueue.pop()
+
+                        val responseMessage = mockedCall.handler(requestEnvelope)
+                        val responseEnvelope = toEnvelope(responseMessage)
+
+                        output.writeFully(responseEnvelope.getBytes())
+                        mockedCall.capturedRequest.set(requestEnvelope)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    socket.close()
+                }
+            }
+        }
+
+    data class DeviceCallMock(
+        val handler: (requestEnvelope: Envelope) -> Oslp.Message,
+    ) {
+        val capturedRequest: AtomicReference<Envelope> = AtomicReference()
     }
 }

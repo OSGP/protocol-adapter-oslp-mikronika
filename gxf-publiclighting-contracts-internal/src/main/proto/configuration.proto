@@ -1,0 +1,137 @@
+// SPDX-FileCopyrightText: Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+edition = "2024";
+
+package org.lfenergy.gxf.publiclighting.contracts.internal.configuration;
+
+message Configuration {
+  RelayConfiguration relay_configuration = 1;
+  DeviceAddressConfiguration device_address_configuration = 2;
+  PlatformAddressConfiguration platform_address_configuration = 3;
+  CommunicationConfiguration communication_configuration = 4;
+  DaylightSavingsTimeConfiguration daylight_savings_time_configuration = 5;
+  AstronomicalOffsetsConfiguration astronomical_offsets_configuration = 6;
+
+  LightType light_type = 7;
+  // Is the test button enabled for this device?
+  bool test_button_enabled = 8 [default = true];
+  // Time synchronization frequency (seconds)
+  uint32 time_sync_frequency = 9 [default = 86400];
+  // Switching delay (seconds) (array of 4 values, default 0, 0, 0, 0)
+  repeated uint32 switching_delay = 10;
+}
+
+message AstronomicalOffsetsConfiguration {
+  // The calculated sunrise time modified by this value
+  // Time is moved earlier (if offset is negative) or later (if offset is positive). In seconds
+  sint32 sunrise_offset = 1 [default = 0];
+  // The calculated sunset time modified by this value
+  // Time is moved earlier (if offset is negative) or later (if offset is positive). In seconds
+  sint32 sunset_offset = 2 [default = 0];
+}
+
+message CommunicationConfiguration {
+  LinkType preferred_link_type = 1;
+  // Communication Timeouts (seconds)
+  uint32 connection_timeout = 2 [default = 20];
+  // Communication number of retries
+  uint32 number_of_retries = 3 [default = 3];
+  // Time between communication attempts (seconds)
+  uint32 delay_between_connection_attempts = 4 [default = 60];
+}
+
+message DaylightSavingsTimeConfiguration{
+  // Is the automatic summer timing enabled for this device?
+  bool automatic_summer_timing_enabled = 1 [default = true];
+  // The time point for DST for Europe is not identical in every country.
+  // It should be added as parameters the weekday, month and time point for DST/summer and winter.
+  //[default = '0360100', length = 7];
+  string summer_time_details = 2 [default = '0360100'];
+  // The time point for DST for Europe is not identical in every country.
+  // It should be added as parameters the weekday, month and time point for DST/summer and winter.
+  //[default = '1060200', length = 7];
+  string winter_time_details = 3 [default = '1060200'];
+}
+
+message DeviceAddressConfiguration {
+  // The fixed IP address of this device (4 bytes)
+  bytes ip_address = 1;
+  // Network mask for fixed IP address (4 bytes)
+  bytes net_mask = 2;
+  // Gateway address for fixed IP address (4 bytes)
+  bytes gateway = 3;
+  // Is DHCP enabled for this device?
+  bool dhcp_enabled = 4 [default = true];
+}
+
+message PlatformAddressConfiguration {
+  // The IP address of the platform (4 bytes)
+  bytes ip_address = 1;
+  // The port number of the platform
+  uint32 port_number = 2;
+}
+
+message RelayConfiguration {
+  // Relay mapping is the mapping between external relay index and internal relay address
+  RelayMapping relay_mapping = 1;
+  // Relay linking is a software linking, to may link each relay with each other relay. It is a matrix.
+  // Example, if relay 1 is linked with relay 3, if relay 1 will be switched (by OSGP or local by internal scheduler),
+  // the relay 3 will switch automatically (on or off, as it set) without new command
+  RelayLinking relay_linking = 2;
+  // Is relay refreshing enabled for this device?
+  // Set minutely the nominal relay state and status according to active schedule
+  // after power outage and missed switching or anti manipulation.
+  bool relay_refreshing_enabled = 3 [default = true];
+}
+
+message RelayLinking {
+  // Max 6 relay link matrices
+  repeated RelayLinkMatrix relay_link_matrix = 1;
+}
+
+message RelayLinkMatrix {
+  // Index number of the master relay, size 1 byte
+  bytes master_relay_index = 1;
+  // If master relay is switched ON, the controlled relays will be switched as per below
+  bool master_relay_on = 2;
+  // Indices of output relays to switch ON if master relay state changes as determined by master relay on, size 4 bytes
+  bytes indices_of_controlled_relays_on = 3;
+  // Indices of output relays to switch OFF if master relay state changes as determined by master relay off, size 4 bytes
+  bytes indices_of_controlled_relays_off = 4;
+}
+
+message RelayMap {
+  // External index, for example 1 (size 1 byte)
+  bytes index = 1;
+  // Internal address, for example 2 (size 1 byte)
+  bytes address = 2;
+  RelayType relay_type = 3;
+}
+
+message RelayMapping {
+  // Max 6 relays
+  repeated RelayMap relay_map = 1;
+}
+
+enum LightType {
+  LIGHT_TYPE_NOT_SET = 0;
+  RELAY = 1;
+  ONE_TO_TEN_VOLT = 2;
+  ONE_TO_TEN_VOLT_REVERSE = 3;
+  DALI = 4;
+}
+
+enum LinkType {
+  LINK_TYPE_NOT_SET = 0;
+  GPRS = 1;
+  CDMA = 2;
+  ETHERNET = 3;
+}
+
+enum RelayType {
+  RELAY_TYPE_NOT_SET = 0;
+  LIGHT = 1;
+  TARIFF = 2;
+}

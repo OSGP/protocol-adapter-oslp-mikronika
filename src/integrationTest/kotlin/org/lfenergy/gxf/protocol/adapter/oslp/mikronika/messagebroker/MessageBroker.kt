@@ -9,25 +9,63 @@ import org.assertj.core.api.Assertions.assertThat
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_EVENTS_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION_HEADER
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_REQUEST_QUEUE
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_RESPONSE_QUEUE
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class MessageBroker(
-    val jmsTemplate: JmsTemplate,
+    val deviceNotificationJmsTemplate: JmsTemplate,
+    val deviceRequestJmsTemplate: JmsTemplate,
 ) {
     @PostConstruct
     fun initialize() {
-        jmsTemplate.receiveTimeout = 2000
+        deviceNotificationJmsTemplate.receiveTimeout = 2000
+        deviceRequestJmsTemplate.receiveTimeout = 2000
+    }
+
+    fun sendDeviceRequestMessage(request: DeviceRequestMessage) {
+        deviceRequestJmsTemplate.send(DEVICE_REQUEST_QUEUE) { session ->
+            val msg = session.createBytesMessage()
+            msg.jmsType = request.header.requestType.name
+            msg.jmsCorrelationID = request.header.correlationUid
+            msg.setStringProperty("DeviceIdentification", request.header.deviceIdentification)
+            msg.writeBytes(request.toByteArray())
+            msg
+        }
+    }
+
+    fun receiveDeviceResponseMessage(
+        expectedDeviceIdentification: String,
+        expectedResponseType: ResponseType,
+    ): DeviceResponseMessage {
+        val bytesMessage = deviceRequestJmsTemplate.receive(DEVICE_RESPONSE_QUEUE) as BytesMessage?
+
+        assertThat(bytesMessage).isNotNull
+        assertThat(bytesMessage!!.jmsType).isEqualTo(expectedResponseType.name)
+        assertThat(bytesMessage.getStringProperty(DEVICE_IDENTIFICATION_HEADER)).isEqualTo(expectedDeviceIdentification)
+
+        val responseMessage = bytesMessage.toDeviceResponseMessage()
+        with(responseMessage.header) {
+            assertThat(this).isNotNull
+            assertThat(deviceIdentification).isEqualTo(expectedDeviceIdentification)
+            assertThat(responseType).isEqualTo(expectedResponseType)
+            assertThat(deviceType).isEqualTo(DEVICE_TYPE)
+        }
+        return responseMessage
     }
 
     fun receiveDeviceEventMessage(
         expectedDeviceIdentification: String,
         expectedEventType: EventType,
     ): DeviceEventMessage {
-        val bytesMessage = jmsTemplate.receive(DEVICE_EVENTS_QUEUE) as BytesMessage?
+        val bytesMessage = deviceNotificationJmsTemplate.receive(DEVICE_EVENTS_QUEUE) as BytesMessage?
 
         assertThat(bytesMessage).isNotNull
         assertThat(bytesMessage!!.jmsType).isEqualTo(expectedEventType.name)
@@ -41,6 +79,12 @@ class MessageBroker(
             assertThat(deviceType).isEqualTo(DEVICE_TYPE)
         }
         return eventMessage
+    }
+
+    private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage {
+        val bytes = ByteArray(this.bodyLength.toInt())
+        this.readBytes(bytes)
+        return DeviceResponseMessage.parseFrom(bytes)
     }
 
     private fun BytesMessage.toDeviceEventMessage(): DeviceEventMessage {

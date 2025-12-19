@@ -40,7 +40,8 @@ message DeviceNotificationReceivedEvent {
 
 enum EventType {
   DEVICE_REGISTRATION = 0;
-  DEVICE_NOTIFICATION = 1;
+  DEVICE_REGISTRATION_CONFIRMATION = 1;
+  DEVICE_NOTIFICATION = 2;
 }
 
 enum NotificationType {

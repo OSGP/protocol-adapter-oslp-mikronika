@@ -111,6 +111,7 @@ testing {
                 implementation(libs.awaitility)
                 implementation(libs.oslpMessageSigning)
                 implementation(libs.pooledJms)
+                implementation(libs.ktor)
                 implementation(libs.protobufKotlin)
                 implementation(libs.protoDefinitions)
                 implementation(libs.springBootStarterArtemis)

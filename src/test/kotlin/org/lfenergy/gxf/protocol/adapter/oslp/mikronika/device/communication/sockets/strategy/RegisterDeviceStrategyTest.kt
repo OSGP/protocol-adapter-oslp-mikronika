@@ -23,6 +23,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mik
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.RegisterDeviceStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.opensmartgridplatform.oslp.Oslp
@@ -62,7 +63,7 @@ class RegisterDeviceStrategyTest {
         verify {
             eventPublisher.publishEvent(
                 withArg { it: DeviceRegistrationReceivedEvent ->
-                    it.deviceIdentification == mikronikaDevice.deviceIdentification
+                    assertThat(it.deviceIdentification).isEqualTo(mikronikaDevice.deviceIdentification)
                 },
             )
         }

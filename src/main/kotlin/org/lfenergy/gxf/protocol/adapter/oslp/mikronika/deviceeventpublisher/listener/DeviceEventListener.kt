@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.listener
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.domain.DeviceEventMessageMapper.toDeviceEventMessage
@@ -21,18 +22,19 @@ class DeviceEventListener(
     @Async
     @EventListener
     fun handleDeviceEvent(event: DeviceNotificationReceivedEvent) {
-        logger.info {
-            "Received device notification event with correlation uid: ${event.correlationUid} for device: ${event.deviceIdentification}"
-        }
+        log(event)
         deviceEventMessageSender.send(event.toDeviceEventMessage())
     }
 
     @Async
     @EventListener
     fun handleDeviceEvent(event: DeviceRegistrationReceivedEvent) {
-        logger.info {
-            "Received device registration event with correlation uid: ${event.correlationUid} for device: ${event.deviceIdentification}"
-        }
+        log(event)
         deviceEventMessageSender.send(event.toDeviceEventMessage())
     }
+
+    private fun log(event: DeviceEvent) =
+        logger.info {
+            "Received ${event.javaClass.simpleName} with correlation uid: ${event.correlationUid} for device: ${event.deviceIdentification}"
+        }
 }

@@ -19,6 +19,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mik
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.EventNotificationRequestStrategy
 import org.springframework.context.ApplicationEventPublisher
 
 @ExtendWith(MockKExtension::class)

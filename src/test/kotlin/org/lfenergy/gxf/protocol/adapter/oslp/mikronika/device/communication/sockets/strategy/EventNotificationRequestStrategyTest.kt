@@ -18,6 +18,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.EventNotificationRequestStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import org.opensmartgridplatform.oslp.Oslp
@@ -71,11 +72,11 @@ class EventNotificationRequestStrategyTest {
         verify(exactly = 1) {
             eventPublisher.publishEvent(
                 withArg { it: DeviceNotificationReceivedEvent ->
-                    it.deviceIdentification == mikronikaDevice.deviceIdentification
-                    it.eventType == DeviceNotificationType.DIAG_EVENTS_GENERAL
-                    it.description == EVENT_DESCRIPTION
-                    it.dateTime.format(formatter) == EVENT_DATETIME
-                    it.index == null
+                    assertThat(it.deviceIdentification).isEqualTo(mikronikaDevice.deviceIdentification)
+                    assertThat(it.eventType).isEqualTo(DeviceNotificationType.DIAG_EVENTS_GENERAL)
+                    assertThat(it.description).isEqualTo(EVENT_DESCRIPTION)
+                    assertThat(it.dateTime.format(formatter)).isEqualTo(EVENT_DATETIME)
+                    assertThat(it.index).isNull()
                 },
             )
         }
