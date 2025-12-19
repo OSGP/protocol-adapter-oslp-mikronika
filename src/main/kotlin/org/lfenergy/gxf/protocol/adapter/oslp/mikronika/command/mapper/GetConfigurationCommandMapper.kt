@@ -29,7 +29,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LinkType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = GET_CONFIGURATION_REQUEST)
-class GetConfigurationCommandMapper : CommandMapper() {
+class GetConfigurationCommandMapper : CommandMapper {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress

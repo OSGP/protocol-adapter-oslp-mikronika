@@ -9,10 +9,10 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.Device
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 
-abstract class CommandMapper {
-    abstract fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest
+interface CommandMapper {
+    fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest
 
-    abstract fun toResponse(
+    fun toResponse(
         requestHeader: RequestHeader,
         envelope: Envelope,
     ): DeviceResponseMessage

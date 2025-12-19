@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = RESUME_SCHEDULE_REQUEST)
-class ResumeScheduleCommandMapper : CommandMapper() {
+class ResumeScheduleCommandMapper : CommandMapper {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress

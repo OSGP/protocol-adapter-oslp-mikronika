@@ -18,7 +18,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getFi
 import org.springframework.stereotype.Component
 
 @Component(value = GET_FIRMWARE_VERSION_REQUEST)
-class GetFirmwareVersionCommandMapper : CommandMapper() {
+class GetFirmwareVersionCommandMapper : CommandMapper {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
 
 @Component(value = SET_EVENT_NOTIFICATION_MASK_REQUEST)
-class SetEventNotificationMaskCommandMapper : CommandMapper() {
+class SetEventNotificationMaskCommandMapper : CommandMapper {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
         val deviceIdentification = requestMessage.header.deviceIdentification
         val networkAddress = requestMessage.header.networkAddress
