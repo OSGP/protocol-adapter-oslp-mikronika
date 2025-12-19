@@ -27,7 +27,7 @@ class SetConfigurationCommandIntegrationTest : CommandIntegrationTest() {
         val input =
             deviceRequestMessage {
                 header = createHeader(RequestType.SET_CONFIGURATION_REQUEST)
-                setConfigurationCommand =
+                setConfigurationRequest =
                     setConfigurationRequest {
                         configuration =
                             configuration {

@@ -25,7 +25,7 @@ class SetConfigurationCommandMapper : CommandMapper() {
         return SetConfigurationRequest(
             deviceIdentification,
             networkAddress,
-            requestMessage.setConfigurationCommand,
+            requestMessage.setConfigurationRequest,
         )
     }
 

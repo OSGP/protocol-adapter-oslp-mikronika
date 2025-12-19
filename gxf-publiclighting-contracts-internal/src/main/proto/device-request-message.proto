@@ -19,7 +19,7 @@ message DeviceRequestMessage {
     ResumeScheduleRequest resume_schedule_request = 4;
     SetTransitionRequest set_transition_request = 5;
     SetEventNotificationMaskRequest set_event_notification_mask_request = 6;
-    SetConfigurationRequest set_configuration_command = 7;
+    SetConfigurationRequest set_configuration_request = 7;
   }
 }
 

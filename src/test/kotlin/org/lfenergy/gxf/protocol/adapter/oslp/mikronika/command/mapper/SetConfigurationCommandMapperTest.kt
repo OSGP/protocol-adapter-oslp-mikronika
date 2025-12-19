@@ -31,7 +31,7 @@ class SetConfigurationCommandMapperTest {
         val deviceRequestMessage =
             deviceRequestMessage {
                 header = requestHeader
-                setConfigurationCommand =
+                setConfigurationRequest =
                     setConfigurationRequest {
                         configuration =
                             configuration {

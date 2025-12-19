@@ -14,7 +14,6 @@ message Configuration {
   DaylightSavingsTimeConfiguration daylight_savings_time_configuration = 5;
   AstronomicalOffsetsConfiguration astronomical_offsets_configuration = 6;
 
-  // Probably not needed here? Will always be RELAY in our current devices
   LightType light_type = 7;
   // Is the test button enabled for this device?
   bool test_button_enabled = 8 [default = true];
