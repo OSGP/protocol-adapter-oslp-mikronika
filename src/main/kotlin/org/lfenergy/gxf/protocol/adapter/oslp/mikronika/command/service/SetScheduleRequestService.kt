@@ -62,17 +62,19 @@ class SetScheduleRequestService(
             requestMessage.header.deviceIdentification,
             requestMessage.header.networkAddress,
             setConfigurationRequest {
-                configuration {
-                    astronomicalOffsetsConfiguration {
-                        val scheduleReq = requestMessage.setScheduleRequest
-                        if (scheduleReq.hasAstronomicalSunsetOffset()) {
-                            sunsetOffset = scheduleReq.astronomicalSunsetOffset
-                        }
-                        if (scheduleReq.hasAstronomicalSunriseOffset()) {
-                            sunriseOffset = scheduleReq.astronomicalSunriseOffset
-                        }
+                configuration =
+                    configuration {
+                        astronomicalOffsetsConfiguration =
+                            astronomicalOffsetsConfiguration {
+                                val scheduleReq = requestMessage.setScheduleRequest
+                                if (scheduleReq.hasAstronomicalSunsetOffset()) {
+                                    sunsetOffset = scheduleReq.astronomicalSunsetOffset
+                                }
+                                if (scheduleReq.hasAstronomicalSunriseOffset()) {
+                                    sunriseOffset = scheduleReq.astronomicalSunriseOffset
+                                }
+                            }
                     }
-                }
             },
         )
 }

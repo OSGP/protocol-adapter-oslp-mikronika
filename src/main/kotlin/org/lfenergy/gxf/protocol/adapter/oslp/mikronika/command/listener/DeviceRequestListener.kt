@@ -19,7 +19,7 @@ class DeviceRequestListener(
     private val logger = KotlinLogging.logger {}
 
     @JmsListener(
-        destination = "gxf.publiclighting.oslp-mikronika.device-requests",
+        destination = $$"${commands.consumer.inbound-queue}",
         containerFactory = "deviceRequestJmsListenerContainerFactory",
     )
     fun onMessage(bytesMessage: BytesMessage) {

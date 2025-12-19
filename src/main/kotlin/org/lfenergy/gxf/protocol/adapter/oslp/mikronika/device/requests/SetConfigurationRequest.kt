@@ -64,7 +64,7 @@ class SetConfigurationRequest(
                     communicationTimeout = setConfigRequest.communicationConfiguration.connectionTimeout
                     communicationNumberOfRetries = setConfigRequest.communicationConfiguration.numberOfRetries
                     communicationPauseTimeBetweenConnectionTrials =
-                        setConfigRequest.communicationConfiguration.numberOfRetries
+                        setConfigRequest.communicationConfiguration.delayBetweenConnectionAttempts
                     isAutomaticSummerTimingEnabled =
                         setConfigRequest.daylightSavingsTimeConfiguration.automaticSummerTimingEnabled
                     summerTimeDetails = setConfigRequest.daylightSavingsTimeConfiguration.summerTimeDetails
