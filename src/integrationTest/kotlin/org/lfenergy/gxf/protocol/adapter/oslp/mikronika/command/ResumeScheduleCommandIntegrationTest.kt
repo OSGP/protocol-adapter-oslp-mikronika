@@ -31,7 +31,6 @@ class ResumeScheduleCommandIntegrationTest : CommandIntegrationTest() {
                     resumeScheduleRequest {
                         immediate = true
                         index = RelayIndex.RELAY_ONE
-                        indexValue = 0
                     }
             }
 
