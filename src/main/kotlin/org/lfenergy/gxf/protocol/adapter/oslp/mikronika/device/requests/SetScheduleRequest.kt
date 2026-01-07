@@ -5,6 +5,8 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import com.google.protobuf.kotlin.toByteString
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.LightValue
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.ScheduleEntry
 import org.opensmartgridplatform.oslp.Oslp
@@ -16,13 +18,13 @@ import org.opensmartgridplatform.oslp.setScheduleRequest
 import org.opensmartgridplatform.oslp.window
 
 class SetScheduleRequest(
-    deviceIdentification: String,
-    networkAddress: String,
+    device: Device,
+    organisation: Organisation,
     val scheduleEntries: List<ScheduleEntry>,
     val pageInfo: PageInfo,
 ) : DeviceRequest(
-        deviceIdentification,
-        networkAddress,
+        device,
+        organisation,
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {

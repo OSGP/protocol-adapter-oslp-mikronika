@@ -7,14 +7,17 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.NETWORK_ADDRESS
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.ORGANIZATION_IDENTIFICATION
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
 
 class StartSelfTestRequestTest {
     @Test
     fun `should map correctly`() {
         val subject =
             StartSelfTestRequest(
-                DEVICE_IDENTIFICATION,
-                NETWORK_ADDRESS,
+                Device(DEVICE_IDENTIFICATION, NETWORK_ADDRESS),
+                Organisation(ORGANIZATION_IDENTIFICATION),
             )
 
         val result = subject.toOslpMessage()

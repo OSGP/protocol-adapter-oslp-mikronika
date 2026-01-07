@@ -8,6 +8,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetEventNotificationMaskRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
@@ -18,16 +20,15 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 
 @Component(value = SET_EVENT_NOTIFICATION_MASK_REQUEST)
 class SetEventNotificationMaskCommandMapper : CommandMapper {
-    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
-        val deviceIdentification = requestMessage.header.deviceIdentification
-        val networkAddress = requestMessage.header.networkAddress
-
-        return SetEventNotificationMaskRequest(
-            deviceIdentification,
-            networkAddress,
+    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
+        SetEventNotificationMaskRequest(
+            Device(
+                requestMessage.header.deviceIdentification,
+                requestMessage.header.networkAddress,
+            ),
+            Organisation(requestMessage.header.organizationIdentification),
             requestMessage.setEventNotificationMaskRequest.notificationTypesList.sumOf { it.number },
         )
-    }
 
     override fun toResponse(
         requestHeader: RequestHeader,

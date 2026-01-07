@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+edition = "2024";
+
+package org.lfenergy.gxf.publiclighting.contracts.internal.audittrail;
+
+message LogItemMessage {
+  MessageType message_type = 1;
+  string organization_identification = 2;
+  string device_identification = 4;
+  bytes raw_data = 5;
+  int32 raw_data_size = 6;
+  bool is_valid = 7;
+}
+
+enum MessageType {
+  FROM_DEVICE = 0;
+  TO_DEVICE = 1;
+}

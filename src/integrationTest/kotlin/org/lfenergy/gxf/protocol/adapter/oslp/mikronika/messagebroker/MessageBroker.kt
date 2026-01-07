@@ -7,10 +7,13 @@ import jakarta.annotation.PostConstruct
 import jakarta.jms.BytesMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.AUDIT_LOG_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_EVENTS_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION_HEADER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_REQUEST_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_RESPONSE_QUEUE
+import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.LogItemMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
@@ -23,11 +26,13 @@ import org.springframework.stereotype.Component
 class MessageBroker(
     val deviceNotificationJmsTemplate: JmsTemplate,
     val deviceRequestJmsTemplate: JmsTemplate,
+    val auditLoggingJmsTemplate: JmsTemplate,
 ) {
     @PostConstruct
     fun initialize() {
         deviceNotificationJmsTemplate.receiveTimeout = 2000
         deviceRequestJmsTemplate.receiveTimeout = 2000
+        auditLoggingJmsTemplate.receiveTimeout = 2000
     }
 
     fun sendDeviceRequestMessage(request: DeviceRequestMessage) {
@@ -81,15 +86,32 @@ class MessageBroker(
         return eventMessage
     }
 
-    private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage {
-        val bytes = ByteArray(this.bodyLength.toInt())
-        this.readBytes(bytes)
-        return DeviceResponseMessage.parseFrom(bytes)
+    fun receiveLogItemMessage(
+        expectedDeviceIdentification: String,
+        expectedMessageType: MessageType,
+    ): LogItemMessage {
+        val bytesMessage = auditLoggingJmsTemplate.receive(AUDIT_LOG_QUEUE) as BytesMessage?
+        assertThat(bytesMessage).isNotNull
+        assertThat(bytesMessage!!.jmsType).isEqualTo(expectedMessageType.name)
+        assertThat(bytesMessage.getStringProperty(DEVICE_IDENTIFICATION_HEADER)).isEqualTo(expectedDeviceIdentification)
+
+        val logItemMessage = bytesMessage.toLogItemMessage()
+        with(logItemMessage) {
+            assertThat(this).isNotNull
+            assertThat(deviceIdentification).isEqualTo(expectedDeviceIdentification)
+            assertThat(messageType).isEqualTo(expectedMessageType)
+        }
+        return logItemMessage
     }
 
-    private fun BytesMessage.toDeviceEventMessage(): DeviceEventMessage {
-        val bytes = ByteArray(this.bodyLength.toInt())
-        this.readBytes(bytes)
-        return DeviceEventMessage.parseFrom(bytes)
-    }
+    private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage = DeviceResponseMessage.parseFrom(this.data())
+
+    private fun BytesMessage.toDeviceEventMessage(): DeviceEventMessage = DeviceEventMessage.parseFrom(this.data())
+
+    private fun BytesMessage.toLogItemMessage(): LogItemMessage = LogItemMessage.parseFrom(this.data())
+
+    private fun BytesMessage.data(): ByteArray =
+        ByteArray(this.bodyLength.toInt()).also {
+            this.readBytes(it)
+        }
 }

@@ -3,18 +3,20 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
 import org.opensmartgridplatform.oslp.setTransitionRequest
 
 class SetTransitionRequest(
-    deviceIdentification: String,
-    networkAddress: String,
+    device: Device,
+    organisation: Organisation,
     val transitionType: TransitionType,
     val time: String,
 ) : DeviceRequest(
-        deviceIdentification,
-        networkAddress,
+        device,
+        organisation,
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {

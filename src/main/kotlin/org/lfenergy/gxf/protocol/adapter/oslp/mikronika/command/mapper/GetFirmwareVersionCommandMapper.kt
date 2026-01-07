@@ -8,6 +8,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetFirmwareVersionRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
@@ -19,15 +21,14 @@ import org.springframework.stereotype.Component
 
 @Component(value = GET_FIRMWARE_VERSION_REQUEST)
 class GetFirmwareVersionCommandMapper : CommandMapper {
-    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
-        val deviceIdentification = requestMessage.header.deviceIdentification
-        val networkAddress = requestMessage.header.networkAddress
-
-        return GetFirmwareVersionRequest(
-            deviceIdentification,
-            networkAddress,
+    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
+        GetFirmwareVersionRequest(
+            Device(
+                requestMessage.header.deviceIdentification,
+                requestMessage.header.networkAddress,
+            ),
+            Organisation(requestMessage.header.organizationIdentification),
         )
-    }
 
     override fun toResponse(
         requestHeader: RequestHeader,
