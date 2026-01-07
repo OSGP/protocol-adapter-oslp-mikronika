@@ -75,6 +75,10 @@ class Device(
         mockQueue.push(deviceCallMock)
     }
 
+    fun clearMocks() {
+        mockQueue.clear()
+    }
+
     private fun deviceRegistrationRequestMessage() =
         Oslp.Message
             .newBuilder()

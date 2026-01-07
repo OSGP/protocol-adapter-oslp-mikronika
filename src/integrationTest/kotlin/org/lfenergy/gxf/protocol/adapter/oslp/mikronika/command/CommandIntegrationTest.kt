@@ -30,6 +30,7 @@ abstract class CommandIntegrationTest {
 
     @BeforeEach
     fun setup() {
+        device.clearMocks()
         adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, device.publicKey)
     }
 }

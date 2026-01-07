@@ -22,7 +22,7 @@ import org.opensmartgridplatform.oslp.message
 import org.springframework.beans.factory.annotation.Autowired
 import org.testcontainers.activemq.ArtemisContainer
 
-class AuditLoggingTest : CommandIntegrationTest() {
+class AuditLoggingIntegrationTest : CommandIntegrationTest() {
     @Autowired
     private lateinit var artemisContainer: ArtemisContainer
 
