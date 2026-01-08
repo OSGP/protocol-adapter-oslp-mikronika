@@ -4,9 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging
 
 import com.google.protobuf.ByteString
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.CommandIntegrationTest
@@ -16,22 +14,12 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
 import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.getConfigurationResponse
 import org.opensmartgridplatform.oslp.message
-import org.springframework.beans.factory.annotation.Autowired
-import org.testcontainers.activemq.ArtemisContainer
 
 class AuditLoggingIntegrationTest : CommandIntegrationTest() {
-    @Autowired
-    private lateinit var artemisContainer: ArtemisContainer
-
-    @BeforeEach
-    @AfterEach
-    fun clearQueues() {
-//        artemisContainer.execInContainer("/bin/sh", "-c", "artemis", "queue", "purge", "--name", "gxf.publiclighting.oslp-mikronika.audit-log")
-//        artemisContainer.execInContainer("/bin/sh", "-c", "artemis", "queue", "purge", "--name", "gxf.publiclighting.oslp-mikronika.device-responses")
-    }
 
     @Test
     fun `should send log item messages when sending command`() {
@@ -42,6 +30,10 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
 
         device.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
+        messageBroker.receiveDeviceResponseMessage(
+            DEVICE_IDENTIFICATION,
+            ResponseType.GET_CONFIGURATION_RESPONSE,
+        )
 
         messageBroker
             .receiveLogItemMessage(
