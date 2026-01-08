@@ -17,7 +17,7 @@ class AuditLoggingService(
         rawData: ByteArray,
         isValid: Boolean,
     ) {
-        logIncommingMessage(
+        logIncomingMessage(
             device,
             rawData,
             isValid,
@@ -52,7 +52,7 @@ class AuditLoggingService(
         rawData: ByteArray,
         isValid: Boolean,
     ) {
-        logIncommingMessage(
+        logIncomingMessage(
             device,
             rawData,
             isValid,
@@ -79,7 +79,7 @@ class AuditLoggingService(
         auditLoggingClient.sendLogItem(auditLog)
     }
 
-    private fun logIncommingMessage(
+    private fun logIncomingMessage(
         device: Device,
         rawData: ByteArray,
         isValid: Boolean,
