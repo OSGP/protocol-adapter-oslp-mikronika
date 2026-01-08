@@ -39,7 +39,7 @@ import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
 
 @Component
-class Device(
+class DeviceSimulator(
     private val signingUtil: SigningUtil,
     private val deviceKeyPair: KeyPair,
     private val serverSocketConfiguration: ServerSocketConfiguration,

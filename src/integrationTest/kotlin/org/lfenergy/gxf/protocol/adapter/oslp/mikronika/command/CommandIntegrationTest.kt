@@ -8,7 +8,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.ContainerConfigur
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.SecurityConfiguration
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.AdapterDatabase
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.messagebroker.MessageBroker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,11 +26,11 @@ abstract class CommandIntegrationTest {
     protected lateinit var messageBroker: MessageBroker
 
     @Autowired
-    protected lateinit var device: Device
+    protected lateinit var deviceSimulator: DeviceSimulator
 
     @BeforeEach
     fun setup() {
-        device.clearMocks()
-        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, device.publicKey)
+        deviceSimulator.clearMocks()
+        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, deviceSimulator.publicKey)
     }
 }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
@@ -27,7 +27,7 @@ class SetRebootCommandIntegrationTest : CommandIntegrationTest() {
                 header = createHeader(RequestType.REBOOT_REQUEST)
             }
 
-        device.addMock(okMock)
+        deviceSimulator.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result: DeviceResponseMessage =
@@ -51,7 +51,7 @@ class SetRebootCommandIntegrationTest : CommandIntegrationTest() {
                 header = createHeader(RequestType.REBOOT_REQUEST)
             }
 
-        device.addMock(rejectedMock)
+        deviceSimulator.addMock(rejectedMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -69,7 +69,7 @@ class SetRebootCommandIntegrationTest : CommandIntegrationTest() {
     }
 
     private val okMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setRebootResponse =
                     setRebootResponse {
@@ -79,7 +79,7 @@ class SetRebootCommandIntegrationTest : CommandIntegrationTest() {
         }
 
     private val rejectedMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setRebootResponse =
                     setRebootResponse {

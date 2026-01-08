@@ -11,7 +11,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.FIRMWARE_VERSION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
@@ -28,7 +28,7 @@ class GetFirmwareVersionCommandIntegrationTest : CommandIntegrationTest() {
                 header = createHeader(RequestType.GET_FIRMWARE_VERSION_REQUEST)
             }
 
-        device.addMock(okMock)
+        deviceSimulator.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result: DeviceResponseMessage =
@@ -48,7 +48,7 @@ class GetFirmwareVersionCommandIntegrationTest : CommandIntegrationTest() {
     }
 
     private val okMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 getFirmwareVersionResponse =
                     getFirmwareVersionResponse {
