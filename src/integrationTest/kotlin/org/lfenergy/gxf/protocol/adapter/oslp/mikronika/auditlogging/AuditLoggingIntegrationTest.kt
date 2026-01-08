@@ -15,7 +15,6 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.getConfigurationResponse
 import org.opensmartgridplatform.oslp.message
@@ -30,10 +29,6 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
 
         deviceSimulator.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
-        messageBroker.receiveDeviceResponseMessage(
-            DEVICE_IDENTIFICATION,
-            ResponseType.GET_CONFIGURATION_RESPONSE,
-        )
 
         messageBroker
             .receiveLogItemMessage(

@@ -19,8 +19,15 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventTyp
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
+import org.testcontainers.activemq.ArtemisContainer
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.util.Base64
 
 @Component
 class MessageBroker(
@@ -28,6 +35,9 @@ class MessageBroker(
     val deviceRequestJmsTemplate: JmsTemplate,
     val auditLoggingJmsTemplate: JmsTemplate,
 ) {
+    @Autowired
+    private lateinit var artemisContainer: ArtemisContainer
+
     @PostConstruct
     fun initialize() {
         deviceNotificationJmsTemplate.receiveTimeout = 2000
@@ -104,6 +114,34 @@ class MessageBroker(
         return logItemMessage
     }
 
+    fun purgeQueues() {
+        purgeQueue(DEVICE_REQUEST_QUEUE)
+        purgeQueue(DEVICE_RESPONSE_QUEUE)
+        purgeQueue(AUDIT_LOG_QUEUE)
+        purgeQueue(DEVICE_EVENTS_QUEUE)
+    }
+
+    private fun purgeQueue(queueName: String) {
+        val port = artemisContainer.getMappedPort(8161)
+        val client = HttpClient.newHttpClient()
+        val url = "http://localhost:$port/console/jolokia"
+        val json = jsonPurgeCommandForQueue(queueName)
+        val auth = Base64.getEncoder().encodeToString("artemis:artemis".toByteArray())
+
+        val request =
+            HttpRequest
+                .newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Origin", "http://localhost")
+                .header("Authorization", "Basic $auth")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build()
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        println(response.body())
+    }
+
     private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage = DeviceResponseMessage.parseFrom(this.data())
 
     private fun BytesMessage.toDeviceEventMessage(): DeviceEventMessage = DeviceEventMessage.parseFrom(this.data())
@@ -114,4 +152,14 @@ class MessageBroker(
         ByteArray(this.bodyLength.toInt()).also {
             this.readBytes(it)
         }
+
+    private fun jsonPurgeCommandForQueue(queueName: String): String =
+        """
+        {
+          "type": "exec",
+          "mbean": "org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"$queueName\",subcomponent=queues,routing-type=\"anycast\",queue=\"$queueName\"",
+          "operation": "removeAllMessages()",
+          "arguments": []
+        }
+        """.trimIndent()
 }

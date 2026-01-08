@@ -32,5 +32,6 @@ abstract class CommandIntegrationTest {
     fun setup() {
         deviceSimulator.clearMocks()
         adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, deviceSimulator.publicKey)
+        messageBroker.purgeQueues()
     }
 }

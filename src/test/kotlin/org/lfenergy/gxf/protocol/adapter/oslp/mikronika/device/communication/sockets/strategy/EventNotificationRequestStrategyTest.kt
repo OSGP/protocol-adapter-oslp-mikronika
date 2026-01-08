@@ -14,6 +14,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
@@ -32,6 +33,9 @@ class EventNotificationRequestStrategyTest {
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
+
+    @MockK
+    private lateinit var auditLoggingService: AuditLoggingService
 
     @MockK
     private lateinit var eventPublisher: ApplicationEventPublisher

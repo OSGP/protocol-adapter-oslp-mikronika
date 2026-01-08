@@ -16,6 +16,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.coreDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
@@ -36,6 +37,9 @@ class RegisterDeviceStrategyTest {
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
+
+    @MockK(relaxed = true)
+    private lateinit var auditLoggingService: AuditLoggingService
 
     @MockK
     private lateinit var coreDeviceService: CoreDeviceService
