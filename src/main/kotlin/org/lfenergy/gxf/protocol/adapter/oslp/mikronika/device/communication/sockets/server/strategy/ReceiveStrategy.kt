@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
@@ -11,11 +12,13 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mod
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.opensmartgridplatform.oslp.Oslp.Message
 
 abstract class ReceiveStrategy(
     private val signingService: SigningService,
     private val mikronikaDeviceService: MikronikaDeviceService,
+    private val auditLoggingService: AuditLoggingService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -34,6 +37,13 @@ abstract class ReceiveStrategy(
         val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUid)
 
         if (!validateSignature(requestEnvelope, MikronikaDevicePublicKey(mikronikaDevice.publicKey))) return null
+
+        auditLoggingService.logMessageFromDevice(
+            Device(mikronikaDevice.deviceIdentification, ""),
+            requestEnvelope.messageBytes,
+            true,
+        )
+
         try {
             handle(requestEnvelope, mikronikaDevice)
         } catch (e: InvalidRequestException) {
@@ -41,6 +51,11 @@ abstract class ReceiveStrategy(
             return null
         }
         val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
+
+        auditLoggingService.logReplyToDevice(
+            Device(mikronikaDevice.deviceIdentification, ""),
+            responsePayload,
+        )
 
         return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload)
     }

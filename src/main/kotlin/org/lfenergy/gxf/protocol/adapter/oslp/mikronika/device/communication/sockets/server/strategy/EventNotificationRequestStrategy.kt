@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy
 
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
@@ -23,8 +24,9 @@ import java.time.format.DateTimeFormatter
 class EventNotificationRequestStrategy(
     signingService: SigningService,
     mikronikaDeviceService: MikronikaDeviceService,
+    auditLoggingService: AuditLoggingService,
     private val eventPublisher: ApplicationEventPublisher,
-) : ReceiveStrategy(signingService, mikronikaDeviceService) {
+) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
 
     override fun handle(
