@@ -17,7 +17,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exc
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.strategy.ConfirmRegisterDeviceStrategy.Companion.SEQUENCE_WINDOW
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.ConfirmRegisterDeviceStrategy
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.ConfirmRegisterDeviceStrategy.Companion.SEQUENCE_WINDOW
 import org.opensmartgridplatform.oslp.Oslp
 
 @ExtendWith(MockKExtension::class)

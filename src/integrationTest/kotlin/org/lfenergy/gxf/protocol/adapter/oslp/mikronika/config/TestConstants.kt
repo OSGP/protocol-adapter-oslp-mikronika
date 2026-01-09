@@ -11,6 +11,9 @@ object TestConstants {
     const val RANDOM_DEVICE = 12345
     const val RANDOM_PLATFORM = 67890
     const val NETWORK_ADDRESS = "127.0.0.1"
+    const val CORRELATION_UID = "19083029498y6asdljk"
+    const val DEVICE_TYPE = "SSLD"
+    const val ORGANIZATION_IDENTIFICATION = "LianderNetManagement"
 
     // Event Notification Test Constants
     const val EVENT_TYPE = "DIAG_EVENTS_GENERAL"
@@ -18,4 +21,7 @@ object TestConstants {
     const val EVENT_DESCRIPTION = "Just a test event"
 
     const val DEVICE_EVENTS_QUEUE = "gxf.publiclighting.oslp-mikronika.device-events"
+
+    const val DEVICE_REQUEST_QUEUE = "gxf.publiclighting.oslp-mikronika.device-requests"
+    const val DEVICE_RESPONSE_QUEUE = "gxf.publiclighting.oslp-mikronika.device-responses"
 }

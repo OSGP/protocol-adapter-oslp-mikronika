@@ -1,0 +1,171 @@
+// SPDX-FileCopyrightText: Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+edition = "2024";
+
+package org.lfenergy.gxf.publiclighting.contracts.internal.device_requests;
+
+import "google/protobuf/timestamp.proto";
+import "configuration.proto";
+
+message DeviceRequestMessage {
+  RequestHeader header = 1;
+
+  // Omitted when request does not contain any data
+  oneof payload {
+    SetLightRequest set_light_request = 2;
+    SetScheduleRequest set_schedule_request = 3;
+    ResumeScheduleRequest resume_schedule_request = 4;
+    SetTransitionRequest set_transition_request = 5;
+    SetEventNotificationMaskRequest set_event_notification_mask_request = 6;
+    SetConfigurationRequest set_configuration_request = 7;
+  }
+}
+
+message RequestHeader {
+  string correlation_uid = 1;
+  string device_identification = 2;
+  string device_type = 3;
+  string organization_identification = 4;
+  RequestType request_type = 5;
+  google.protobuf.Timestamp timestamp = 6;
+  string network_address = 7;
+  string domain = 8;
+  string domain_version = 9;
+  uint32 priority = 10;
+}
+
+enum RequestType {
+  GET_STATUS_REQUEST = 0;
+  SET_LIGHT_REQUEST = 1;
+  REBOOT_REQUEST = 2;
+  START_SELF_TEST_REQUEST = 3;
+  STOP_SELF_TEST_REQUEST = 4;
+  SET_SCHEDULE_REQUEST = 5;
+  RESUME_SCHEDULE_REQUEST = 6;
+  SET_TRANSITION_REQUEST = 7;
+  SET_EVENT_NOTIFICATION_MASK_REQUEST = 8;
+  GET_CONFIGURATION_REQUEST = 9;
+  SET_CONFIGURATION_REQUEST = 10;
+  GET_FIRMWARE_VERSION_REQUEST = 11;
+}
+
+message SetLightRequest {
+  repeated LightValue light_values = 1;
+}
+
+message SetScheduleRequest {
+  // Offset with respect to astronomical sunrise in minutes
+  int32 astronomical_sunrise_offset = 1;
+  // Offset with respect to astronomical sunset in minutes
+  int32 astronomical_sunset_offset = 2;
+  // List of schedule entries, maximum count of 50 entries
+  repeated ScheduleEntry schedule_entries = 3;
+}
+
+message ResumeScheduleRequest {
+  RelayIndex index = 1;
+  bool immediate = 2;
+}
+
+message SetTransitionRequest {
+  TransitionType transition_type = 1;
+  // Transition time in hhmmss UTC
+  string time = 2;
+}
+
+message SetEventNotificationMaskRequest {
+  repeated NotificationType notification_types = 1;
+}
+
+message SetConfigurationRequest {
+  org.lfenergy.gxf.publiclighting.contracts.internal.configuration.Configuration configuration = 1;
+}
+
+message LightValue {
+  RelayIndex index = 1;
+  bool light_on = 2;
+}
+
+message ScheduleEntry {
+  Weekday weekday = 1;
+  // Start day in YYYYMMDD UTC format
+  string start_day = 2;
+  // End day in YYYYMMDD UTC format
+  string end_day = 3;
+  ActionTime action_time = 4;
+  // Local time in hhmmss format, only set when action_time = ABSOLUTE_TIME
+  string time = 5;
+  // Window around astronomical sunset or sunrise in which switching based on a light sensor trigger is allowed
+  TriggerWindow window = 6;
+  // Maximum count of 6 light values
+  repeated LightValue value = 7;
+  // Switch on astronomical sunset or sunrise or light transition
+  TriggerType trigger_type = 8;
+  // Minimal time (in seconds) the lights should burn before deciding to switch the lights on,
+  // only set when action_time = ABSOLUTE_TIME
+  uint32 minimum_lights_on = 9;
+  // Index of schedule entry in the schedule list
+  uint32 index = 10;
+  // Is this schedule entry enabled?
+  bool is_enabled = 11;
+}
+
+message TriggerWindow {
+  uint32 minutes_before = 1;
+  uint32 minutes_after = 2;
+}
+
+enum TriggerType {
+  TT_NOT_SET = 0;
+  LIGHT_TRANSITION = 1;
+  ASTRONOMICAL = 2;
+}
+
+enum Weekday {
+  WEEKDAY_UNSPECIFIED = 0;
+  MONDAY = 1;
+  TUESDAY = 2;
+  WEDNESDAY = 3;
+  THURSDAY = 4;
+  FRIDAY = 5;
+  SATURDAY = 6;
+  SUNDAY = 7;
+  WEEKDAY = 8;
+  WEEKEND = 9;
+  ABSOLUTE_DAY = 10;
+  ALL_DAYS = 11;
+}
+
+enum ActionTime {
+  AT_UNSPECIFIED = 0;
+  ABSOLUTE_TIME = 1;
+  SUNRISE_TIME = 2;
+  SUNSET_TIME = 3;
+}
+
+enum RelayIndex{
+  ALL_RELAYS = 0;
+  RELAY_ONE = 1;
+  RELAY_TWO = 2;
+  RELAY_THREE = 3;
+  RELAY_FOUR = 4;
+}
+
+enum TransitionType {
+  SUNRISE = 0;
+  SUNSET = 1;
+}
+
+enum NotificationType {
+  NT_NOT_SET = 0;
+  DIAG_EVENTS = 1;
+  HARDWARE_FAILURE = 2;
+  LIGHT_EVENTS = 4;      // For example LightValue changes.
+  TARIFF_EVENTS = 8;     // For example Tariff changes.
+  MONITOR_EVENTS = 16;   // For example monitor buffer is almost full.
+  FIRMWARE_EVENTS = 32;  // For example firmware activation.
+  COMM_EVENTS = 64;      // For example alternative channel.
+  SECURITY_EVENTS = 128; // For example out of sequence.
+}

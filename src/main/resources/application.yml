@@ -49,3 +49,19 @@ device-events:
       delivery-persistent: true
       priority: 4
       time-to-live: 0
+
+client-socket:
+  device-port: 12122
+
+commands:
+  consumer:
+    inbound-queue: gxf.publiclighting.oslp-mikronika.device-requests
+    min-concurrency: 1
+    max-concurrency: 5
+  producer:
+    outbound-queue: gxf.publiclighting.oslp-mikronika.device-responses
+    quality-of-service:
+      explicit-qos-enabled: true
+      delivery-persistent: true
+      priority: 4
+      time-to-live: 0

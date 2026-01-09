@@ -8,10 +8,22 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNoti
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationType
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceRegistrationReceivedEvent
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.deviceeventpublisher.domain.DeviceEventMessageMapper.toProtobufTimestamp
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.relayConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.Header
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.NotificationType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setScheduleRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.getConfigurationResponse
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.responseHeader
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceNotificationReceivedEvent as ProtobufDeviceNotificationReceivedEvent
@@ -109,4 +121,90 @@ object TestObjects {
                     .setNetworkAddress(NETWORK_ADDRESS)
                     .setHasSchedule(HAS_SCHEDULE),
             ).build()
+
+    val deviceGetStatusRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.GET_STATUS_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+        }
+
+    val deviceSetScheduleRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.SET_SCHEDULE_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+        }
+
+    val deviceSetScheduleRequestMessageWithAstronomicalOffsets: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.SET_SCHEDULE_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+            setScheduleRequest =
+                setScheduleRequest {
+                    astronomicalSunsetOffset = 1
+                    astronomicalSunriseOffset = 1
+                }
+        }
+
+    val deviceGetConfigurationResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.GET_CONFIGURATION_RESPONSE
+                }
+            getConfigurationResponse {
+                configuration =
+                    configuration {
+                        relayConfiguration =
+                            relayConfiguration {
+                                relayRefreshingEnabled = true
+                            }
+                    }
+            }
+        }
+
+    val deviceSetConfigurationResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.SET_CONFIGURATION_RESPONSE
+                }
+        }
+
+    val deviceSetScheduleResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.SET_SCHEDULE_RESPONSE
+                }
+        }
+
+    val deviceGetStatusResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.GET_STATUS_RESPONSE
+                }
+        }
 }
