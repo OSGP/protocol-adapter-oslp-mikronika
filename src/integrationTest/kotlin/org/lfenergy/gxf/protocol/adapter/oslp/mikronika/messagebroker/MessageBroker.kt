@@ -139,7 +139,6 @@ class MessageBroker(
                 .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        println(response.body())
     }
 
     private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage = DeviceResponseMessage.parseFrom(this.data())
