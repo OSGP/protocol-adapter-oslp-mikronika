@@ -93,14 +93,4 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                     }
             }
         }
-
-    val rejectedMock =
-        DeviceSimulator.DeviceCallMock {
-            message {
-                getConfigurationResponse =
-                    getConfigurationResponse {
-                        status = Oslp.Status.REJECTED
-                    }
-            }
-        }
 }
