@@ -22,8 +22,8 @@ class AuditLoggingConfiguration(
         val template = JmsTemplate(connectionFactory)
         template.defaultDestinationName = properties.producer.outboundQueue
         with(properties.producer.qualityOfService) {
+            template.isExplicitQosEnabled = explicitQosEnabled
             if (explicitQosEnabled) {
-                template.isExplicitQosEnabled = explicitQosEnabled
                 template.setDeliveryPersistent(deliveryPersistent)
                 template.priority = priority
                 template.timeToLive = timeToLive
