@@ -48,6 +48,8 @@ class DeviceClientService(
 
                 val responseEnvelope = sock.sendAndReceive(requestEnvelope)
 
+                // TODO: [FDP-3625] validate SequenceNumber
+
                 if (!validateSignature(responseEnvelope, MikronikaDevicePublicKey(device.publicKey))) {
                     throw InvalidSignatureException("Signature validation failed for message! DeviceUid: ${responseEnvelope.deviceUid}")
                 }
@@ -56,7 +58,6 @@ class DeviceClientService(
                     deviceRequest.organisation,
                     deviceRequest.device,
                     responseEnvelope.messageBytes,
-                    true,
                 )
 
                 device.sequenceNumber = responseEnvelope.sequenceNumber

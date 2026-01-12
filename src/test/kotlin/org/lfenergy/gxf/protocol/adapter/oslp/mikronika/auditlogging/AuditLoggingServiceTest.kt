@@ -26,7 +26,6 @@ class AuditLoggingServiceTest {
         auditLoggingService.logMessageFromDevice(
             testDevice,
             testRawData,
-            isValid = false,
         )
 
         verify {
@@ -35,8 +34,7 @@ class AuditLoggingServiceTest {
                     it.device == testDevice &&
                         it.organisation == null &&
                         it.message.messageType == MessageType.FROM_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData) &&
-                        it.message.isInvalid
+                        it.message.rawData.contentEquals(testRawData)
                 },
             )
         }
@@ -55,8 +53,7 @@ class AuditLoggingServiceTest {
                     it.device == testDevice &&
                         it.organisation == null &&
                         it.message.messageType == MessageType.TO_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData) &&
-                        it.message.isValid
+                        it.message.rawData.contentEquals(testRawData)
                 },
             )
         }
@@ -76,8 +73,7 @@ class AuditLoggingServiceTest {
                     it.device == testDevice &&
                         it.organisation == testOrganisation &&
                         it.message.messageType == MessageType.TO_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData) &&
-                        it.message.isValid
+                        it.message.rawData.contentEquals(testRawData)
                 },
             )
         }
@@ -89,7 +85,6 @@ class AuditLoggingServiceTest {
             testOrganisation,
             testDevice,
             testRawData,
-            isValid = false,
         )
 
         verify {
@@ -98,8 +93,7 @@ class AuditLoggingServiceTest {
                     it.device == testDevice &&
                         it.organisation == testOrganisation &&
                         it.message.messageType == MessageType.FROM_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData) &&
-                        it.message.isInvalid
+                        it.message.rawData.contentEquals(testRawData)
                 },
             )
         }

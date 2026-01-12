@@ -29,7 +29,6 @@ internal class JmsAuditLoggingClient(
             deviceIdentification = device.deviceIdentification
             rawData = message.rawData.toByteString()
             rawDataSize = message.rawData.size
-            isValid = message.isValid
         }
 
     private fun LogItemMessage.toJmsMessage(session: Session) =

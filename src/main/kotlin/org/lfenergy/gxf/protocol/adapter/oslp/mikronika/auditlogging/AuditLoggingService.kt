@@ -15,12 +15,10 @@ class AuditLoggingService(
     fun logMessageFromDevice(
         device: Device,
         rawData: ByteArray,
-        isValid: Boolean,
     ) {
         logIncomingMessage(
             device,
             rawData,
-            isValid,
         )
     }
 
@@ -50,12 +48,10 @@ class AuditLoggingService(
         organisation: Organisation,
         device: Device,
         rawData: ByteArray,
-        isValid: Boolean,
     ) {
         logIncomingMessage(
             device,
             rawData,
-            isValid,
             organisation,
         )
     }
@@ -71,7 +67,6 @@ class AuditLoggingService(
                 Message(
                     MessageType.TO_DEVICE,
                     rawData,
-                    true,
                 ),
                 organisation,
             )
@@ -82,7 +77,6 @@ class AuditLoggingService(
     private fun logIncomingMessage(
         device: Device,
         rawData: ByteArray,
-        isValid: Boolean,
         organisation: Organisation? = null,
     ) {
         val auditLog =
@@ -91,7 +85,6 @@ class AuditLoggingService(
                 Message(
                     MessageType.FROM_DEVICE,
                     rawData,
-                    isValid,
                 ),
                 organisation,
             )
@@ -109,8 +102,4 @@ data class AuditLog(
 class Message(
     val messageType: MessageType,
     val rawData: ByteArray,
-    val isValid: Boolean,
-) {
-    val isInvalid: Boolean
-        get() = !isValid
-}
+)

@@ -40,7 +40,6 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                 assertEquals("LianderNetManagement", logItemMessageToDevice.organizationIdentification)
                 assertEquals(3, logItemMessageToDevice.rawDataSize)
                 assertEquals(ByteString.fromHex("9A0200"), logItemMessageToDevice.rawData)
-                assertEquals(true, logItemMessageToDevice.isValid)
             }
 
         messageBroker
@@ -53,7 +52,6 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                 assertEquals("LianderNetManagement", logItemReplyFromDevice.organizationIdentification)
                 assertEquals(7, logItemReplyFromDevice.rawDataSize)
                 assertEquals(ByteString.fromHex("A2020408003002"), logItemReplyFromDevice.rawData)
-                assertEquals(true, logItemReplyFromDevice.isValid)
             }
     }
 
@@ -74,7 +72,6 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                 assertEquals("", logItemMessageToDevice.organizationIdentification)
                 assertEquals(45, logItemMessageToDevice.rawDataSize)
                 assertEquals(ByteString.fromHex(expectedReceivedRawMessage), logItemMessageToDevice.rawData)
-                assertEquals(true, logItemMessageToDevice.isValid)
             }
 
         messageBroker
@@ -87,7 +84,6 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                 assertEquals("", logItemReplyFromDevice.organizationIdentification)
                 assertEquals(5, logItemReplyFromDevice.rawDataSize)
                 assertEquals(ByteString.fromHex("9201020800"), logItemReplyFromDevice.rawData)
-                assertEquals(true, logItemReplyFromDevice.isValid)
             }
     }
 
