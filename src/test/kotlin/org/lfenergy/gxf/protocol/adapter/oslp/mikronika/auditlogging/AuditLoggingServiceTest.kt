@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction
 
 @ExtendWith(MockKExtension::class)
 class AuditLoggingServiceTest {
@@ -33,7 +33,7 @@ class AuditLoggingServiceTest {
                 match {
                     it.device == testDevice &&
                         it.organisation == null &&
-                        it.message.messageType == MessageType.FROM_DEVICE &&
+                        it.message.direction == Direction.FROM_DEVICE &&
                         it.message.rawData.contentEquals(testRawData)
                 },
             )
@@ -52,7 +52,7 @@ class AuditLoggingServiceTest {
                 match {
                     it.device == testDevice &&
                         it.organisation == null &&
-                        it.message.messageType == MessageType.TO_DEVICE &&
+                        it.message.direction == Direction.TO_DEVICE &&
                         it.message.rawData.contentEquals(testRawData)
                 },
             )
@@ -72,7 +72,7 @@ class AuditLoggingServiceTest {
                 match {
                     it.device == testDevice &&
                         it.organisation == testOrganisation &&
-                        it.message.messageType == MessageType.TO_DEVICE &&
+                        it.message.direction == Direction.TO_DEVICE &&
                         it.message.rawData.contentEquals(testRawData)
                 },
             )
@@ -92,7 +92,7 @@ class AuditLoggingServiceTest {
                 match {
                     it.device == testDevice &&
                         it.organisation == testOrganisation &&
-                        it.message.messageType == MessageType.FROM_DEVICE &&
+                        it.message.direction == Direction.FROM_DEVICE &&
                         it.message.rawData.contentEquals(testRawData)
                 },
             )
@@ -110,5 +110,5 @@ private val testRawData = byteArrayOf(0x01, 0x02, 0x03)
 
 private val testOrganisation =
     Organisation(
-        organizationIdentification = "org123",
+        identification = "org123",
     )

@@ -4,5 +4,5 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain
 
 data class Organisation(
-    val organizationIdentification: String,
+    val identification: String,
 )

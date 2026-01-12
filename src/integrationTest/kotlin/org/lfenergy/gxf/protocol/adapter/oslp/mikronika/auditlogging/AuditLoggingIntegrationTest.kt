@@ -11,7 +11,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.CommandIntegrati
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
@@ -33,11 +33,10 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
         messageBroker
             .receiveLogItemMessage(
                 DEVICE_IDENTIFICATION,
-                MessageType.TO_DEVICE,
             ).also { logItemMessageToDevice ->
                 assertNotNull(logItemMessageToDevice)
-                assertEquals(MessageType.TO_DEVICE, logItemMessageToDevice.messageType)
-                assertEquals("LianderNetManagement", logItemMessageToDevice.organizationIdentification)
+                assertEquals(Direction.TO_DEVICE, logItemMessageToDevice.direction)
+                assertEquals("LianderNetManagement", logItemMessageToDevice.organisationIdentification)
                 assertEquals(3, logItemMessageToDevice.rawDataSize)
                 assertEquals(ByteString.fromHex("9A0200"), logItemMessageToDevice.rawData)
             }
@@ -45,11 +44,10 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
         messageBroker
             .receiveLogItemMessage(
                 DEVICE_IDENTIFICATION,
-                MessageType.FROM_DEVICE,
             ).also { logItemReplyFromDevice ->
                 assertNotNull(logItemReplyFromDevice)
-                assertEquals(MessageType.FROM_DEVICE, logItemReplyFromDevice.messageType)
-                assertEquals("LianderNetManagement", logItemReplyFromDevice.organizationIdentification)
+                assertEquals(Direction.FROM_DEVICE, logItemReplyFromDevice.direction)
+                assertEquals("LianderNetManagement", logItemReplyFromDevice.organisationIdentification)
                 assertEquals(7, logItemReplyFromDevice.rawDataSize)
                 assertEquals(ByteString.fromHex("A2020408003002"), logItemReplyFromDevice.rawData)
             }
@@ -65,11 +63,10 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
         messageBroker
             .receiveLogItemMessage(
                 DEVICE_IDENTIFICATION,
-                MessageType.FROM_DEVICE,
             ).also { logItemMessageToDevice ->
                 assertNotNull(logItemMessageToDevice)
-                assertEquals(MessageType.FROM_DEVICE, logItemMessageToDevice.messageType)
-                assertEquals("", logItemMessageToDevice.organizationIdentification)
+                assertEquals(Direction.FROM_DEVICE, logItemMessageToDevice.direction)
+                assertEquals("", logItemMessageToDevice.organisationIdentification)
                 assertEquals(45, logItemMessageToDevice.rawDataSize)
                 assertEquals(ByteString.fromHex(expectedReceivedRawMessage), logItemMessageToDevice.rawData)
             }
@@ -77,11 +74,10 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
         messageBroker
             .receiveLogItemMessage(
                 DEVICE_IDENTIFICATION,
-                MessageType.TO_DEVICE,
             ).also { logItemReplyFromDevice ->
                 assertNotNull(logItemReplyFromDevice)
-                assertEquals(MessageType.TO_DEVICE, logItemReplyFromDevice.messageType)
-                assertEquals("", logItemReplyFromDevice.organizationIdentification)
+                assertEquals(Direction.TO_DEVICE, logItemReplyFromDevice.direction)
+                assertEquals("", logItemReplyFromDevice.organisationIdentification)
                 assertEquals(5, logItemReplyFromDevice.rawDataSize)
                 assertEquals(ByteString.fromHex("9201020800"), logItemReplyFromDevice.rawData)
             }

@@ -7,8 +7,8 @@ import com.google.protobuf.kotlin.toByteString
 import jakarta.jms.Session
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLog
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingClient
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.LogItemMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.logItemMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.LogItemMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.logItemMessage
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 
@@ -24,8 +24,8 @@ internal class JmsAuditLoggingClient(
 
     private fun AuditLog.toProtobuf() =
         logItemMessage {
-            messageType = message.messageType
-            organizationIdentification = organisation?.organizationIdentification ?: ""
+            direction = message.direction
+            organisationIdentification = organisation?.identification ?: ""
             deviceIdentification = device.deviceIdentification
             rawData = message.rawData.toByteString()
             rawDataSize = message.rawData.size
@@ -33,8 +33,10 @@ internal class JmsAuditLoggingClient(
 
     private fun LogItemMessage.toJmsMessage(session: Session) =
         session.createBytesMessage().apply {
-            jmsType = messageType.name
+            jmsType = OSLP_LOG_ITEM_REQUEST
             setStringProperty("DeviceIdentification", deviceIdentification)
             writeBytes(toByteArray())
         }
 }
+
+private const val OSLP_LOG_ITEM_REQUEST = "OSLP_LOG_ITEM"

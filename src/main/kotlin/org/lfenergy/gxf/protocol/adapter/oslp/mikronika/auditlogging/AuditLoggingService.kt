@@ -5,7 +5,9 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction.FROM_DEVICE
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction.TO_DEVICE
 import org.springframework.stereotype.Service
 
 @Service
@@ -65,7 +67,7 @@ class AuditLoggingService(
             AuditLog(
                 device,
                 Message(
-                    MessageType.TO_DEVICE,
+                    TO_DEVICE,
                     rawData,
                 ),
                 organisation,
@@ -83,7 +85,7 @@ class AuditLoggingService(
             AuditLog(
                 device,
                 Message(
-                    MessageType.FROM_DEVICE,
+                    FROM_DEVICE,
                     rawData,
                 ),
                 organisation,
@@ -100,6 +102,6 @@ data class AuditLog(
 )
 
 class Message(
-    val messageType: MessageType,
+    val direction: Direction,
     val rawData: ByteArray,
 )

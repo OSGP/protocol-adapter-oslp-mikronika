@@ -4,17 +4,17 @@
 
 edition = "2024";
 
-package org.lfenergy.gxf.publiclighting.contracts.internal.audittrail;
+package org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging;
 
 message LogItemMessage {
-  MessageType message_type = 1;
-  string organization_identification = 2;
+  Direction direction = 1;
+  string organisation_identification = 2;
   string device_identification = 4;
   bytes raw_data = 5;
   int32 raw_data_size = 6;
 }
 
-enum MessageType {
+enum Direction {
   FROM_DEVICE = 0;
   TO_DEVICE = 1;
 }

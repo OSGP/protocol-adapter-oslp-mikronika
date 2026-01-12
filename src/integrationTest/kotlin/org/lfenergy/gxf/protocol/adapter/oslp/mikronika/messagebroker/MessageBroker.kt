@@ -12,8 +12,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEV
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION_HEADER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_REQUEST_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_RESPONSE_QUEUE
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.LogItemMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.audittrail.MessageType
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.LogItemMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
@@ -96,20 +95,16 @@ class MessageBroker(
         return eventMessage
     }
 
-    fun receiveLogItemMessage(
-        expectedDeviceIdentification: String,
-        expectedMessageType: MessageType,
-    ): LogItemMessage {
+    fun receiveLogItemMessage(expectedDeviceIdentification: String): LogItemMessage {
         val bytesMessage = auditLoggingJmsTemplate.receive(AUDIT_LOG_QUEUE) as BytesMessage?
         assertThat(bytesMessage).isNotNull
-        assertThat(bytesMessage!!.jmsType).isEqualTo(expectedMessageType.name)
+        assertThat(bytesMessage!!.jmsType).isEqualTo(OSLP_LOG_ITEM_REQUEST)
         assertThat(bytesMessage.getStringProperty(DEVICE_IDENTIFICATION_HEADER)).isEqualTo(expectedDeviceIdentification)
 
         val logItemMessage = bytesMessage.toLogItemMessage()
         with(logItemMessage) {
             assertThat(this).isNotNull
             assertThat(deviceIdentification).isEqualTo(expectedDeviceIdentification)
-            assertThat(messageType).isEqualTo(expectedMessageType)
         }
         return logItemMessage
     }
@@ -138,7 +133,7 @@ class MessageBroker(
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build()
 
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
     private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage = DeviceResponseMessage.parseFrom(this.data())
@@ -162,3 +157,5 @@ class MessageBroker(
         }
         """.trimIndent()
 }
+
+private const val OSLP_LOG_ITEM_REQUEST = "OSLP_LOG_ITEM"
