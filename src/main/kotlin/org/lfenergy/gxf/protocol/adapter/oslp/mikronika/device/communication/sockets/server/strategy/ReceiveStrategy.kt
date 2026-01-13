@@ -41,7 +41,7 @@ abstract class ReceiveStrategy(
         if (!validateSignature(requestEnvelope, MikronikaDevicePublicKey(mikronikaDevice.publicKey))) return null
 
         auditLoggingService.logMessageFromDevice(
-            Device(mikronikaDevice.deviceIdentification, EMPTY),
+            Device(mikronikaDevice.deviceIdentification),
             requestEnvelope.messageBytes,
         )
 
@@ -54,7 +54,7 @@ abstract class ReceiveStrategy(
         val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
 
         auditLoggingService.logReplyToDevice(
-            Device(mikronikaDevice.deviceIdentification, EMPTY),
+            Device(mikronikaDevice.deviceIdentification),
             responsePayload,
         )
 
@@ -101,9 +101,9 @@ abstract class ReceiveStrategy(
         val securityKey =
             signingService.createSignature(
                 requestEnvelope.sequenceNumber.toByteArray(2) +
-                    requestEnvelope.deviceUid +
-                    responsePayload.size.toByteArray(2) +
-                    responsePayload,
+                        requestEnvelope.deviceUid +
+                        responsePayload.size.toByteArray(2) +
+                        responsePayload,
             )
 
         return Envelope(
@@ -115,5 +115,3 @@ abstract class ReceiveStrategy(
         )
     }
 }
-
-private const val EMPTY = ""

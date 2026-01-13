@@ -5,5 +5,5 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain
 
 data class Device(
     val deviceIdentification: String,
-    val networkAddress: String,
+    val networkAddress: String = "",
 )
