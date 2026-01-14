@@ -25,10 +25,10 @@ internal class JmsAuditLoggingClient(
     private fun AuditLog.toProtobuf() =
         logItemMessage {
             direction = message.direction
-            organisationIdentification = organisation?.identification ?: ""
+            organizationIdentification = organization?.identification ?: ""
             deviceIdentification = device.deviceIdentification
             rawData = message.rawData.toByteString()
-            rawDataSize = message.rawData.size
+            decodedData = message.decodedData
         }
 
     private fun LogItemMessage.toJmsMessage(session: Session) =

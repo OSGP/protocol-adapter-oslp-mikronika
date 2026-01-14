@@ -38,12 +38,14 @@ class DeviceClientService(
                 val sock = ClientSocket(deviceRequest.device.networkAddress, socketProperties.devicePort)
                 val device =
                     mikronikaDeviceService.findByDeviceIdentification(deviceRequest.device.deviceIdentification)
-                val requestEnvelope = createEnvelope(device, deviceRequest.toOslpMessage())
+                val oslpMessage = deviceRequest.toOslpMessage()
+                val requestEnvelope = createEnvelope(device, oslpMessage)
 
                 auditLoggingService.logMessageToDevice(
-                    deviceRequest.organisation,
+                    deviceRequest.organization,
                     deviceRequest.device,
-                    requestEnvelope.messageBytes,
+                    oslpMessage.toByteArray(),
+                    oslpMessage.toString(),
                 )
 
                 val responseEnvelope = sock.sendAndReceive(requestEnvelope)
@@ -55,9 +57,10 @@ class DeviceClientService(
                 }
 
                 auditLoggingService.logReplyFromDevice(
-                    deviceRequest.organisation,
+                    deviceRequest.organization,
                     deviceRequest.device,
                     responseEnvelope.messageBytes,
+                    responseEnvelope.message.toString(),
                 )
 
                 device.sequenceNumber = responseEnvelope.sequenceNumber

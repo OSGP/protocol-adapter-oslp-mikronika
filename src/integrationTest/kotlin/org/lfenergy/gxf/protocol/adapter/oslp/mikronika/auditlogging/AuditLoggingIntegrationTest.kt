@@ -36,9 +36,9 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
             ).also { logItemMessageToDevice ->
                 assertNotNull(logItemMessageToDevice)
                 assertEquals(Direction.TO_DEVICE, logItemMessageToDevice.direction)
-                assertEquals("LianderNetManagement", logItemMessageToDevice.organisationIdentification)
-                assertEquals(3, logItemMessageToDevice.rawDataSize)
+                assertEquals("LianderNetManagement", logItemMessageToDevice.organizationIdentification)
                 assertEquals(ByteString.fromHex("9A0200"), logItemMessageToDevice.rawData)
+                assertEquals(expectedDeviceRequest, logItemMessageToDevice.decodedData)
             }
 
         messageBroker
@@ -47,9 +47,9 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
             ).also { logItemReplyFromDevice ->
                 assertNotNull(logItemReplyFromDevice)
                 assertEquals(Direction.FROM_DEVICE, logItemReplyFromDevice.direction)
-                assertEquals("LianderNetManagement", logItemReplyFromDevice.organisationIdentification)
-                assertEquals(7, logItemReplyFromDevice.rawDataSize)
+                assertEquals("LianderNetManagement", logItemReplyFromDevice.organizationIdentification)
                 assertEquals(ByteString.fromHex("A2020408003002"), logItemReplyFromDevice.rawData)
+                assertEquals(expectedDeviceResponse, logItemReplyFromDevice.decodedData)
             }
     }
 
@@ -66,9 +66,9 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
             ).also { logItemMessageToDevice ->
                 assertNotNull(logItemMessageToDevice)
                 assertEquals(Direction.FROM_DEVICE, logItemMessageToDevice.direction)
-                assertEquals("", logItemMessageToDevice.organisationIdentification)
-                assertEquals(45, logItemMessageToDevice.rawDataSize)
+                assertEquals(NO_ORGANISATION, logItemMessageToDevice.organizationIdentification)
                 assertEquals(ByteString.fromHex(expectedReceivedRawMessage), logItemMessageToDevice.rawData)
+                assertEquals(expectedNotificationEvent, logItemMessageToDevice.decodedData)
             }
 
         messageBroker
@@ -77,11 +77,47 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
             ).also { logItemReplyFromDevice ->
                 assertNotNull(logItemReplyFromDevice)
                 assertEquals(Direction.TO_DEVICE, logItemReplyFromDevice.direction)
-                assertEquals("", logItemReplyFromDevice.organisationIdentification)
-                assertEquals(5, logItemReplyFromDevice.rawDataSize)
+                assertEquals(NO_ORGANISATION, logItemReplyFromDevice.organizationIdentification)
                 assertEquals(ByteString.fromHex("9201020800"), logItemReplyFromDevice.rawData)
+                assertEquals(expectedNotificationResponse, logItemReplyFromDevice.decodedData)
             }
     }
+
+    val expectedDeviceRequest =
+        """
+        getConfigurationRequest {
+        }
+        
+        """.trimIndent()
+
+    val expectedDeviceResponse =
+        """
+        getConfigurationResponse {
+          status: OK
+          preferredLinkType: CDMA
+        }
+        
+        """.trimIndent()
+
+    val expectedNotificationEvent =
+        """
+        eventNotificationRequest {
+          notifications {
+            event: DIAG_EVENTS_GENERAL
+            index: "0"
+            description: "Just a test event"
+            timestamp: "20251117101530"
+          }
+        }
+        
+        """.trimIndent()
+    val expectedNotificationResponse =
+        """
+        eventNotificationResponse {
+          status: OK
+        }
+        
+        """.trimIndent()
 
     val okMock =
         DeviceSimulator.DeviceCallMock {
@@ -93,4 +129,8 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                     }
             }
         }
+
+    private fun String.removeWhitespaces() = this.replace(Regex("[ \\n\\r]"), "")
 }
+
+private const val NO_ORGANISATION = ""

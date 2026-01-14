@@ -4,12 +4,12 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.opensmartgridplatform.oslp.Oslp
 
 abstract class DeviceRequest(
     val device: Device,
-    val organisation: Organisation,
+    val organization: Organization,
 ) {
     abstract fun toOslpMessage(): Oslp.Message
 }

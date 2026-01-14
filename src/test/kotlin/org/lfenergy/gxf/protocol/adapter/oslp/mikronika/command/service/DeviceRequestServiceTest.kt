@@ -28,7 +28,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.ser
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetStatusRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 
@@ -54,7 +54,7 @@ class DeviceRequestServiceTest {
 
     @Test
     fun `should call mapper and deviceClientService whenever call is successful`() {
-        val getStatusRequest: DeviceRequest = GetStatusRequest(Device("", ""), Organisation(""))
+        val getStatusRequest: DeviceRequest = GetStatusRequest(Device("", ""), Organization(""))
         every { mapperFactory.getMapperFor(any()) } returns getStatusCommandMapper
         every { getStatusCommandMapper.toInternal(any()) } returns getStatusRequest
         every { getStatusCommandMapper.toResponse(any(), any()) } returns deviceGetStatusResponseMessage
@@ -81,7 +81,7 @@ class DeviceRequestServiceTest {
 
     @Test
     fun `should call deviceClientService with error message if call failed`() {
-        val getStatusRequest: DeviceRequest = GetStatusRequest(Device("", ""), Organisation(""))
+        val getStatusRequest: DeviceRequest = GetStatusRequest(Device("", ""), Organization(""))
         every { mapperFactory.getMapperFor(any()) } returns getStatusCommandMapper
         every { getStatusCommandMapper.toInternal(any()) } returns getStatusRequest
         every { deviceClientService.sendClientMessage(any(), any()) } just Runs

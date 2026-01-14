@@ -9,7 +9,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENT
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.NETWORK_ADDRESS
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.ORGANIZATION_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setConfigurationRequest
 
 class SetConfigurationRequestTest {
@@ -18,7 +18,7 @@ class SetConfigurationRequestTest {
         val subject =
             SetConfigurationRequest(
                 Device(DEVICE_IDENTIFICATION, NETWORK_ADDRESS),
-                Organisation(ORGANIZATION_IDENTIFICATION),
+                Organization(ORGANIZATION_IDENTIFICATION),
                 setConfigurationRequest = setConfigurationRequest { },
             )
 

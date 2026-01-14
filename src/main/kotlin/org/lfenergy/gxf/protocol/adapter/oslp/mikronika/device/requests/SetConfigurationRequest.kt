@@ -4,7 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LightType
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LinkType
 import org.opensmartgridplatform.oslp.Oslp
@@ -18,11 +18,11 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.SetCon
 
 class SetConfigurationRequest(
     device: Device,
-    organisation: Organisation,
+    organization: Organization,
     val setConfigurationRequest: InternalSetConfigurationRequest,
 ) : DeviceRequest(
         device,
-        organisation,
+        organization,
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {

@@ -10,7 +10,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction
 
 @ExtendWith(MockKExtension::class)
@@ -26,15 +26,17 @@ class AuditLoggingServiceTest {
         auditLoggingService.logMessageFromDevice(
             testDevice,
             testRawData,
+            testDecodedData,
         )
 
         verify {
             auditLoggingClientMock.sendLogItem(
                 match {
                     it.device == testDevice &&
-                        it.organisation == null &&
+                        it.organization == null &&
                         it.message.direction == Direction.FROM_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData)
+                        it.message.rawData.contentEquals(testRawData) &&
+                        it.message.decodedData.contentEquals(testDecodedData)
                 },
             )
         }
@@ -45,15 +47,17 @@ class AuditLoggingServiceTest {
         auditLoggingService.logReplyToDevice(
             testDevice,
             testRawData,
+            testDecodedData,
         )
 
         verify {
             auditLoggingClientMock.sendLogItem(
                 match {
                     it.device == testDevice &&
-                        it.organisation == null &&
+                        it.organization == null &&
                         it.message.direction == Direction.TO_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData)
+                        it.message.rawData.contentEquals(testRawData) &&
+                        it.message.decodedData.contentEquals(testDecodedData)
                 },
             )
         }
@@ -62,18 +66,20 @@ class AuditLoggingServiceTest {
     @Test
     fun testLogMessageToDevice() {
         auditLoggingService.logMessageToDevice(
-            testOrganisation,
+            testOrganization,
             testDevice,
             testRawData,
+            testDecodedData,
         )
 
         verify {
             auditLoggingClientMock.sendLogItem(
                 match {
                     it.device == testDevice &&
-                        it.organisation == testOrganisation &&
+                        it.organization == testOrganization &&
                         it.message.direction == Direction.TO_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData)
+                        it.message.rawData.contentEquals(testRawData) &&
+                        it.message.decodedData.contentEquals(testDecodedData)
                 },
             )
         }
@@ -82,18 +88,20 @@ class AuditLoggingServiceTest {
     @Test
     fun testLogReplyFromDevice() {
         auditLoggingService.logReplyFromDevice(
-            testOrganisation,
+            testOrganization,
             testDevice,
             testRawData,
+            testDecodedData,
         )
 
         verify {
             auditLoggingClientMock.sendLogItem(
                 match {
                     it.device == testDevice &&
-                        it.organisation == testOrganisation &&
+                        it.organization == testOrganization &&
                         it.message.direction == Direction.FROM_DEVICE &&
-                        it.message.rawData.contentEquals(testRawData)
+                        it.message.rawData.contentEquals(testRawData) &&
+                        it.message.decodedData.contentEquals(testDecodedData)
                 },
             )
         }
@@ -107,8 +115,9 @@ private val testDevice =
     )
 
 private val testRawData = byteArrayOf(0x01, 0x02, 0x03)
+private val testDecodedData = "Decoded"
 
-private val testOrganisation =
-    Organisation(
+private val testOrganization =
+    Organization(
         identification = "org123",
     )

@@ -4,14 +4,14 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.getStatusRequest
 import org.opensmartgridplatform.oslp.message
 
 class GetStatusRequest(
     device: Device,
-    organisation: Organisation,
+    organisation: Organization,
 ) : DeviceRequest(
         device,
         organisation,

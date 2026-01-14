@@ -9,7 +9,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetScheduleRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
@@ -28,7 +28,7 @@ class SetScheduleCommandMapper : CommandMapper {
                 requestMessage.header.deviceIdentification,
                 requestMessage.header.networkAddress,
             ),
-            Organisation(requestMessage.header.organizationIdentification),
+            Organization(requestMessage.header.organizationIdentification),
             scheduleEntries,
             SetScheduleRequest.PageInfo(1, scheduleEntries.size, 1),
         )

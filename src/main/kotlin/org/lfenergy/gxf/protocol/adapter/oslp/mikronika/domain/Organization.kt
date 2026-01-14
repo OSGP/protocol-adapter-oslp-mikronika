@@ -3,6 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain
 
-data class Organisation(
+data class Organization(
     val identification: String,
 )

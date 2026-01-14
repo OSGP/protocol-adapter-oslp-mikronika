@@ -4,7 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction
 import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction.FROM_DEVICE
 import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.Direction.TO_DEVICE
@@ -17,51 +17,60 @@ class AuditLoggingService(
     fun logMessageFromDevice(
         device: Device,
         rawData: ByteArray,
+        decodedData: String,
     ) {
         logIncomingMessage(
             device,
             rawData,
+            decodedData,
         )
     }
 
     fun logReplyToDevice(
         device: Device,
         rawData: ByteArray,
+        decodedData: String,
     ) {
         logOutgoingMessage(
             device,
             rawData,
+            decodedData,
         )
     }
 
     fun logMessageToDevice(
-        organisation: Organisation,
+        organization: Organization,
         device: Device,
         rawData: ByteArray,
+        decodedData: String,
     ) {
         logOutgoingMessage(
             device,
             rawData,
-            organisation,
+            decodedData,
+            organization,
         )
     }
 
     fun logReplyFromDevice(
-        organisation: Organisation,
+        organization: Organization,
         device: Device,
         rawData: ByteArray,
+        decodedData: String,
     ) {
         logIncomingMessage(
             device,
             rawData,
-            organisation,
+            decodedData,
+            organization,
         )
     }
 
     private fun logOutgoingMessage(
         device: Device,
         rawData: ByteArray,
-        organisation: Organisation? = null,
+        decodedData: String,
+        organization: Organization? = null,
     ) {
         val auditLog =
             AuditLog(
@@ -69,8 +78,9 @@ class AuditLoggingService(
                 Message(
                     TO_DEVICE,
                     rawData,
+                    decodedData,
                 ),
-                organisation,
+                organization,
             )
 
         auditLoggingClient.sendLogItem(auditLog)
@@ -79,7 +89,8 @@ class AuditLoggingService(
     private fun logIncomingMessage(
         device: Device,
         rawData: ByteArray,
-        organisation: Organisation? = null,
+        decodedData: String,
+        organization: Organization? = null,
     ) {
         val auditLog =
             AuditLog(
@@ -87,8 +98,9 @@ class AuditLoggingService(
                 Message(
                     FROM_DEVICE,
                     rawData,
+                    decodedData,
                 ),
-                organisation,
+                organization,
             )
 
         auditLoggingClient.sendLogItem(auditLog)
@@ -98,10 +110,11 @@ class AuditLoggingService(
 data class AuditLog(
     val device: Device,
     val message: Message,
-    val organisation: Organisation? = null,
+    val organization: Organization? = null,
 )
 
 class Message(
     val direction: Direction,
     val rawData: ByteArray,
+    val decodedData: String,
 )

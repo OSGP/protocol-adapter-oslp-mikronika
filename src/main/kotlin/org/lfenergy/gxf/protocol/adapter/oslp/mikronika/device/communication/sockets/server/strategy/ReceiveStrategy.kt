@@ -43,6 +43,7 @@ abstract class ReceiveStrategy(
         auditLoggingService.logMessageFromDevice(
             Device(mikronikaDevice.deviceIdentification),
             requestEnvelope.messageBytes,
+            requestEnvelope.message.toString(),
         )
 
         try {
@@ -51,14 +52,15 @@ abstract class ReceiveStrategy(
             logger.warn { "Invalid request received for deviceUid: ${mikronikaDevice.deviceUid} with message: ${e.message}" }
             return null
         }
-        val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
+        val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice)
 
         auditLoggingService.logReplyToDevice(
             Device(mikronikaDevice.deviceIdentification),
-            responsePayload,
+            responsePayload.toByteArray(),
+            responsePayload.toString(),
         )
 
-        return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload)
+        return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload.toByteArray())
     }
 
     private fun finalizeInvocation(
@@ -101,9 +103,9 @@ abstract class ReceiveStrategy(
         val securityKey =
             signingService.createSignature(
                 requestEnvelope.sequenceNumber.toByteArray(2) +
-                        requestEnvelope.deviceUid +
-                        responsePayload.size.toByteArray(2) +
-                        responsePayload,
+                    requestEnvelope.deviceUid +
+                    responsePayload.size.toByteArray(2) +
+                    responsePayload,
             )
 
         return Envelope(

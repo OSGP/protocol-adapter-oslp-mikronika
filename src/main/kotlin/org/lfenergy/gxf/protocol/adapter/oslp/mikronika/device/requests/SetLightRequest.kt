@@ -6,7 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 import com.google.protobuf.kotlin.toByteString
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.LightValue
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.lightValue
@@ -15,11 +15,11 @@ import org.opensmartgridplatform.oslp.setLightRequest
 
 class SetLightRequest(
     device: Device,
-    organisation: Organisation,
+    organization: Organization,
     val lightValues: List<LightValue>,
 ) : DeviceRequest(
         device,
-        organisation,
+        organization,
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {

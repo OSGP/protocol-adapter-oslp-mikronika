@@ -8,10 +8,10 @@ package org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging;
 
 message LogItemMessage {
   Direction direction = 1;
-  string organisation_identification = 2;
-  string device_identification = 4;
-  bytes raw_data = 5;
-  int32 raw_data_size = 6;
+  string organization_identification = 2;
+  string device_identification = 3;
+  bytes raw_data = 4;
+  string decoded_data = 5;
 }
 
 enum Direction {

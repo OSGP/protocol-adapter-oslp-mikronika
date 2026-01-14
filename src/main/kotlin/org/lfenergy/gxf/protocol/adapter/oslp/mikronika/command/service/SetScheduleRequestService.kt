@@ -8,7 +8,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceRes
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceClientService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetConfigurationRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.astronomicalOffsetsConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
@@ -65,7 +65,7 @@ class SetScheduleRequestService(
                 requestMessage.header.deviceIdentification,
                 requestMessage.header.networkAddress,
             ),
-            Organisation(requestMessage.header.organizationIdentification),
+            Organization(requestMessage.header.organizationIdentification),
             setConfigurationRequest {
                 configuration =
                     configuration {

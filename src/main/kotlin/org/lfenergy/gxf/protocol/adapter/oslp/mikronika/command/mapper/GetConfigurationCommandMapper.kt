@@ -9,7 +9,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetConfigurationRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organisation
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.astronomicalOffsetsConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.communicationConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
@@ -38,7 +38,7 @@ class GetConfigurationCommandMapper : CommandMapper {
                 requestMessage.header.deviceIdentification,
                 requestMessage.header.networkAddress,
             ),
-            Organisation(requestMessage.header.organizationIdentification),
+            Organization(requestMessage.header.organizationIdentification),
         )
 
     override fun toResponse(
