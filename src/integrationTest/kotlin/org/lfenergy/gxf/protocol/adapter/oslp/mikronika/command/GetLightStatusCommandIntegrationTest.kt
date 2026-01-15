@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
@@ -37,12 +35,13 @@ class GetLightStatusCommandIntegrationTest : CommandIntegrationTest() {
             )
 
         val receivedRequest = okMock.capturedRequest.get()
-        assertTrue(receivedRequest.message.hasGetStatusRequest())
-        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+        assertThat(receivedRequest.message.hasGetStatusRequest()).isTrue()
+        assertThat(receivedRequest.message.hasGetStatusRequest()).isTrue()
+        assertThat(String(receivedRequest.deviceUid)).isEqualTo(DEVICE_UID)
 
-        assertNotNull(result)
-        assertEquals(Result.OK, result.result)
-        assertEquals(ResponseType.GET_LIGHT_STATUS_RESPONSE, result.header.responseType)
+        assertThat(result).isNotNull()
+        assertThat(result.result).isEqualTo(Result.OK)
+        assertThat(result.header.responseType).isEqualTo(ResponseType.GET_LIGHT_STATUS_RESPONSE)
     }
 
     @Test
@@ -62,11 +61,11 @@ class GetLightStatusCommandIntegrationTest : CommandIntegrationTest() {
             )
 
         val receivedRequest = rejectedMock.capturedRequest.get()
-        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+        assertThat(String(receivedRequest.deviceUid)).isEqualTo(DEVICE_UID)
 
-        assertNotNull(result)
-        assertEquals(Result.NOT_OK, result.result)
-        assertEquals(ResponseType.GET_LIGHT_STATUS_RESPONSE, result.header.responseType)
+        assertThat(result).isNotNull()
+        assertThat(result.result).isEqualTo(Result.NOT_OK)
+        assertThat(result.header.responseType).isEqualTo(ResponseType.GET_LIGHT_STATUS_RESPONSE)
     }
 
     val okMock =
