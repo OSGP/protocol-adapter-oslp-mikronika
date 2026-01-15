@@ -14,7 +14,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEV
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.EVENT_DESCRIPTION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.EVENT_TIMESTAMP
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.AdapterDatabase
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.messagebroker.MessageBroker
@@ -40,14 +40,14 @@ class DeviceEventNotificationIntegrationTest {
     private lateinit var messageBroker: MessageBroker
 
     @Autowired
-    private lateinit var device: Device
+    private lateinit var deviceSimulator: DeviceSimulator
 
     private var mikronikaDevice: MikronikaDevice? = null
     private var responseEnvelope: Envelope? = null
 
     @BeforeEach
     fun setup() {
-        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, device.publicKey)
+        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, deviceSimulator.publicKey)
     }
 
     @Test
@@ -63,7 +63,7 @@ class DeviceEventNotificationIntegrationTest {
     }
 
     private fun `when the device sends an event notification request message`() {
-        responseEnvelope = device.sendEventNotificationRequest()
+        responseEnvelope = deviceSimulator.sendEventNotificationRequest()
     }
 
     private fun `then an event notification response message should be sent back to the device`() {

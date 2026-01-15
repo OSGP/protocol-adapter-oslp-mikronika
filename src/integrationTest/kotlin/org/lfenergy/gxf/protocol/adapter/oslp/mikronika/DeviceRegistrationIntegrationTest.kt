@@ -13,7 +13,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.NET
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RANDOM_DEVICE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.AdapterDatabase
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.CoreDatabase
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.core.CoreDevice
@@ -39,7 +39,7 @@ class DeviceRegistrationIntegrationTest {
     private lateinit var messageBroker: MessageBroker
 
     @Autowired
-    private lateinit var device: Device
+    private lateinit var deviceSimulator: DeviceSimulator
 
     private var mikronikaDevice: MikronikaDevice? = null
     private var coreDevice: CoreDevice? = null
@@ -48,7 +48,7 @@ class DeviceRegistrationIntegrationTest {
 
     @BeforeEach
     fun setup() {
-        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, device.publicKey)
+        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, deviceSimulator.publicKey)
     }
 
     @Test
@@ -66,7 +66,7 @@ class DeviceRegistrationIntegrationTest {
     }
 
     private fun `when the device sends a device registration request message`() {
-        responseEnvelope = device.sendDeviceRegistrationRequest()
+        responseEnvelope = deviceSimulator.sendDeviceRegistrationRequest()
     }
 
     private fun `then a device registration response message should be sent back to the device`() {

@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
@@ -28,6 +29,9 @@ class ConfirmRegisterDeviceStrategyTest {
 
     @MockK
     private lateinit var mikronikaDeviceService: MikronikaDeviceService
+
+    @MockK
+    private lateinit var auditLoggingService: AuditLoggingService
 
     @InjectMockKs
     private lateinit var confirmRegisterDeviceStrategy: ConfirmRegisterDeviceStrategy

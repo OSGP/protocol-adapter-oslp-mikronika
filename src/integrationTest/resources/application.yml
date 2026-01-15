@@ -58,6 +58,15 @@ commands:
       priority: 4
       time-to-live: 0
 
+audit-logging:
+  producer:
+    outbound-queue: gxf.publiclighting.oslp-mikronika.audit-log
+    quality-of-service:
+      explicit-qos-enabled: true
+      delivery-persistent: true
+      priority: 4
+      time-to-live: 0
+
 server-socket:
   port: 12126
   hostName: localhost

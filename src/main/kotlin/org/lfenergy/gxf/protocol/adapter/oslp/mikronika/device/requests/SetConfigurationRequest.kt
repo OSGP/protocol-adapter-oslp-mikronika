@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LightType
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LinkType
 import org.opensmartgridplatform.oslp.Oslp
@@ -15,12 +17,12 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.RelayTyp
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.SetConfigurationRequest as InternalSetConfigurationRequest
 
 class SetConfigurationRequest(
-    deviceIdentification: String,
-    networkAddress: String,
+    device: Device,
+    organization: Organization,
     val setConfigurationRequest: InternalSetConfigurationRequest,
 ) : DeviceRequest(
-        deviceIdentification,
-        networkAddress,
+        device,
+        organization,
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {

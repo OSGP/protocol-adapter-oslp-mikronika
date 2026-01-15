@@ -8,6 +8,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetTransitionRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.TransitionType
@@ -20,9 +22,6 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 @Component(value = SET_TRANSITION_REQUEST)
 class SetTransitionCommandMapper : CommandMapper {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
-        val deviceIdentification = requestMessage.header.deviceIdentification
-        val networkAddress = requestMessage.header.networkAddress
-
         val transitionType =
             when (requestMessage.setTransitionRequest.transitionType) {
                 TransitionType.SUNRISE -> SetTransitionRequest.TransitionType.NIGHT_DAY
@@ -33,8 +32,11 @@ class SetTransitionCommandMapper : CommandMapper {
         val time = requestMessage.setTransitionRequest.time
 
         return SetTransitionRequest(
-            deviceIdentification,
-            networkAddress,
+            Device(
+                requestMessage.header.deviceIdentification,
+                requestMessage.header.networkAddress,
+            ),
+            Organization(requestMessage.header.organizationIdentification),
             transitionType,
             time,
         )

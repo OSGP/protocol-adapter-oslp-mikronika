@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
@@ -11,11 +12,13 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mod
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.opensmartgridplatform.oslp.Oslp.Message
 
 abstract class ReceiveStrategy(
     private val signingService: SigningService,
     private val mikronikaDeviceService: MikronikaDeviceService,
+    private val auditLoggingService: AuditLoggingService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -33,16 +36,31 @@ abstract class ReceiveStrategy(
         val deviceUid = String(requestEnvelope.deviceUid)
         val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUid)
 
+        // TODO: [FDP-3625] Check sequence number for validity
+
         if (!validateSignature(requestEnvelope, MikronikaDevicePublicKey(mikronikaDevice.publicKey))) return null
+
+        auditLoggingService.logMessageFromDevice(
+            Device(mikronikaDevice.deviceIdentification),
+            requestEnvelope.messageBytes,
+            requestEnvelope.message.toString(),
+        )
+
         try {
             handle(requestEnvelope, mikronikaDevice)
         } catch (e: InvalidRequestException) {
             logger.warn { "Invalid request received for deviceUid: ${mikronikaDevice.deviceUid} with message: ${e.message}" }
             return null
         }
-        val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice).toByteArray()
+        val responsePayload = buildResponsePayload(requestEnvelope, mikronikaDevice)
 
-        return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload)
+        auditLoggingService.logReplyToDevice(
+            Device(mikronikaDevice.deviceIdentification),
+            responsePayload.toByteArray(),
+            responsePayload.toString(),
+        )
+
+        return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload.toByteArray())
     }
 
     private fun finalizeInvocation(

@@ -39,7 +39,7 @@ import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
 
 @Component
-class Device(
+class DeviceSimulator(
     private val signingUtil: SigningUtil,
     private val deviceKeyPair: KeyPair,
     private val serverSocketConfiguration: ServerSocketConfiguration,
@@ -73,6 +73,10 @@ class Device(
 
     fun addMock(deviceCallMock: DeviceCallMock) {
         mockQueue.push(deviceCallMock)
+    }
+
+    fun clearMocks() {
+        mockQueue.clear()
     }
 
     private fun deviceRegistrationRequestMessage() =

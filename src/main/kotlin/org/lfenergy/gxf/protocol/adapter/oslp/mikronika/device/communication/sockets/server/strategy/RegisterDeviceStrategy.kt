@@ -5,6 +5,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import com.google.protobuf.ByteString
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
@@ -25,9 +26,10 @@ import kotlin.random.Random
 class RegisterDeviceStrategy(
     signingService: SigningService,
     mikronikaDeviceService: MikronikaDeviceService,
+    auditLoggingService: AuditLoggingService,
     private val coreDeviceService: CoreDeviceService,
     private val eventPublisher: ApplicationEventPublisher,
-) : ReceiveStrategy(signingService, mikronikaDeviceService) {
+) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     override fun handle(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,

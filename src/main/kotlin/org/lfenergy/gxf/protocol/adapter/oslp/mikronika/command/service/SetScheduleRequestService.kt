@@ -7,6 +7,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.SetSchedu
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceClientService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.SetConfigurationRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.astronomicalOffsetsConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
@@ -59,8 +61,11 @@ class SetScheduleRequestService(
 
     private fun createAstronomicalOffsetConfigurationRequest(requestMessage: DeviceRequestMessage) =
         SetConfigurationRequest(
-            requestMessage.header.deviceIdentification,
-            requestMessage.header.networkAddress,
+            Device(
+                requestMessage.header.deviceIdentification,
+                requestMessage.header.networkAddress,
+            ),
+            Organization(requestMessage.header.organizationIdentification),
             setConfigurationRequest {
                 configuration =
                     configuration {

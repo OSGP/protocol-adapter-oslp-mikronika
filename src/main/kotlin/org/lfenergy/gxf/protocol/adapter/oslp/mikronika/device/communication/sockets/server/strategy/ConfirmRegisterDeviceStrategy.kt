@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy
 
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Component
 class ConfirmRegisterDeviceStrategy(
     signingService: SigningService,
     mikronikaDeviceService: MikronikaDeviceService,
-) : ReceiveStrategy(signingService, mikronikaDeviceService) {
+    auditLoggingService: AuditLoggingService,
+) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     override fun handle(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
