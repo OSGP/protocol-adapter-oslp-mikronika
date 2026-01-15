@@ -45,8 +45,8 @@ class SetConfigurationCommandMapperTest {
 
         val result = subject.toInternal(deviceRequestMessage) as SetConfigurationRequest
 
-        assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
-        assertEquals(NETWORK_ADDRESS, result.networkAddress)
+        assertEquals(DEVICE_IDENTIFICATION, result.device.deviceIdentification)
+        assertEquals(NETWORK_ADDRESS, result.device.networkAddress)
         assertTrue(result.setConfigurationRequest.configuration.testButtonEnabled)
         assertEquals(InternalLightType.RELAY, result.setConfigurationRequest.configuration.lightType)
         assertEquals(100, result.setConfigurationRequest.configuration.timeSyncFrequency)

@@ -34,8 +34,8 @@ class ResumeScheduleCommandMapperTest {
 
         val result = subject.toInternal(deviceRequestMessage) as ResumeScheduleRequest
 
-        assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
-        assertEquals(NETWORK_ADDRESS, result.networkAddress)
+        assertEquals(DEVICE_IDENTIFICATION, result.device.deviceIdentification)
+        assertEquals(NETWORK_ADDRESS, result.device.networkAddress)
         assertEquals(2, result.index)
         assertEquals(false, result.immediate)
     }

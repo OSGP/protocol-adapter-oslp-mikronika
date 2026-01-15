@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.scheduleEntry
@@ -39,7 +39,7 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
                     }
             }
 
-        device.addMock(okMock)
+        deviceSimulator.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -73,7 +73,7 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
                     }
             }
 
-        device.addMock(rejectedMock)
+        deviceSimulator.addMock(rejectedMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -108,8 +108,8 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
                     }
             }
 
-        device.addMock(okAstronomicalMock)
-        device.addMock(okSetConfigurationMock)
+        deviceSimulator.addMock(okAstronomicalMock)
+        deviceSimulator.addMock(okSetConfigurationMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -132,7 +132,7 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
     }
 
     val okSetConfigurationMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setConfigurationResponse =
                     setConfigurationResponse {
@@ -142,7 +142,7 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
         }
 
     val okAstronomicalMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setScheduleResponse =
                     setScheduleResponse {
@@ -152,7 +152,7 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
         }
 
     val okMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setScheduleResponse =
                     setScheduleResponse {
@@ -162,7 +162,7 @@ class SetScheduleCommandIntegrationTest : CommandIntegrationTest() {
         }
 
     val rejectedMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setScheduleResponse =
                     setScheduleResponse {

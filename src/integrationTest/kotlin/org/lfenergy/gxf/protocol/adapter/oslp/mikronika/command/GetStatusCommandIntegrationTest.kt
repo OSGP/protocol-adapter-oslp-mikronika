@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
@@ -27,7 +27,7 @@ class GetStatusCommandIntegrationTest : CommandIntegrationTest() {
                 header = createHeader(RequestType.GET_STATUS_REQUEST)
             }
 
-        device.addMock(okMock)
+        deviceSimulator.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -52,7 +52,7 @@ class GetStatusCommandIntegrationTest : CommandIntegrationTest() {
                 header = createHeader(RequestType.GET_STATUS_REQUEST)
             }
 
-        device.addMock(rejectedMock)
+        deviceSimulator.addMock(rejectedMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -70,7 +70,7 @@ class GetStatusCommandIntegrationTest : CommandIntegrationTest() {
     }
 
     val okMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 getStatusResponse =
                     getStatusResponse {
@@ -84,7 +84,7 @@ class GetStatusCommandIntegrationTest : CommandIntegrationTest() {
         }
 
     val rejectedMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 getStatusResponse =
                     getStatusResponse {

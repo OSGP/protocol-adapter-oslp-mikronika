@@ -7,27 +7,41 @@ import jakarta.annotation.PostConstruct
 import jakarta.jms.BytesMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.AUDIT_LOG_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_EVENTS_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION_HEADER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_REQUEST_QUEUE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_RESPONSE_QUEUE
+import org.lfenergy.gxf.publiclighting.contracts.internal.auditlogging.LogItemMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.DeviceEventMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
+import org.testcontainers.activemq.ArtemisContainer
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.util.Base64
 
 @Component
 class MessageBroker(
     val deviceNotificationJmsTemplate: JmsTemplate,
     val deviceRequestJmsTemplate: JmsTemplate,
+    val auditLoggingJmsTemplate: JmsTemplate,
 ) {
+    @Autowired
+    private lateinit var artemisContainer: ArtemisContainer
+
     @PostConstruct
     fun initialize() {
         deviceNotificationJmsTemplate.receiveTimeout = 2000
         deviceRequestJmsTemplate.receiveTimeout = 2000
+        auditLoggingJmsTemplate.receiveTimeout = 2000
     }
 
     fun sendDeviceRequestMessage(request: DeviceRequestMessage) {
@@ -81,15 +95,67 @@ class MessageBroker(
         return eventMessage
     }
 
-    private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage {
-        val bytes = ByteArray(this.bodyLength.toInt())
-        this.readBytes(bytes)
-        return DeviceResponseMessage.parseFrom(bytes)
+    fun receiveLogItemMessage(expectedDeviceIdentification: String): LogItemMessage {
+        val bytesMessage = auditLoggingJmsTemplate.receive(AUDIT_LOG_QUEUE) as BytesMessage?
+        assertThat(bytesMessage).isNotNull
+        assertThat(bytesMessage!!.jmsType).isEqualTo(OSLP_LOG_ITEM_REQUEST)
+        assertThat(bytesMessage.getStringProperty(DEVICE_IDENTIFICATION_HEADER)).isEqualTo(expectedDeviceIdentification)
+
+        val logItemMessage = bytesMessage.toLogItemMessage()
+        with(logItemMessage) {
+            assertThat(this).isNotNull
+            assertThat(deviceIdentification).isEqualTo(expectedDeviceIdentification)
+        }
+        return logItemMessage
     }
 
-    private fun BytesMessage.toDeviceEventMessage(): DeviceEventMessage {
-        val bytes = ByteArray(this.bodyLength.toInt())
-        this.readBytes(bytes)
-        return DeviceEventMessage.parseFrom(bytes)
+    fun purgeQueues() {
+        purgeQueue(DEVICE_REQUEST_QUEUE)
+        purgeQueue(DEVICE_RESPONSE_QUEUE)
+        purgeQueue(AUDIT_LOG_QUEUE)
+        purgeQueue(DEVICE_EVENTS_QUEUE)
     }
+
+    private fun purgeQueue(queueName: String) {
+        val port = artemisContainer.getMappedPort(8161)
+        val client = HttpClient.newHttpClient()
+        val url = "http://localhost:$port/console/jolokia"
+        val json = jsonPurgeCommandForQueue(queueName)
+        val auth = Base64.getEncoder().encodeToString("artemis:artemis".toByteArray())
+
+        val request =
+            HttpRequest
+                .newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("Origin", "http://localhost")
+                .header("Authorization", "Basic $auth")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build()
+
+        client.send(request, HttpResponse.BodyHandlers.ofString())
+    }
+
+    private fun BytesMessage.toDeviceResponseMessage(): DeviceResponseMessage = DeviceResponseMessage.parseFrom(this.data())
+
+    private fun BytesMessage.toDeviceEventMessage(): DeviceEventMessage = DeviceEventMessage.parseFrom(this.data())
+
+    private fun BytesMessage.toLogItemMessage(): LogItemMessage = LogItemMessage.parseFrom(this.data())
+
+    private fun BytesMessage.data(): ByteArray =
+        ByteArray(this.bodyLength.toInt()).also {
+            this.readBytes(it)
+        }
+
+    private fun jsonPurgeCommandForQueue(queueName: String): String =
+        """
+        {
+          "type": "exec",
+          "mbean": "org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"$queueName\",subcomponent=queues,routing-type=\"anycast\",queue=\"$queueName\"",
+          "operation": "removeAllMessages()",
+          "arguments": []
+        }
+        """.trimIndent()
 }
+
+private const val OSLP_LOG_ITEM_REQUEST = "OSLP_LOG_ITEM"

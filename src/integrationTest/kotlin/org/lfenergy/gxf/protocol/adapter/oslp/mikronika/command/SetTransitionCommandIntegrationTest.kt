@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertNotNull
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEVICE_UID
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.createHeader
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.TransitionType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
@@ -34,7 +34,7 @@ class SetTransitionCommandIntegrationTest : CommandIntegrationTest() {
                     }
             }
 
-        device.addMock(okMock)
+        deviceSimulator.addMock(okMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -64,7 +64,7 @@ class SetTransitionCommandIntegrationTest : CommandIntegrationTest() {
                     }
             }
 
-        device.addMock(rejectedMock)
+        deviceSimulator.addMock(rejectedMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -83,7 +83,7 @@ class SetTransitionCommandIntegrationTest : CommandIntegrationTest() {
     }
 
     val okMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setTransitionResponse =
                     setTransitionResponse {
@@ -93,7 +93,7 @@ class SetTransitionCommandIntegrationTest : CommandIntegrationTest() {
         }
 
     val rejectedMock =
-        Device.DeviceCallMock {
+        DeviceSimulator.DeviceCallMock {
             message {
                 setTransitionResponse =
                     setTransitionResponse {

@@ -24,4 +24,6 @@ object TestConstants {
 
     const val DEVICE_REQUEST_QUEUE = "gxf.publiclighting.oslp-mikronika.device-requests"
     const val DEVICE_RESPONSE_QUEUE = "gxf.publiclighting.oslp-mikronika.device-responses"
+
+    const val AUDIT_LOG_QUEUE = "gxf.publiclighting.oslp-mikronika.audit-log"
 }

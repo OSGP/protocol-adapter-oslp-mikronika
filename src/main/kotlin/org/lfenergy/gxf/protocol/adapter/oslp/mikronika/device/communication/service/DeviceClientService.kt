@@ -7,6 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidSignatureException
@@ -24,6 +25,7 @@ class DeviceClientService(
     private val mikronikaDeviceService: MikronikaDeviceService,
     private val signingService: SigningService,
     private val socketProperties: ClientSocketConfigurationProperties,
+    private val auditLoggingService: AuditLoggingService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -33,15 +35,33 @@ class DeviceClientService(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val sock = ClientSocket(deviceRequest.networkAddress, socketProperties.devicePort)
-                val device = mikronikaDeviceService.findByDeviceIdentification(deviceRequest.deviceIdentification)
-                val requestEnvelope = createEnvelope(device, deviceRequest.toOslpMessage())
+                val sock = ClientSocket(deviceRequest.device.networkAddress, socketProperties.devicePort)
+                val device =
+                    mikronikaDeviceService.findByDeviceIdentification(deviceRequest.device.deviceIdentification)
+                val oslpMessage = deviceRequest.toOslpMessage()
+                val requestEnvelope = createEnvelope(device, oslpMessage)
+
+                auditLoggingService.logMessageToDevice(
+                    deviceRequest.organization,
+                    deviceRequest.device,
+                    oslpMessage.toByteArray(),
+                    oslpMessage.toString(),
+                )
 
                 val responseEnvelope = sock.sendAndReceive(requestEnvelope)
+
+                // TODO: [FDP-3625] validate SequenceNumber
 
                 if (!validateSignature(responseEnvelope, MikronikaDevicePublicKey(device.publicKey))) {
                     throw InvalidSignatureException("Signature validation failed for message! DeviceUid: ${responseEnvelope.deviceUid}")
                 }
+
+                auditLoggingService.logReplyFromDevice(
+                    deviceRequest.organization,
+                    deviceRequest.device,
+                    responseEnvelope.messageBytes,
+                    responseEnvelope.message.toString(),
+                )
 
                 device.sequenceNumber = responseEnvelope.sequenceNumber
                 mikronikaDeviceService.saveDevice(device)

@@ -38,8 +38,8 @@ class SetEventNotificationMaskCommandMapperTest {
 
         val result = subject.toInternal(deviceRequestMessage) as SetEventNotificationMaskRequest
 
-        assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
-        assertEquals(NETWORK_ADDRESS, result.networkAddress)
+        assertEquals(DEVICE_IDENTIFICATION, result.device.deviceIdentification)
+        assertEquals(NETWORK_ADDRESS, result.device.networkAddress)
         assertEquals(24, result.notificationMask)
     }
 

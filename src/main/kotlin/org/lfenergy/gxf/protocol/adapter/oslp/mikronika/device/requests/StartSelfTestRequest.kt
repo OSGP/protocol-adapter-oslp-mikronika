@@ -3,16 +3,18 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
 import org.opensmartgridplatform.oslp.startSelfTestRequest
 
 class StartSelfTestRequest(
-    deviceIdentification: String,
-    networkAddress: String,
+    device: Device,
+    organization: Organization,
 ) : DeviceRequest(
-        deviceIdentification,
-        networkAddress,
+        device,
+        organization,
     ) {
     override fun toOslpMessage(): Oslp.Message =
         message {

@@ -12,7 +12,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.DEV
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RANDOM_PLATFORM
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.SEQUENCE_NUMBER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.database.AdapterDatabase
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.DeviceSimulator
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
@@ -29,14 +29,14 @@ class DeviceRegistrationConfirmationIntegrationTest {
     private lateinit var adapterDatabase: AdapterDatabase
 
     @Autowired
-    private lateinit var device: Device
+    private lateinit var deviceSimulator: DeviceSimulator
 
     private var mikronikaDevice: MikronikaDevice? = null
     private var responseEnvelope: Envelope? = null
 
     @BeforeEach
     fun setup() {
-        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, device.publicKey)
+        adapterDatabase.updateDeviceKey(DEVICE_IDENTIFICATION, deviceSimulator.publicKey)
         adapterDatabase.updateRandomPlatform(DEVICE_IDENTIFICATION, RANDOM_PLATFORM)
     }
 
@@ -53,7 +53,7 @@ class DeviceRegistrationConfirmationIntegrationTest {
     }
 
     private fun `when the device sends a device registration confirmation request message`() {
-        responseEnvelope = device.sendDeviceRegistrationConfirmationRequest()
+        responseEnvelope = deviceSimulator.sendDeviceRegistrationConfirmationRequest()
     }
 
     private fun `then a device registration confirmation response message should be sent back to the device`() {

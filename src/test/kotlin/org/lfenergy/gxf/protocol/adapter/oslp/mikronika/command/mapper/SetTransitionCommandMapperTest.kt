@@ -34,8 +34,8 @@ class SetTransitionCommandMapperTest {
 
         val result = subject.toInternal(deviceRequestMessage) as SetTransitionRequest
 
-        assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
-        assertEquals(NETWORK_ADDRESS, result.networkAddress)
+        assertEquals(DEVICE_IDENTIFICATION, result.device.deviceIdentification)
+        assertEquals(NETWORK_ADDRESS, result.device.networkAddress)
         assertEquals(SetTransitionRequest.TransitionType.DAY_NIGHT, result.transitionType)
         assertEquals("time", result.time)
     }

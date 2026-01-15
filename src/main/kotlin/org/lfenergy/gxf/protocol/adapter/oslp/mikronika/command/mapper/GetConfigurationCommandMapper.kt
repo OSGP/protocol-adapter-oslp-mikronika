@@ -8,6 +8,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetConfigurationRequest
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.astronomicalOffsetsConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.communicationConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
@@ -30,15 +32,14 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 
 @Component(value = GET_CONFIGURATION_REQUEST)
 class GetConfigurationCommandMapper : CommandMapper {
-    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest {
-        val deviceIdentification = requestMessage.header.deviceIdentification
-        val networkAddress = requestMessage.header.networkAddress
-
-        return GetConfigurationRequest(
-            deviceIdentification,
-            networkAddress,
+    override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
+        GetConfigurationRequest(
+            Device(
+                requestMessage.header.deviceIdentification,
+                requestMessage.header.networkAddress,
+            ),
+            Organization(requestMessage.header.organizationIdentification),
         )
-    }
 
     override fun toResponse(
         requestHeader: RequestHeader,

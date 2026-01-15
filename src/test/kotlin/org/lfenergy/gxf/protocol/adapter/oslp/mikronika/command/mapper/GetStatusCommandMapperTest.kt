@@ -28,8 +28,8 @@ class GetStatusCommandMapperTest {
 
         val result = subject.toInternal(deviceRequestMessage) as GetStatusRequest
 
-        assertEquals(DEVICE_IDENTIFICATION, result.deviceIdentification)
-        assertEquals(NETWORK_ADDRESS, result.networkAddress)
+        assertEquals(DEVICE_IDENTIFICATION, result.device.deviceIdentification)
+        assertEquals(NETWORK_ADDRESS, result.device.networkAddress)
     }
 
     @Test
