@@ -129,8 +129,6 @@ class AuditLoggingIntegrationTest : CommandIntegrationTest() {
                     }
             }
         }
-
-    private fun String.removeWhitespaces() = this.replace(Regex("[ \\n\\r]"), "")
 }
 
 private const val NO_ORGANISATION = ""
