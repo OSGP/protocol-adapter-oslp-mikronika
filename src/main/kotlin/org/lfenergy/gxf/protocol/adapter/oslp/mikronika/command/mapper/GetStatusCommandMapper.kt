@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
+import com.google.protobuf.ByteString
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_STATUS_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
@@ -56,7 +57,7 @@ class GetStatusCommandMapper : CommandMapper {
         getStatusResponse {
             val response = envelope.message.getStatusResponse
 
-            lightValues += response.valueList.map { it.toInternal() }
+            lightValues += response.valueList.mapNotNull { it.toInternal() }
 
             response.preferredLinktype.toInternal()?.let { preferredLinkType = it }
 
@@ -109,17 +110,28 @@ class GetStatusCommandMapper : CommandMapper {
             }
         }
 
-    private fun Oslp.LightValue.toInternal(): InternalLightValue =
-        lightValue {
-            index =
-                when (index.number) {
-                    0 -> RelayIndex.RELAY_ALL
-                    1 -> RelayIndex.RELAY_ONE
-                    2 -> RelayIndex.RELAY_TWO
-                    3 -> RelayIndex.RELAY_THREE
-                    4 -> RelayIndex.RELAY_FOUR
-                    else -> RelayIndex.RELAY_ALL
-                }
+    private fun Oslp.LightValue.toInternal(): InternalLightValue? {
+        val relayIndex = this.index.toInternal() ?: return null
+        return lightValue {
+            index = relayIndex
             lightOn = on
         }
+    }
+
+    private fun ByteString.toInternal(): RelayIndex? {
+        if (isEmpty) return RelayIndex.RELAY_ALL
+        return when (val index = singleByteToInt()) {
+            0 -> RelayIndex.RELAY_ALL
+            1 -> RelayIndex.RELAY_ONE
+            2 -> RelayIndex.RELAY_TWO
+            3 -> RelayIndex.RELAY_THREE
+            4 -> RelayIndex.RELAY_FOUR
+            else -> {
+                logger.warn { "Unknown relay index: $index" }
+                null
+            }
+        }
+    }
+
+    private fun ByteString.singleByteToInt() = byteAt(0).toInt() and 0xFF
 }
