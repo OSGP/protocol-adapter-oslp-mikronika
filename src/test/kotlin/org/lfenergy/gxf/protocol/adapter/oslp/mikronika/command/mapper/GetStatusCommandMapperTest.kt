@@ -61,8 +61,8 @@ class GetStatusCommandMapperTest {
                                 lightValue {
                                     index = ByteString.copyFrom(byteArrayOf(5.toByte()))
                                     on = true
-                                }
-                            )
+                                },
+                            ),
                         )
                     }
             }
