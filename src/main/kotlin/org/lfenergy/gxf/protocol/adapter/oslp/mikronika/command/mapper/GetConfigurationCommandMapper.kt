@@ -150,7 +150,7 @@ class GetConfigurationCommandMapper : CommandMapper {
             }
         }
 
-    private fun Oslp.RelayType.toInternal() =
+    private fun Oslp.RelayType.toInternal(): RelayType? =
         when (this) {
             Oslp.RelayType.LIGHT -> RelayType.LIGHT
             Oslp.RelayType.RT_NOT_SET -> RelayType.RELAY_TYPE_NOT_SET
