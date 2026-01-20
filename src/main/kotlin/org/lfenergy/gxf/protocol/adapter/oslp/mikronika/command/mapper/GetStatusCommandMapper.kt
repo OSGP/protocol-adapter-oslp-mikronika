@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
+import com.google.protobuf.ByteString
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_STATUS_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
@@ -26,6 +28,8 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 
 @Component(value = GET_STATUS_REQUEST)
 class GetStatusCommandMapper : CommandMapper {
+    private val logger = KotlinLogging.logger { }
+
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
         GetStatusRequest(
             Device(
@@ -53,20 +57,14 @@ class GetStatusCommandMapper : CommandMapper {
         getStatusResponse {
             val response = envelope.message.getStatusResponse
 
-            lightValues += response.valueList.map { it.toInternal() }
+            lightValues += response.valueList.mapNotNull { it.toInternal() }
 
-            preferredLinkType = response.preferredLinktype.toInternal()
+            response.preferredLinktype.toInternal()?.let { preferredLinkType = it }
 
-            actualLinkType = response.actualLinktype.toInternal()
+            response.actualLinktype.toInternal()?.let { actualLinkType = it }
 
-            lightType =
-                when (response.lightType) {
-                    Oslp.LightType.RELAY -> InternalLightType.RELAY
-                    Oslp.LightType.ONE_TO_TEN_VOLT -> InternalLightType.ONE_TO_TEN_VOLT
-                    Oslp.LightType.ONE_TO_TEN_VOLT_REVERSE -> InternalLightType.ONE_TO_TEN_VOLT_REVERSE
-                    Oslp.LightType.DALI -> InternalLightType.DALI
-                    else -> InternalLightType.RELAY
-                }
+            response.lightType.toInternal()?.let { lightType = it }
+
             eventNotificationMask = response.eventNotificationMask
             numberOfOutputs = response.numberOfOutputs
             dcOutputVoltageMaximum = response.dcOutputVoltageMaximum
@@ -87,25 +85,53 @@ class GetStatusCommandMapper : CommandMapper {
             currentIp = response.currentIp
         }
 
-    private fun Oslp.LinkType.toInternal(): InternalLinkType =
+    private fun Oslp.LightType.toInternal(): InternalLightType? =
+        when (this) {
+            Oslp.LightType.RELAY -> InternalLightType.RELAY
+            Oslp.LightType.ONE_TO_TEN_VOLT -> InternalLightType.ONE_TO_TEN_VOLT
+            Oslp.LightType.ONE_TO_TEN_VOLT_REVERSE -> InternalLightType.ONE_TO_TEN_VOLT_REVERSE
+            Oslp.LightType.DALI -> InternalLightType.DALI
+            Oslp.LightType.LT_NOT_SET -> InternalLightType.LIGHT_TYPE_NOT_SET
+            else -> {
+                logger.warn { "Unknown light type: $this" }
+                null
+            }
+        }
+
+    private fun Oslp.LinkType.toInternal(): InternalLinkType? =
         when (this) {
             Oslp.LinkType.GPRS -> InternalLinkType.GPRS
             Oslp.LinkType.CDMA -> InternalLinkType.CDMA
             Oslp.LinkType.ETHERNET -> InternalLinkType.ETHERNET
-            else -> throw IllegalArgumentException("Unknown LinkType: $this")
+            Oslp.LinkType.LINK_NOT_SET -> InternalLinkType.LINK_TYPE_NOT_SET
+            else -> {
+                logger.warn { "Unknown link type: $this" }
+                null
+            }
         }
 
-    private fun Oslp.LightValue.toInternal(): InternalLightValue =
-        lightValue {
-            index =
-                when (index.number) {
-                    0 -> RelayIndex.RELAY_ALL
-                    1 -> RelayIndex.RELAY_ONE
-                    2 -> RelayIndex.RELAY_TWO
-                    3 -> RelayIndex.RELAY_THREE
-                    4 -> RelayIndex.RELAY_FOUR
-                    else -> RelayIndex.RELAY_ALL
-                }
+    private fun Oslp.LightValue.toInternal(): InternalLightValue? {
+        val relayIndex = this.index.toInternal() ?: return null
+        return lightValue {
+            index = relayIndex
             lightOn = on
         }
+    }
+
+    private fun ByteString.toInternal(): RelayIndex? {
+        if (isEmpty) return RelayIndex.RELAY_ALL
+        return when (val index = singleByteToInt()) {
+            0 -> RelayIndex.RELAY_ALL
+            1 -> RelayIndex.RELAY_ONE
+            2 -> RelayIndex.RELAY_TWO
+            3 -> RelayIndex.RELAY_THREE
+            4 -> RelayIndex.RELAY_FOUR
+            else -> {
+                logger.warn { "Unknown relay index: $index" }
+                null
+            }
+        }
+    }
+
+    private fun ByteString.singleByteToInt() = byteAt(0).toInt() and 0xFF
 }
