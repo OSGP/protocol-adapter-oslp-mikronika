@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory.Companion.GET_CONFIGURATION_REQUEST
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
@@ -10,6 +11,8 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRe
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.GetConfigurationRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.RelayMap
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.RelayType
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.astronomicalOffsetsConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.communicationConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.configuration
@@ -18,6 +21,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.deviceAd
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.platformAddressConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.relayConfiguration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.relayLinking
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.relayMap
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.relayMapping
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
@@ -32,6 +36,8 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 
 @Component(value = GET_CONFIGURATION_REQUEST)
 class GetConfigurationCommandMapper : CommandMapper {
+    private val logger = KotlinLogging.logger { }
+
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
         GetConfigurationRequest(
             Device(
@@ -64,7 +70,7 @@ class GetConfigurationCommandMapper : CommandMapper {
                         relayConfiguration {
                             relayMapping =
                                 relayMapping {
-                                    relayMap.addAll(emptyList())
+                                    relayMap.addAll(response.relayConfiguration.toInternal())
                                 }
                             relayLinking =
                                 relayLinking {
@@ -88,7 +94,7 @@ class GetConfigurationCommandMapper : CommandMapper {
 
                     communicationConfiguration =
                         communicationConfiguration {
-                            preferredLinkType = response.preferredLinkType.toInternal()
+                            response.preferredLinkType.toInternal()?.let { preferredLinkType = it }
                             connectionTimeout = response.communicationTimeout
                             numberOfRetries = response.communicationNumberOfRetries
                             delayBetweenConnectionAttempts = response.communicationPauseTimeBetweenConnectionTrials
@@ -107,28 +113,50 @@ class GetConfigurationCommandMapper : CommandMapper {
                             sunsetOffset = response.astroGateSunSetOffset
                         }
 
-                    lightType = response.lightType.toInternal()
+                    response.lightType.toInternal()?.let { lightType = it }
                     testButtonEnabled = response.isTestButtonEnabled
                     timeSyncFrequency = response.timeSyncFrequency
                     switchingDelay.addAll(response.switchingDelayList)
                 }
         }
 
-    private fun Oslp.LightType.toInternal(): InternalLightType =
+    private fun Oslp.LightType.toInternal(): InternalLightType? =
         when (this) {
             Oslp.LightType.RELAY -> InternalLightType.RELAY
-            Oslp.LightType.ONE_TO_TEN_VOLT -> InternalLightType.ONE_TO_TEN_VOLT
-            Oslp.LightType.ONE_TO_TEN_VOLT_REVERSE -> InternalLightType.ONE_TO_TEN_VOLT_REVERSE
-            Oslp.LightType.DALI -> InternalLightType.DALI
-            else -> InternalLightType.RELAY
+            else -> {
+                logger.warn { "Unsupported light type: $this" }
+                null
+            }
         }
 
-    private fun Oslp.LinkType.toInternal(): InternalLinkType =
+    private fun Oslp.LinkType.toInternal(): InternalLinkType? =
         when (this) {
             Oslp.LinkType.GPRS -> InternalLinkType.GPRS
             Oslp.LinkType.CDMA -> InternalLinkType.CDMA
             Oslp.LinkType.ETHERNET -> InternalLinkType.ETHERNET
             Oslp.LinkType.LINK_NOT_SET -> InternalLinkType.LINK_TYPE_NOT_SET
-            else -> throw IllegalArgumentException("Unknown LinkType: $this")
+            else -> {
+                logger.warn { "Unsupported link type: $this" }
+                null
+            }
+        }
+
+    private fun Oslp.RelayConfiguration.toInternal(): List<RelayMap> =
+        addressMapList.map { am ->
+            relayMap {
+                index = am.index
+                address = am.address
+                am.relayType.toInternal()?.let { relayType = it }
+            }
+        }
+
+    private fun Oslp.RelayType.toInternal(): RelayType? =
+        when (this) {
+            Oslp.RelayType.LIGHT -> RelayType.LIGHT
+            Oslp.RelayType.RT_NOT_SET -> RelayType.RELAY_TYPE_NOT_SET
+            else -> {
+                logger.warn { "Unsupported relay type $this" }
+                null
+            }
         }
 }
