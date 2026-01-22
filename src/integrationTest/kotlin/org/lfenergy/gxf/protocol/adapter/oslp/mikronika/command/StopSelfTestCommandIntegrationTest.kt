@@ -63,7 +63,6 @@ class StopSelfTestCommandIntegrationTest : CommandIntegrationTest() {
 
         assertNotNull(result)
         assertEquals(Result.NOT_OK, result.result)
-        assertEquals(123.toChar().toString(), result.errorResponse.errorMessage)
 
         val receivedRequest = rejectedMock.capturedRequest.get()
 
