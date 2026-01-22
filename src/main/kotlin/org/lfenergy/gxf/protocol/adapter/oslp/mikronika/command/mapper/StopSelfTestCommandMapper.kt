@@ -14,7 +14,6 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.Device
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
-import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.errorResponse
 import org.opensmartgridplatform.oslp.Oslp
 import org.springframework.stereotype.Component
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result as InternalResult
@@ -42,12 +41,5 @@ class StopSelfTestCommandMapper : CommandMapper {
                     Oslp.Status.OK -> InternalResult.OK
                     else -> InternalResult.NOT_OK
                 }
-
-            if (response.hasSelfTestResult()) {
-                errorResponse =
-                    errorResponse {
-                        errorMessage = response.selfTestResult.toStringUtf8()
-                    }
-            }
         }
 }
