@@ -6,6 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config
 object TestConstants {
     const val DEVICE_IDENTIFICATION_HEADER = "DeviceIdentification"
     const val DEVICE_IDENTIFICATION = "device_001"
+    const val DEVICE_WITHOUT_COORDINATES = "device_004"
     const val DEVICE_UID = "MIK--UID-001"
     const val SEQUENCE_NUMBER = 1
     const val RANDOM_DEVICE = 12345

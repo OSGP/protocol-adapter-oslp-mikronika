@@ -36,6 +36,10 @@ signing:
   security-provider: "SunEC"
   private-key-path: "Provide me!"
 
+default-location:
+  latitude: 52.132635
+  longitude: 5.291266
+
 device-events:
   producer:
     outbound-queue: gxf.publiclighting.oslp-mikronika.device-events

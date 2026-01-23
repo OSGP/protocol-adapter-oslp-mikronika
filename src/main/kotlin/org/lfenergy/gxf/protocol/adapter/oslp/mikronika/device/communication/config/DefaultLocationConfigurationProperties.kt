@@ -5,7 +5,8 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.co
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("client-socket")
-class ClientSocketConfigurationProperties {
-    var devicePort: Int = 12125
-}
+@ConfigurationProperties("default-location")
+class DefaultLocationConfigurationProperties(
+    var latitude: Float = 52.132633f,
+    var longitude: Float = 5.291266f,
+)

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.DEVICE_IDENTIFICATION
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.DefaultLocationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.coreDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
@@ -46,6 +47,9 @@ class RegisterDeviceStrategyTest {
 
     @MockK
     private lateinit var eventPublisher: ApplicationEventPublisher
+
+    @MockK
+    private lateinit var defaultLocationConfigurationProperties: DefaultLocationConfigurationProperties
 
     @InjectMockKs
     private lateinit var registerDeviceStrategy: RegisterDeviceStrategy

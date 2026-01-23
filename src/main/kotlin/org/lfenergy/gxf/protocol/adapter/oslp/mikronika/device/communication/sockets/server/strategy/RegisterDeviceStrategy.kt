@@ -6,6 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 import com.google.protobuf.ByteString
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.DEVICE_TYPE
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.DefaultLocationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.CoreDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
@@ -29,6 +30,7 @@ class RegisterDeviceStrategy(
     auditLoggingService: AuditLoggingService,
     private val coreDeviceService: CoreDeviceService,
     private val eventPublisher: ApplicationEventPublisher,
+    private val defaultLocationConfigurationProperties: DefaultLocationConfigurationProperties,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     override fun handle(
         requestEnvelope: Envelope,
@@ -53,6 +55,8 @@ class RegisterDeviceStrategy(
                 .totalSeconds / 60
 
         val coreDevice = coreDeviceService.getCoreDevice(mikronikaDevice.deviceIdentification)
+        val latitude = coreDevice.latitude ?: defaultLocationConfigurationProperties.latitude
+        val longitude = coreDevice.longitude ?: defaultLocationConfigurationProperties.longitude
 
         val response =
             Message
@@ -67,8 +71,8 @@ class RegisterDeviceStrategy(
                         .setLocationInfo(
                             Oslp.LocationInfo
                                 .newBuilder()
-                                .setLatitude(coreDevice.latitude.toCoordinatesInt())
-                                .setLongitude(coreDevice.longitude.toCoordinatesInt())
+                                .setLatitude(latitude.toCoordinatesInt())
+                                .setLongitude(longitude.toCoordinatesInt())
                                 .setTimeOffset(offsetMinutes),
                         ),
                 ).build()

@@ -24,8 +24,8 @@ spring:
     show-sql: false
 
 server-socket:
-  port: 12122
+  port: 12125
   hostName: localhost
 
 client-socket:
-  device-port: 12129
+  device-port: 12126
