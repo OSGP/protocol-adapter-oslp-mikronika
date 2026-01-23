@@ -49,9 +49,14 @@ class DeviceSimulator(
 
     private val mockQueue: LinkedList<DeviceCallMock> = LinkedList()
 
-    fun sendDeviceRegistrationRequest(): Envelope {
+    fun sendDeviceRegistrationRequest(
+        deviceIdentification: String = DEVICE_IDENTIFICATION,
+        deviceUid: String = DEVICE_UID,
+    ): Envelope {
         Socket(serverSocketConfiguration.hostName, serverSocketConfiguration.port).use { socket ->
-            socket.getOutputStream().write(toEnvelope(deviceRegistrationRequestMessage()).getBytes())
+            socket
+                .getOutputStream()
+                .write(toEnvelope(deviceRegistrationRequestMessage(deviceIdentification), deviceUid).getBytes())
             return Envelope.parseFrom(socket.getInputStream().readBytes())
         }
     }
@@ -79,13 +84,13 @@ class DeviceSimulator(
         mockQueue.clear()
     }
 
-    private fun deviceRegistrationRequestMessage() =
+    private fun deviceRegistrationRequestMessage(deviceIdentification: String) =
         Oslp.Message
             .newBuilder()
             .setRegisterDeviceRequest(
                 Oslp.RegisterDeviceRequest
                     .newBuilder()
-                    .setDeviceIdentification(DEVICE_IDENTIFICATION)
+                    .setDeviceIdentification(deviceIdentification)
                     .setIpAddress(ByteString.copyFrom(InetAddress.getByName(NETWORK_ADDRESS).address))
                     .setHasSchedule(true)
                     .setRandomDevice(RANDOM_DEVICE)
@@ -119,10 +124,13 @@ class DeviceSimulator(
                     ),
             ).build()
 
-    private fun toEnvelope(message: Oslp.Message): Envelope {
+    private fun toEnvelope(
+        message: Oslp.Message,
+        deviceUid: String = DEVICE_UID,
+    ): Envelope {
         val payload = message.toByteArray()
         val sequenceNumber = SEQUENCE_NUMBER
-        val deviceUid = DEVICE_UID
+        val deviceUid = deviceUid
         val byteArray =
             sequenceNumber.toByteArray(2) +
                 deviceUid.toByteArray() +
