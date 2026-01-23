@@ -37,7 +37,7 @@ signing:
   private-key-path: "Provide me!"
 
 default-location:
-  latitude: 52.132635
+  latitude: 52.132633
   longitude: 5.291266
 
 device-events:
