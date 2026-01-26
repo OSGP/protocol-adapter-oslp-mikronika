@@ -44,7 +44,7 @@ class GetFirmwareVersionCommandMapper : CommandMapper {
             firmwareVersions.addAll(
                 listOf(
                     firmwareVersion {
-                        firmwareType = FirmwareType.FT_NOT_SET
+                        firmwareType = FirmwareType.FUNCTIONAL
                         version = envelope.message.getFirmwareVersionResponse.firmwareVersion
                     },
                 ),
