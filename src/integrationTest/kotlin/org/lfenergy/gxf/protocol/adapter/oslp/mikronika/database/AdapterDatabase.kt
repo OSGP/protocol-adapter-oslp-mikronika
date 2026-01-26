@@ -46,6 +46,7 @@ class AdapterDatabase(
         @Suppress("UNUSED_PARAMETER") rowNum: Int,
     ) = MikronikaDevice(
         deviceIdentification = rs.getString("device_identification"),
+        deviceUid = rs.getString("device_uid"),
         randomDevice = rs.getInt("random_device"),
         randomPlatform = rs.getInt("random_platform"),
         sequenceNumber = rs.getInt("sequence_number"),
@@ -53,7 +54,7 @@ class AdapterDatabase(
 }
 
 const val SELECT_ADAPTER_DEVICE_SQL =
-    "select device_identification, random_device, random_platform, sequence_number from oslp_mikronika_device where device_identification = ?"
+    "select device_identification, device_uid, random_device, random_platform, sequence_number from oslp_mikronika_device where device_identification = ?"
 
 const val UPDATE_DEVICE_KEY_SQL =
     "update oslp_mikronika_device set public_key = ? where device_identification = ?"

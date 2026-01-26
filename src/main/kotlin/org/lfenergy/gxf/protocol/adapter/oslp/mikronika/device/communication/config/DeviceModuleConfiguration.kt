@@ -7,5 +7,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableConfigurationProperties(ClientSocketConfigurationProperties::class)
+@EnableConfigurationProperties(
+    ClientSocketConfigurationProperties::class,
+    DefaultLocationConfigurationProperties::class,
+)
 class DeviceModuleConfiguration
