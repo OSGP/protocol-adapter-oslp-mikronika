@@ -141,16 +141,11 @@ class SetConfigurationRequestTest {
 
         assertThat(result.hasSetConfigurationRequest()).isTrue
         with(result.setConfigurationRequest) {
-            assertThat(hasAstroGateSunSetOffset()).isTrue.also {
-                assertThat(astroGateSunSetOffset).isEqualTo(
-                    SUNSET_OFFSET,
-                )
-            }
-            assertThat(hasAstroGateSunRiseOffset()).isTrue.also {
-                assertThat(astroGateSunRiseOffset).isEqualTo(
-                    SUNRISE_OFFSET,
-                )
-            }
+            assertThat(hasAstroGateSunSetOffset()).isTrue
+            assertThat(astroGateSunSetOffset).isEqualTo(SUNSET_OFFSET)
+
+            assertThat(hasAstroGateSunRiseOffset()).isTrue
+            assertThat(astroGateSunRiseOffset).isEqualTo(SUNRISE_OFFSET)
 
             assertThat(hasCommunicationTimeout()).isFalse
             assertThat(hasCommunicationPauseTimeBetweenConnectionTrials()).isFalse
