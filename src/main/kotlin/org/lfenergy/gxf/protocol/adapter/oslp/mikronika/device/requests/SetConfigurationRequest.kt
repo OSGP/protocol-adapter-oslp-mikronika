@@ -25,9 +25,9 @@ class SetConfigurationRequest(
     organization: Organization,
     val setConfigurationRequest: InternalSetConfigurationRequest,
 ) : DeviceRequest(
-    device,
-    organization,
-) {
+        device,
+        organization,
+    ) {
     override fun toOslpMessage(): Oslp.Message {
         val requestedConfiguration = this.setConfigurationRequest.configuration
 
@@ -148,10 +148,14 @@ class SetConfigurationRequest(
         return relayMatrix {
             if (internal.hasMasterRelayIndex()) masterRelayIndex = internal.masterRelayIndex
             if (internal.hasMasterRelayOn()) masterRelayOn = internal.masterRelayOn
-            if (internal.hasIndicesOfControlledRelaysOn()) indicesOfControlledRelaysOn =
-                internal.indicesOfControlledRelaysOn
-            if (internal.hasIndicesOfControlledRelaysOff()) indicesOfControlledRelaysOff =
-                internal.indicesOfControlledRelaysOff
+            if (internal.hasIndicesOfControlledRelaysOn()) {
+                indicesOfControlledRelaysOn =
+                    internal.indicesOfControlledRelaysOn
+            }
+            if (internal.hasIndicesOfControlledRelaysOff()) {
+                indicesOfControlledRelaysOff =
+                    internal.indicesOfControlledRelaysOff
+            }
         }
     }
 
