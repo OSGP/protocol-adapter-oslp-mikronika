@@ -5,9 +5,13 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.Configuration
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LightType
 import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.LinkType
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.RelayLinkMatrix
+import org.lfenergy.gxf.publiclighting.contracts.internal.configuration.RelayMap
 import org.opensmartgridplatform.oslp.Oslp
+import org.opensmartgridplatform.oslp.SetConfigurationRequestKt
 import org.opensmartgridplatform.oslp.indexAddressMap
 import org.opensmartgridplatform.oslp.message
 import org.opensmartgridplatform.oslp.relayConfiguration
@@ -21,65 +25,144 @@ class SetConfigurationRequest(
     organization: Organization,
     val setConfigurationRequest: InternalSetConfigurationRequest,
 ) : DeviceRequest(
-        device,
-        organization,
-    ) {
-    override fun toOslpMessage(): Oslp.Message =
-        message {
+    device,
+    organization,
+) {
+    override fun toOslpMessage(): Oslp.Message {
+        val requestedConfiguration = this.setConfigurationRequest.configuration
+
+        return message {
             setConfigurationRequest =
                 setConfigurationRequest {
-                    val setConfigRequest = this@SetConfigurationRequest.setConfigurationRequest.configuration
+                    addRelayConfiguration(this, requestedConfiguration)
+                    addDeviceAddressConfiguration(this, requestedConfiguration)
+                    addPlatformAddressConfiguration(this, requestedConfiguration)
+                    addCommunicationConfiguration(this, requestedConfiguration)
+                    addDaylightSavingsConfiguration(this, requestedConfiguration)
+                    addAstronomicalOffsetConfiguration(this, requestedConfiguration)
 
-                    relayLinking.addAll(
-                        setConfigRequest.relayConfiguration.relayLinking.relayLinkMatrixList.map {
-                            relayMatrix {
-                                masterRelayIndex = it.masterRelayIndex
-                                masterRelayOn = it.masterRelayOn
-                                indicesOfControlledRelaysOn = it.indicesOfControlledRelaysOn
-                                indicesOfControlledRelaysOff = it.indicesOfControlledRelaysOff
-                            }
-                        },
-                    )
-
-                    relayConfiguration =
-                        relayConfiguration {
-                            addressMap.addAll(
-                                setConfigRequest.relayConfiguration.relayMapping.relayMapList.map {
-                                    indexAddressMap {
-                                        index = it.index
-                                        address = it.address
-                                        relayType = it.relayType.toOslp()
-                                    }
-                                },
-                            )
-                        }
-
-                    relayRefreshing = setConfigRequest.relayConfiguration.relayRefreshingEnabled
-
-                    deviceFixIpValue = setConfigRequest.deviceAddressConfiguration.ipAddress
-                    netMask = setConfigRequest.deviceAddressConfiguration.netMask
-                    gateWay = setConfigRequest.deviceAddressConfiguration.gateway
-                    isDhcpEnabled = setConfigRequest.deviceAddressConfiguration.dhcpEnabled
-                    ospgIpAddress = setConfigRequest.platformAddressConfiguration.ipAddress
-                    osgpPortNumber = setConfigRequest.platformAddressConfiguration.portNumber
-                    preferredLinkType = setConfigRequest.communicationConfiguration.preferredLinkType.toOslp()
-                    communicationTimeout = setConfigRequest.communicationConfiguration.connectionTimeout
-                    communicationNumberOfRetries = setConfigRequest.communicationConfiguration.numberOfRetries
-                    communicationPauseTimeBetweenConnectionTrials =
-                        setConfigRequest.communicationConfiguration.delayBetweenConnectionAttempts
-                    isAutomaticSummerTimingEnabled =
-                        setConfigRequest.daylightSavingsTimeConfiguration.automaticSummerTimingEnabled
-                    summerTimeDetails = setConfigRequest.daylightSavingsTimeConfiguration.summerTimeDetails
-                    winterTimeDetails = setConfigRequest.daylightSavingsTimeConfiguration.winterTimeDetails
-                    astroGateSunRiseOffset = setConfigRequest.astronomicalOffsetsConfiguration.sunriseOffset
-                    astroGateSunSetOffset = setConfigRequest.astronomicalOffsetsConfiguration.sunsetOffset
-
-                    lightType = setConfigRequest.lightType.toOslp()
-                    isTestButtonEnabled = setConfigRequest.testButtonEnabled
-                    timeSyncFrequency = setConfigRequest.timeSyncFrequency
-                    switchingDelay.addAll(setConfigRequest.switchingDelayList)
+                    with(requestedConfiguration) {
+                        if (hasLightType()) this@setConfigurationRequest.lightType = lightType.toOslp()
+                        if (hasTestButtonEnabled()) isTestButtonEnabled = testButtonEnabled
+                        if (hasTimeSyncFrequency()) this@setConfigurationRequest.timeSyncFrequency = timeSyncFrequency
+                        if (switchingDelayCount > 0) switchingDelay.addAll(switchingDelayList)
+                    }
                 }
         }
+    }
+
+    private fun addRelayConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasRelayConfiguration()) {
+            with(requestedConfiguration.relayConfiguration) {
+                if (hasRelayLinking()) {
+                    dsl.apply {
+                        relayLinking.addAll(this@with.relayLinking.relayLinkMatrixList.map { it.toOslp() })
+                    }
+                }
+                if (hasRelayMapping()) {
+                    dsl.relayConfiguration =
+                        relayConfiguration {
+                            addressMap.addAll(
+                                relayMapping.relayMapList.map { it.toOslp() },
+                            )
+                        }
+                }
+                if (hasRelayRefreshingEnabled()) dsl.relayRefreshing = relayRefreshingEnabled
+            }
+        }
+    }
+
+    private fun addDeviceAddressConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasDeviceAddressConfiguration()) {
+            with(requestedConfiguration.deviceAddressConfiguration) {
+                if (hasIpAddress()) dsl.deviceFixIpValue = ipAddress
+                if (hasNetMask()) dsl.netMask = netMask
+                if (hasGateway()) dsl.gateWay = gateway
+                if (hasDhcpEnabled()) dsl.isDhcpEnabled = dhcpEnabled
+            }
+        }
+    }
+
+    private fun addPlatformAddressConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasPlatformAddressConfiguration()) {
+            with(requestedConfiguration.platformAddressConfiguration) {
+                if (hasIpAddress()) dsl.ospgIpAddress = ipAddress
+                if (hasPortNumber()) dsl.osgpPortNumber = portNumber
+            }
+        }
+    }
+
+    private fun addCommunicationConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasCommunicationConfiguration()) {
+            with(requestedConfiguration.communicationConfiguration) {
+                if (hasPreferredLinkType()) dsl.preferredLinkType = preferredLinkType.toOslp()
+                if (hasConnectionTimeout()) dsl.communicationTimeout = connectionTimeout
+                if (hasNumberOfRetries()) dsl.communicationNumberOfRetries = numberOfRetries
+                if (hasDelayBetweenConnectionAttempts()) {
+                    dsl.communicationPauseTimeBetweenConnectionTrials =
+                        delayBetweenConnectionAttempts
+                }
+            }
+        }
+    }
+
+    private fun addDaylightSavingsConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasDaylightSavingsTimeConfiguration()) {
+            with(requestedConfiguration.daylightSavingsTimeConfiguration) {
+                if (hasAutomaticSummerTimingEnabled()) dsl.isAutomaticSummerTimingEnabled = automaticSummerTimingEnabled
+                if (hasSummerTimeDetails()) dsl.summerTimeDetails = summerTimeDetails
+                if (hasWinterTimeDetails()) dsl.winterTimeDetails = winterTimeDetails
+            }
+        }
+    }
+
+    private fun addAstronomicalOffsetConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasAstronomicalOffsetsConfiguration()) {
+            with(requestedConfiguration.astronomicalOffsetsConfiguration) {
+                if (hasSunsetOffset()) dsl.astroGateSunSetOffset = sunsetOffset
+                if (hasSunriseOffset()) dsl.astroGateSunRiseOffset = sunriseOffset
+            }
+        }
+    }
+
+    private fun RelayLinkMatrix.toOslp(): Oslp.RelayMatrix {
+        val internal = this
+        return relayMatrix {
+            if (internal.hasMasterRelayIndex()) masterRelayIndex = internal.masterRelayIndex
+            if (internal.hasMasterRelayOn()) masterRelayOn = internal.masterRelayOn
+            if (internal.hasIndicesOfControlledRelaysOn()) indicesOfControlledRelaysOn =
+                internal.indicesOfControlledRelaysOn
+            if (internal.hasIndicesOfControlledRelaysOff()) indicesOfControlledRelaysOff =
+                internal.indicesOfControlledRelaysOff
+        }
+    }
+
+    private fun RelayMap.toOslp(): Oslp.IndexAddressMap {
+        val internal = this
+        return indexAddressMap {
+            if (internal.hasIndex()) index = internal.index
+            if (internal.hasAddress()) address = internal.address
+            if (internal.hasRelayType()) relayType = internal.relayType.toOslp()
+        }
+    }
 
     private fun LinkType.toOslp(): Oslp.LinkType =
         when (this) {
