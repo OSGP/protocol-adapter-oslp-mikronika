@@ -34,69 +34,25 @@ class SetConfigurationRequest(
         return message {
             setConfigurationRequest =
                 setConfigurationRequest {
-                    addRelayConfiguration(this, requestedConfiguration)
-                    addDeviceAddressConfiguration(this, requestedConfiguration)
-                    addPlatformAddressConfiguration(this, requestedConfiguration)
+                    addAstronomicalOffsetConfiguration(this, requestedConfiguration)
                     addCommunicationConfiguration(this, requestedConfiguration)
                     addDaylightSavingsConfiguration(this, requestedConfiguration)
-                    addAstronomicalOffsetConfiguration(this, requestedConfiguration)
-
-                    with(requestedConfiguration) {
-                        if (hasLightType()) this@setConfigurationRequest.lightType = lightType.toOslp()
-                        if (hasTestButtonEnabled()) isTestButtonEnabled = testButtonEnabled
-                        if (hasTimeSyncFrequency()) this@setConfigurationRequest.timeSyncFrequency = timeSyncFrequency
-                        if (switchingDelayCount > 0) switchingDelay.addAll(switchingDelayList)
-                    }
+                    addDeviceAddressConfiguration(this, requestedConfiguration)
+                    addPlatformAddressConfiguration(this, requestedConfiguration)
+                    addRelayConfiguration(this, requestedConfiguration)
+                    addOtherFields(this, requestedConfiguration)
                 }
         }
     }
 
-    private fun addRelayConfiguration(
+    private fun addAstronomicalOffsetConfiguration(
         dsl: SetConfigurationRequestKt.Dsl,
         requestedConfiguration: Configuration,
     ) {
-        if (requestedConfiguration.hasRelayConfiguration()) {
-            with(requestedConfiguration.relayConfiguration) {
-                if (hasRelayLinking()) {
-                    dsl.apply {
-                        relayLinking.addAll(this@with.relayLinking.relayLinkMatrixList.map { it.toOslp() })
-                    }
-                }
-                if (hasRelayMapping()) {
-                    dsl.relayConfiguration =
-                        relayConfiguration {
-                            addressMap.addAll(
-                                relayMapping.relayMapList.map { it.toOslp() },
-                            )
-                        }
-                }
-                if (hasRelayRefreshingEnabled()) dsl.relayRefreshing = relayRefreshingEnabled
-            }
-        }
-    }
-
-    private fun addDeviceAddressConfiguration(
-        dsl: SetConfigurationRequestKt.Dsl,
-        requestedConfiguration: Configuration,
-    ) {
-        if (requestedConfiguration.hasDeviceAddressConfiguration()) {
-            with(requestedConfiguration.deviceAddressConfiguration) {
-                if (hasIpAddress()) dsl.deviceFixIpValue = ipAddress
-                if (hasNetMask()) dsl.netMask = netMask
-                if (hasGateway()) dsl.gateWay = gateway
-                if (hasDhcpEnabled()) dsl.isDhcpEnabled = dhcpEnabled
-            }
-        }
-    }
-
-    private fun addPlatformAddressConfiguration(
-        dsl: SetConfigurationRequestKt.Dsl,
-        requestedConfiguration: Configuration,
-    ) {
-        if (requestedConfiguration.hasPlatformAddressConfiguration()) {
-            with(requestedConfiguration.platformAddressConfiguration) {
-                if (hasIpAddress()) dsl.ospgIpAddress = ipAddress
-                if (hasPortNumber()) dsl.osgpPortNumber = portNumber
+        if (requestedConfiguration.hasAstronomicalOffsetsConfiguration()) {
+            with(requestedConfiguration.astronomicalOffsetsConfiguration) {
+                if (hasSunsetOffset()) dsl.astroGateSunSetOffset = sunsetOffset
+                if (hasSunriseOffset()) dsl.astroGateSunRiseOffset = sunriseOffset
             }
         }
     }
@@ -131,15 +87,65 @@ class SetConfigurationRequest(
         }
     }
 
-    private fun addAstronomicalOffsetConfiguration(
+    private fun addDeviceAddressConfiguration(
         dsl: SetConfigurationRequestKt.Dsl,
         requestedConfiguration: Configuration,
     ) {
-        if (requestedConfiguration.hasAstronomicalOffsetsConfiguration()) {
-            with(requestedConfiguration.astronomicalOffsetsConfiguration) {
-                if (hasSunsetOffset()) dsl.astroGateSunSetOffset = sunsetOffset
-                if (hasSunriseOffset()) dsl.astroGateSunRiseOffset = sunriseOffset
+        if (requestedConfiguration.hasDeviceAddressConfiguration()) {
+            with(requestedConfiguration.deviceAddressConfiguration) {
+                if (hasIpAddress()) dsl.deviceFixIpValue = ipAddress
+                if (hasNetMask()) dsl.netMask = netMask
+                if (hasGateway()) dsl.gateWay = gateway
+                if (hasDhcpEnabled()) dsl.isDhcpEnabled = dhcpEnabled
             }
+        }
+    }
+
+    private fun addPlatformAddressConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasPlatformAddressConfiguration()) {
+            with(requestedConfiguration.platformAddressConfiguration) {
+                if (hasIpAddress()) dsl.ospgIpAddress = ipAddress
+                if (hasPortNumber()) dsl.osgpPortNumber = portNumber
+            }
+        }
+    }
+
+    private fun addRelayConfiguration(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        if (requestedConfiguration.hasRelayConfiguration()) {
+            with(requestedConfiguration.relayConfiguration) {
+                if (hasRelayLinking()) {
+                    dsl.apply {
+                        relayLinking.addAll(this@with.relayLinking.relayLinkMatrixList.map { it.toOslp() })
+                    }
+                }
+                if (hasRelayMapping()) {
+                    dsl.relayConfiguration =
+                        relayConfiguration {
+                            addressMap.addAll(
+                                relayMapping.relayMapList.map { it.toOslp() },
+                            )
+                        }
+                }
+                if (hasRelayRefreshingEnabled()) dsl.relayRefreshing = relayRefreshingEnabled
+            }
+        }
+    }
+
+    private fun addOtherFields(
+        dsl: SetConfigurationRequestKt.Dsl,
+        requestedConfiguration: Configuration,
+    ) {
+        with(requestedConfiguration) {
+            if (hasLightType()) dsl.lightType = lightType.toOslp()
+            if (hasTestButtonEnabled()) dsl.isTestButtonEnabled = testButtonEnabled
+            if (hasTimeSyncFrequency()) dsl.timeSyncFrequency = timeSyncFrequency
+            if (switchingDelayCount > 0) dsl.apply { switchingDelay.addAll(switchingDelayList) }
         }
     }
 
