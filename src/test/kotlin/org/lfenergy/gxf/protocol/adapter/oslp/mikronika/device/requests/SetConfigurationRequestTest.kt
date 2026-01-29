@@ -152,6 +152,10 @@ class SetConfigurationRequestTest {
             assertThat(hasCommunicationNumberOfRetries()).isFalse
             assertThat(hasPreferredLinkType()).isFalse
 
+            assertThat(hasIsAutomaticSummerTimingEnabled()).isFalse
+            assertThat(hasSummerTimeDetails()).isFalse
+            assertThat(hasWinterTimeDetails()).isFalse
+
             assertThat(hasDeviceFixIpValue()).isFalse
             assertThat(hasNetMask()).isFalse
             assertThat(hasGateWay()).isFalse
