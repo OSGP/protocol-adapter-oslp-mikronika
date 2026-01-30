@@ -60,7 +60,7 @@ class SetConfigurationRequest(
                     if (source.hasLightType()) lightType = source.lightType.toOslp()
                     if (source.hasTestButtonEnabled()) isTestButtonEnabled = source.testButtonEnabled
                     if (source.hasTimeSyncFrequency()) timeSyncFrequency = source.timeSyncFrequency
-                    if (source.switchingDelayCount > 0) apply { switchingDelay.addAll(source.switchingDelayList) }
+                    if (source.switchingDelayCount > 0) switchingDelay.addAll(source.switchingDelayList)
                 }
         }
     }
