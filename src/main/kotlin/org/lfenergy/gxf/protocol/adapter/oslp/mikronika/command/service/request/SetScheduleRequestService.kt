@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.SetScheduleCommandMapper
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
@@ -21,7 +21,7 @@ class SetScheduleRequestService(
     private val deviceResponseSender: DeviceResponseSender,
     private val setScheduleCommandMapper: SetScheduleCommandMapper,
 ) : RequestService(deviceClientService) {
-    fun handleSetScheduleRequest(requestMessage: DeviceRequestMessage) {
+    override fun handleRequestMessage(requestMessage: DeviceRequestMessage) {
         if (requestMessage.setScheduleRequest.hasAstronomicalSunsetOffset() ||
             requestMessage.setScheduleRequest.hasAstronomicalSunriseOffset()
         ) {

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request
 
 import io.mockk.Runs
 import io.mockk.every
@@ -48,7 +48,7 @@ class SetScheduleRequestServiceTest {
         every { deviceClientService.sendClientMessage(any(), any()) } just Runs
         every { deviceResponseSender.send(any()) } just Runs
 
-        subject.handleSetScheduleRequest(deviceSetScheduleRequestMessage)
+        subject.handleRequestMessage(deviceSetScheduleRequestMessage)
 
         val setScheduleResponseMapperSlot = slot<(Result<Envelope>) -> Unit>()
         verify {
@@ -69,7 +69,7 @@ class SetScheduleRequestServiceTest {
         every { deviceClientService.sendClientMessage(any(), any()) } just Runs
         every { deviceResponseSender.send(any()) } just Runs
 
-        subject.handleSetScheduleRequest(deviceSetScheduleRequestMessageWithAstronomicalOffsets)
+        subject.handleRequestMessage(deviceSetScheduleRequestMessageWithAstronomicalOffsets)
 
         val responseMapperSlot = slot<(Result<Envelope>) -> Unit>()
         verify {
