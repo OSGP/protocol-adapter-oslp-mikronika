@@ -60,6 +60,7 @@ class DeviceRequestServiceFactoryTest {
         fun params() =
             listOf(
                 Arguments.of(RequestType.GET_STATUS_REQUEST, GenericDeviceRequestService::class),
+                Arguments.of(RequestType.SET_LIGHT_REQUEST, SetLightRequestService::class),
                 Arguments.of(RequestType.SET_SCHEDULE_REQUEST, SetScheduleRequestService::class),
             )
     }
