@@ -50,8 +50,8 @@ class SetScheduleRequest(
     private fun List<ScheduleEntry>.toSchedules() =
         map { entry ->
             schedule {
-                weekday = Oslp.Weekday.forNumber(entry.weekday.number)
-                actionTime = Oslp.ActionTime.forNumber(entry.actionTime.number)
+                weekday = Oslp.Weekday.forNumber(entry.weekday.number) // Required field for OSLP
+                actionTime = Oslp.ActionTime.forNumber(entry.actionTime.number) // Required field for OSLP
                 if (entry.hasStartDay()) startDay = entry.startDay
                 if (entry.hasEndDay()) endDay = entry.endDay
                 if (entry.hasTime()) time = entry.time

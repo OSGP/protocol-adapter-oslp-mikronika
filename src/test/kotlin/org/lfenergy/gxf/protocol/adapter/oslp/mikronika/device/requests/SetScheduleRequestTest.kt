@@ -93,7 +93,7 @@ class SetScheduleRequestTest {
     }
 
     @Test
-    fun `should map correctly with empty schedule`() {
+    fun `should map correctly with minimal schedule`() {
         val subject =
             SetScheduleRequest(
                 Device(DEVICE_IDENTIFICATION, NETWORK_ADDRESS),
@@ -117,8 +117,8 @@ class SetScheduleRequestTest {
         with(result.setScheduleRequest) {
             assertThat(schedulesList).hasSize(1)
             with(schedulesList[0]) {
-                assertThat(hasWeekday()).isTrue
-                assertThat(hasActionTime()).isTrue
+                assertThat(hasWeekday()).isTrue  // Required field for OSLP
+                assertThat(hasActionTime()).isTrue  // Required field for OSLP
 
                 assertThat(hasStartDay()).isFalse
                 assertThat(hasEndDay()).isFalse
@@ -126,8 +126,8 @@ class SetScheduleRequestTest {
                 assertThat(hasWindow()).isFalse
                 assertThat(valueList).hasSize(1)
                 with(valueList[0]) {
-                    assertThat(hasIndex()).isTrue
-                    assertThat(hasOn()).isTrue
+                    assertThat(hasIndex()).isTrue  // Expected to always be present
+                    assertThat(hasOn()).isTrue  // Required field for OSLP
                 }
             }
         }
