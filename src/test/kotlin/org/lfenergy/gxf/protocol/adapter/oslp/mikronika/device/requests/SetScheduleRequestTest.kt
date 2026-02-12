@@ -117,8 +117,8 @@ class SetScheduleRequestTest {
         with(result.setScheduleRequest) {
             assertThat(schedulesList).hasSize(1)
             with(schedulesList[0]) {
-                assertThat(hasWeekday()).isTrue  // Required field for OSLP
-                assertThat(hasActionTime()).isTrue  // Required field for OSLP
+                assertThat(hasWeekday()).isTrue // Required field for OSLP
+                assertThat(hasActionTime()).isTrue // Required field for OSLP
 
                 assertThat(hasStartDay()).isFalse
                 assertThat(hasEndDay()).isFalse
@@ -126,8 +126,8 @@ class SetScheduleRequestTest {
                 assertThat(hasWindow()).isFalse
                 assertThat(valueList).hasSize(1)
                 with(valueList[0]) {
-                    assertThat(hasIndex()).isTrue  // Expected to always be present
-                    assertThat(hasOn()).isTrue  // Required field for OSLP
+                    assertThat(hasIndex()).isTrue // Expected to always be present
+                    assertThat(hasOn()).isTrue // Required field for OSLP
                 }
             }
         }
