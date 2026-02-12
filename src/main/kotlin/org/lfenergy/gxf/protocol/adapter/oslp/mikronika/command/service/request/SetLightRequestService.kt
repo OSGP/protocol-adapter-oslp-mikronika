@@ -5,6 +5,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.SetLightCommandMapper
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.DeviceClientService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.ResumeScheduleRequest
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
@@ -28,9 +29,7 @@ class SetLightRequestService(
         sendDeviceRequest(
             setLightCommandMapper.toInternal(requestMessage),
             onSuccess = { responseEnvelope ->
-                resumeSchedule(requestMessage)
-                val response = setLightCommandMapper.toResponse(requestHeader, responseEnvelope)
-                deviceResponseSender.send(response)
+                resumeSchedule(requestMessage, responseEnvelope)
             },
             onFailure = { exception ->
                 val message = createErrorMessage(requestHeader, exception)
@@ -39,7 +38,10 @@ class SetLightRequestService(
         )
     }
 
-    private fun resumeSchedule(requestMessage: DeviceRequestMessage) {
+    private fun resumeSchedule(
+        requestMessage: DeviceRequestMessage,
+        setLightResponse: Envelope,
+    ) {
         val requestHeader = requestMessage.header
 
         val request =
@@ -55,8 +57,14 @@ class SetLightRequestService(
 
         sendDeviceRequest(
             request,
-            onSuccess = { /* send response for not requested action? TODO: Check what to do here in OSLP adapter */ },
-            onFailure = { /* not sure what to do here yet */ },
+            onSuccess = {
+                val response = setLightCommandMapper.toResponse(requestHeader, setLightResponse)
+                deviceResponseSender.send(response)
+            },
+            onFailure = { exception ->
+                val message = createErrorMessage(requestHeader, exception)
+                deviceResponseSender.send(message)
+            },
         )
     }
 }

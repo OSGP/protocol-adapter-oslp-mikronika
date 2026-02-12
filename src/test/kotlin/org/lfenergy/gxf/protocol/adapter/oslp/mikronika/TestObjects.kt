@@ -215,13 +215,11 @@ object TestObjects {
         deviceRequestMessage {
             header =
                 requestHeader {
-                    requestHeader {
-                        correlationUid = "correlationUid"
-                        deviceIdentification = DEVICE_IDENTIFICATION
-                        deviceType = "deviceType"
-                        requestType = RequestType.SET_LIGHT_REQUEST
-                        organizationIdentification = "organizationIdentification"
-                    }
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.SET_LIGHT_REQUEST
+                    organizationIdentification = "organizationIdentification"
                 }
             setLightRequest =
                 setLightRequest {

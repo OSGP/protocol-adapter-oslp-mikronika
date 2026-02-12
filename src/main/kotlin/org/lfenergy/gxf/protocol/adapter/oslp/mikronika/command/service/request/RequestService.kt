@@ -38,8 +38,9 @@ sealed class RequestService(
         deviceResponseMessage {
             header = buildResponseHeader(requestHeader)
             result = Result.NOT_OK
-            errorResponse {
-                errorMessage = exception.message ?: "Unknown exception"
-            }
+            errorResponse =
+                errorResponse {
+                    errorMessage = exception.message ?: "Unknown exception"
+                }
         }
 }
