@@ -51,7 +51,7 @@ class SetLightRequestService(
                     requestHeader.networkAddress,
                 ),
                 Organization(requestHeader.organizationIdentification),
-                index = 0, // All relays
+                index = ALL_RELAYS_INDEX,
                 immediate = false,
             )
 
@@ -66,5 +66,9 @@ class SetLightRequestService(
                 deviceResponseSender.send(message)
             },
         )
+    }
+
+    companion object {
+        private const val ALL_RELAYS_INDEX = 0
     }
 }

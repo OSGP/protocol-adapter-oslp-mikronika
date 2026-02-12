@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
 
-import io.ktor.util.reflect.instanceOf
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -51,8 +50,8 @@ class DeviceRequestServiceFactoryTest {
         val result = subject.getDeviceRequestServiceFor(request)
 
         assertThat(
-            result.instanceOf(classType),
-        ).isTrue
+            result,
+        ).isInstanceOf(classType.java)
     }
 
     companion object {
