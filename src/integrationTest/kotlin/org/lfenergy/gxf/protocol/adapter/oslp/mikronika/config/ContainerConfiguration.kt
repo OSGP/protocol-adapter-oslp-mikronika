@@ -18,6 +18,11 @@ class ContainerConfiguration {
     @ServiceConnection
     fun artemisContainer() =
         ArtemisContainer("apache/activemq-artemis:2.30.0-alpine").apply {
+            val defaultExtraArgs = "--http-host 0.0.0.0 --relax-jolokia"
+            withEnv(
+                "EXTRA_ARGS",
+                "$defaultExtraArgs --disable-persistence --java-options=\"-Dbrokerconfig.maxDiskUsage=-1\"",
+            )
         }
 
     @Bean
