@@ -236,10 +236,8 @@ object TestObjects {
         deviceResponseMessage {
             header =
                 responseHeader {
-                    responseHeader {
-                        deviceIdentification = DEVICE_IDENTIFICATION
-                        responseType = ResponseType.SET_LIGHT_RESPONSE
-                    }
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.SET_LIGHT_RESPONSE
                 }
         }
 }
