@@ -10,5 +10,6 @@ import org.springframework.context.annotation.Configuration
 @EnableConfigurationProperties(
     ClientSocketConfigurationProperties::class,
     DefaultLocationConfigurationProperties::class,
+    ValidationConfigurationProperties::class,
 )
 class DeviceModuleConfiguration

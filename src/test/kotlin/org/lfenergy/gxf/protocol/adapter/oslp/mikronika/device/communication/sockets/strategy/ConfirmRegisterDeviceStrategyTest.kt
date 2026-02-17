@@ -8,18 +8,22 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ValidationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.ConfirmRegisterDeviceStrategy
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.ConfirmRegisterDeviceStrategy.Companion.SEQUENCE_WINDOW
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
 
 @ExtendWith(MockKExtension::class)
@@ -33,8 +37,16 @@ class ConfirmRegisterDeviceStrategyTest {
     @MockK
     private lateinit var auditLoggingService: AuditLoggingService
 
+    @MockK
+    private lateinit var validationConfigurationProperties: ValidationConfigurationProperties
+
     @InjectMockKs
     private lateinit var confirmRegisterDeviceStrategy: ConfirmRegisterDeviceStrategy
+
+    @BeforeEach
+    fun setup() {
+        every { validationConfigurationProperties.sequenceNumber } returns sequenceNumber
+    }
 
     @Test
     fun `handle should throw InvalidRequestException when random device number does not match`() {
@@ -53,7 +65,7 @@ class ConfirmRegisterDeviceStrategyTest {
         val mikronikaDevice = mikronikaDevice()
         val unknownNumber = 999999
 
-        val envelopeMock = mockEnvelope(randomDevice = mikronikaDevice.randomDevice!!, randomPlatform = unknownNumber)
+        val envelopeMock = mockEnvelope(randomDevice = mikronikaDevice.randomDevice, randomPlatform = unknownNumber)
 
         assertThatThrownBy { confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice) }
             .isInstanceOf(InvalidRequestException::class.java)
@@ -61,13 +73,34 @@ class ConfirmRegisterDeviceStrategyTest {
     }
 
     @Test
-    fun `handle should update the sequence number when random numbers match`() {
-        val mikronikaDevice = mikronikaDevice()
+    fun `handle should throw InvalidRequestException when sequence number is out of window`() {
+        val deviceSequence = 50
+        val storedSequence = 1
+
+        val mikronikaDevice = mikronikaDevice(storedSequence)
 
         val envelopeMock =
             mockEnvelope(
-                randomDevice = mikronikaDevice.randomDevice!!,
-                randomPlatform = mikronikaDevice.randomPlatform!!,
+                sequenceNumber = deviceSequence,
+                randomDevice = 1,
+                randomPlatform = 1,
+            )
+
+        assertThatThrownBy { confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice) }
+            .isInstanceOf(InvalidRequestException::class.java)
+            .hasMessageContaining("Sequence number incorrect")
+    }
+
+    @Test
+    fun `handle should update the sequence number when random numbers match`() {
+        val mikronikaDevice = mikronikaDevice(sequenceNumber = 41)
+
+        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
+
+        val envelopeMock =
+            mockEnvelope(
+                randomDevice = mikronikaDevice.randomDevice,
+                randomPlatform = mikronikaDevice.randomPlatform,
             )
 
         val expectedSequenceNumber = 42
@@ -76,6 +109,13 @@ class ConfirmRegisterDeviceStrategyTest {
         confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice)
 
         assertThat(mikronikaDevice.sequenceNumber).isEqualTo(expectedSequenceNumber)
+
+        val mikronikaDeviceSlot = slot<MikronikaDevice>()
+        verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
+
+        val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
+
+        assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(expectedSequenceNumber)
     }
 
     @Test
@@ -89,13 +129,14 @@ class ConfirmRegisterDeviceStrategyTest {
         val response = actual.confirmRegisterDeviceResponse
         assertThat(response.randomDevice).isEqualTo(mikronikaDevice.randomDevice)
         assertThat(response.randomPlatform).isEqualTo(mikronikaDevice.randomPlatform)
-        assertThat(response.sequenceWindow).isEqualTo(SEQUENCE_WINDOW)
+        assertThat(response.sequenceWindow).isEqualTo(6)
         assertThat(response.status).isEqualTo(Oslp.Status.OK)
     }
 
     private fun mockEnvelope(
         randomDevice: Int = 5,
         randomPlatform: Int = 12,
+        sequenceNumber: Int = 1,
     ): Envelope {
         val envelope = mockk<Envelope>(relaxed = true)
         val message = mockk<Oslp.Message>(relaxed = true)
@@ -105,7 +146,14 @@ class ConfirmRegisterDeviceStrategyTest {
         every { confirmRegisterDeviceRequest.randomPlatform } returns randomPlatform
         every { message.confirmRegisterDeviceRequest } returns confirmRegisterDeviceRequest
         every { envelope.message } returns message
+        every { envelope.sequenceNumber } returns sequenceNumber
 
         return envelope
     }
+
+    private val sequenceNumber =
+        ValidationConfigurationProperties.SequenceNumber().apply {
+            max = 65535
+            window = 6
+        }
 }
