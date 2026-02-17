@@ -92,9 +92,34 @@ class ConfirmRegisterDeviceStrategyTest {
     }
 
     @Test
+    fun `handle should correctly handle sequence number rollover from max to small value`() {
+        val initialSequenceNumber = 65535
+        val receivedSequenceNumber = 3
+
+        val mikronikaDevice = mikronikaDevice(sequenceNumber = initialSequenceNumber)
+        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
+
+        val envelopeMock =
+            mockEnvelope(
+                sequenceNumber = receivedSequenceNumber,
+                randomDevice = mikronikaDevice.randomDevice,
+                randomPlatform = mikronikaDevice.randomPlatform,
+            )
+
+        confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice)
+
+        assertThat(mikronikaDevice.sequenceNumber).isEqualTo(receivedSequenceNumber)
+
+        val mikronikaDeviceSlot = slot<MikronikaDevice>()
+        verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
+
+        val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
+        assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(receivedSequenceNumber)
+    }
+
+    @Test
     fun `handle should update the sequence number when random numbers match`() {
         val mikronikaDevice = mikronikaDevice(sequenceNumber = 41)
-
         every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
 
         val envelopeMock =
@@ -114,7 +139,6 @@ class ConfirmRegisterDeviceStrategyTest {
         verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
 
         val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
-
         assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(expectedSequenceNumber)
     }
 

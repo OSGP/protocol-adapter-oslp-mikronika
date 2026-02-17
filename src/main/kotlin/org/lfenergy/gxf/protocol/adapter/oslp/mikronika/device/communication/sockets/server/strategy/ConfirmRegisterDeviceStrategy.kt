@@ -83,7 +83,7 @@ class ConfirmRegisterDeviceStrategy(
             logger.warn { "No current sequence number found for device" }
             throw InvalidRequestException("No current sequence number found for device")
         }
-        val expectedSequenceNumber = currentSequenceNumber + 1
+        val expectedSequenceNumber = (currentSequenceNumber + 1) % maxSequence
 
         val delta = abs(expectedSequenceNumber - receivedSequenceNumber)
         val valid = ((delta <= sequenceWindow) || (delta > (maxSequence - sequenceWindow)))
