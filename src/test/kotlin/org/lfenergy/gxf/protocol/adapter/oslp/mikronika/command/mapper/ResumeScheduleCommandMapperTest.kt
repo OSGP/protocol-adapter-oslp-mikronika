@@ -41,6 +41,23 @@ class ResumeScheduleCommandMapperTest {
     }
 
     @Test
+    fun `should set correct defaults`() {
+        val deviceRequestMessage =
+            deviceRequestMessage {
+                header = requestHeader
+                resumeScheduleRequest =
+                    resumeScheduleRequest {}
+            }
+
+        val result = subject.toInternal(deviceRequestMessage) as ResumeScheduleRequest
+
+        assertEquals(DEVICE_IDENTIFICATION, result.device.deviceIdentification)
+        assertEquals(NETWORK_ADDRESS, result.device.networkAddress)
+        assertEquals(0, result.index)
+        assertEquals(true, result.immediate)
+    }
+
+    @Test
     fun `should map toResponse correctly`() {
         val envelope = mockk<Envelope>()
 
