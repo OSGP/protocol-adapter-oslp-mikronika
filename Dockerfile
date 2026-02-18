@@ -1,4 +1,4 @@
-FROM alpine/java:21-jre
+FROM gcr.io/distroless/java21-debian13
 
 WORKDIR /app
 
