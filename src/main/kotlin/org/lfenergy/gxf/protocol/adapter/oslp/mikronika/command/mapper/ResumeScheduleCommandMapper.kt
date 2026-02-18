@@ -12,6 +12,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Device
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.domain.Organization
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestHeader
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.resumeScheduleRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
 import org.opensmartgridplatform.oslp.Oslp
@@ -21,15 +22,17 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Resul
 @Component(value = RESUME_SCHEDULE_REQUEST)
 class ResumeScheduleCommandMapper : CommandMapper {
     override fun toInternal(requestMessage: DeviceRequestMessage): DeviceRequest =
-        ResumeScheduleRequest(
-            Device(
-                requestMessage.header.deviceIdentification,
-                requestMessage.header.networkAddress,
-            ),
-            Organization(requestMessage.header.organizationIdentification),
-            requestMessage.resumeScheduleRequest.index.number,
-            requestMessage.resumeScheduleRequest.immediate,
-        )
+        with(requestMessage) {
+            ResumeScheduleRequest(
+                Device(
+                    header.deviceIdentification,
+                    header.networkAddress,
+                ),
+                Organization(header.organizationIdentification),
+                if (resumeScheduleRequest.hasIndex()) resumeScheduleRequest.index.number else 0,
+                if (resumeScheduleRequest.hasImmediate()) resumeScheduleRequest.immediate else true,
+            )
+        }
 
     override fun toResponse(
         requestHeader: RequestHeader,
