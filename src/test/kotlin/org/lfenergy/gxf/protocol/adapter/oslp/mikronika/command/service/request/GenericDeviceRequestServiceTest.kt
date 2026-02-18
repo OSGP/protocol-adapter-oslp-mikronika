@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the GXF project
 //
 // SPDX-License-Identifier: Apache-2.0
-package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service
+package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request
 
 import io.mockk.Runs
 import io.mockk.every
@@ -10,7 +10,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.DEVICE_IDENTIFICATION
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceGetStatusRequestMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceGetStatusResponseMessage
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.TestObjects.deviceSetScheduleRequestMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.CommandMapperFactory
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.mapper.GetStatusCommandMapper
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
@@ -33,7 +31,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.Reques
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 
 @ExtendWith(MockKExtension::class)
-class DeviceRequestServiceTest {
+class GenericDeviceRequestServiceTest {
     @MockK
     private lateinit var deviceClientService: DeviceClientService
 
@@ -46,11 +44,8 @@ class DeviceRequestServiceTest {
     @MockK
     private lateinit var getStatusCommandMapper: GetStatusCommandMapper
 
-    @MockK
-    private lateinit var setScheduleRequestService: SetScheduleRequestService
-
     @InjectMockKs
-    private lateinit var subject: DeviceRequestService
+    private lateinit var subject: GenericDeviceRequestService
 
     @Test
     fun `should call mapper and deviceClientService whenever call is successful`() {
@@ -61,7 +56,7 @@ class DeviceRequestServiceTest {
         every { deviceClientService.sendClientMessage(any(), any()) } just Runs
         every { deviceResponseSender.send(any()) } just Runs
 
-        subject.handleDeviceRequestMessage(deviceGetStatusRequestMessage)
+        subject.handleRequestMessage(deviceGetStatusRequestMessage)
 
         val responseMapperSlot = slot<(Result<Envelope>) -> Unit>()
         verify {
@@ -87,7 +82,7 @@ class DeviceRequestServiceTest {
         every { deviceClientService.sendClientMessage(any(), any()) } just Runs
         every { deviceResponseSender.send(any()) } just Runs
 
-        subject.handleDeviceRequestMessage(deviceGetStatusRequestMessage)
+        subject.handleRequestMessage(deviceGetStatusRequestMessage)
 
         val responseMapperSlot = slot<(Result<Envelope>) -> Unit>()
         verify {
@@ -109,15 +104,5 @@ class DeviceRequestServiceTest {
         assertEquals(DEVICE_IDENTIFICATION, responseErrorMessage.header.deviceIdentification)
         assertEquals("deviceType", responseErrorMessage.header.deviceType)
         assertEquals("organizationIdentification", responseErrorMessage.header.organizationIdentification)
-    }
-
-    @Test
-    fun `should call setScheduleRequestService when request is SetScheduleRequest`() {
-        every { setScheduleRequestService.handleSetScheduleRequest(deviceSetScheduleRequestMessage) } just runs
-        subject.handleDeviceRequestMessage(deviceSetScheduleRequestMessage)
-
-        verify { setScheduleRequestService.handleSetScheduleRequest(deviceSetScheduleRequestMessage) }
-
-        verify(exactly = 0) { deviceResponseSender.send(any()) }
     }
 }

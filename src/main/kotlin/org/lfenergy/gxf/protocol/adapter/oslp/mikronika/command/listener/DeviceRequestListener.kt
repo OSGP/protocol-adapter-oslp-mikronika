@@ -7,14 +7,14 @@ import com.google.protobuf.InvalidProtocolBufferException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.jms.BytesMessage
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.ApplicationConstants.JMS_PROPERTY_DEVICE_IDENTIFICATION
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.DeviceRequestService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.DeviceRequestServiceFactory
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
 
 @Component
 class DeviceRequestListener(
-    private val deviceRequestService: DeviceRequestService,
+    private val deviceRequestServiceFactory: DeviceRequestServiceFactory,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -31,7 +31,9 @@ class DeviceRequestListener(
 
         try {
             val deviceRequestMessage = bytesMessage.parseToDeviceRequestMessage()
-            deviceRequestService.handleDeviceRequestMessage(deviceRequestMessage)
+            val requestService = deviceRequestServiceFactory.getDeviceRequestServiceFor(deviceRequestMessage)
+
+            requestService.handleRequestMessage(deviceRequestMessage)
         } catch (e: InvalidProtocolBufferException) {
             logger.error(e) {
                 "Received invalid protocol buffer message with correlation uid $correlationId."

@@ -36,11 +36,12 @@ class ClientSocket(
             val buffer = ByteArray(1024)
             val bytesRead = input.readAvailable(buffer)
 
-            return when {
+            when {
                 bytesRead < 0 -> throw ClientSocketException("Connection was closed prematurely!")
                 bytesRead == 0 -> throw ClientSocketException("No bytes received!")
-                else -> Envelope.parseFrom(buffer.copyOf(bytesRead))
             }
+
+            return Envelope.parseFrom(buffer.copyOf(bytesRead))
         }
     }
 }
