@@ -61,6 +61,13 @@ abstract class ReceiveStrategy(
         return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload.toByteArray())
     }
 
+    protected fun updateSequenceNumber(
+        mikronikaDevice: MikronikaDevice,
+        newSequenceNumber: Int,
+    ) {
+        mikronikaDevice.sequenceNumber = newSequenceNumber
+    }
+
     private fun finalizeInvocation(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,

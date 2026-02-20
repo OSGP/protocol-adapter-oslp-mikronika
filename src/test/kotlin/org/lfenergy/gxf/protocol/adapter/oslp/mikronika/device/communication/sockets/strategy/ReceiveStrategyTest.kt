@@ -49,7 +49,7 @@ class ReceiveStrategyTest {
 
     @BeforeEach
     fun setup() {
-        every { sequenceValidationService.checkAndUpdateSequenceNumber(any(), any()) } just runs
+        every { sequenceValidationService.checkSequenceNumber(any(), any()) } just runs
     }
 
     @Test
@@ -91,8 +91,9 @@ class ReceiveStrategyTest {
     fun `handle should save the device and return a signed envelope`() {
         val deviceUid = "device-uid2"
         val envelope = mockEnvelope(deviceUid)
+        val deviceSequence = 41
 
-        val mikronikaDevice = mikronikaDevice()
+        val mikronikaDevice = mikronikaDevice(deviceSequence)
         every { mikronikaDeviceService.findByDeviceUid(deviceUid) } returns mikronikaDevice
 
         every {
@@ -110,7 +111,7 @@ class ReceiveStrategyTest {
         assertThat(result).isNotNull()
 
         verify(exactly = 1) {
-            sequenceValidationService.checkAndUpdateSequenceNumber(mikronikaDevice, SEQUENCE_NUMBER)
+            sequenceValidationService.checkSequenceNumber(deviceSequence, SEQUENCE_NUMBER)
             mikronikaDeviceService.saveDevice(mikronikaDevice)
             signingService.createSignature(any<ByteArray>())
         }

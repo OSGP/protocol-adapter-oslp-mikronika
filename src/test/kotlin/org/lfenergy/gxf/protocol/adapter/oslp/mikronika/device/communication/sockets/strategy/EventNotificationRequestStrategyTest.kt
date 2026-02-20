@@ -50,7 +50,7 @@ class EventNotificationRequestStrategyTest {
 
     @BeforeEach
     fun setup() {
-        every { sequenceValidationService.checkAndUpdateSequenceNumber(any(), any()) } just runs
+        every { sequenceValidationService.checkSequenceNumber(any(), any()) } just runs
     }
 
     @Test

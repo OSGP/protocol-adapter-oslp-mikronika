@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ValidationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
@@ -26,8 +25,6 @@ class ConfirmRegisterDeviceStrategy(
     signingService: SigningService,
     auditLoggingService: AuditLoggingService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
-    private val logger = KotlinLogging.logger {}
-
     override fun handle(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
@@ -40,7 +37,12 @@ class ConfirmRegisterDeviceStrategy(
                 throw InvalidRequestException("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $randomPlatform")
             }
 
-            sequenceValidationService.checkAndUpdateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
+            sequenceValidationService.checkSequenceNumber(
+                mikronikaDevice.sequenceNumber,
+                requestEnvelope.sequenceNumber,
+            )
+
+            updateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
         }
     }
 

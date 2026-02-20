@@ -7,25 +7,23 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.slot
-import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.Arguments.of
+import org.junit.jupiter.params.provider.MethodSource
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ValidationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
+import java.util.stream.Stream
 
 @ExtendWith(MockKExtension::class)
 class SequenceValidationServiceTest {
     @MockK
     private lateinit var validationConfigurationProperties: ValidationConfigurationProperties
-
-    @MockK
-    private lateinit var mikronikaDeviceService: MikronikaDeviceService
 
     @InjectMockKs
     private lateinit var subject: SequenceValidationService
@@ -42,47 +40,18 @@ class SequenceValidationServiceTest {
 
         val mikronikaDevice = mikronikaDevice(storedSequence)
 
-        assertThatThrownBy { subject.checkAndUpdateSequenceNumber(mikronikaDevice, deviceSequence) }
+        assertThatThrownBy { subject.checkSequenceNumber(mikronikaDevice.sequenceNumber, deviceSequence) }
             .isInstanceOf(InvalidRequestException::class.java)
             .hasMessageContaining("Sequence number incorrect")
     }
 
-    @Test
-    fun `handle should correctly handle sequence number rollover from max to small value`() {
-        val deviceSequence = 65535
-        val receivedSequence = 3
-
-        val mikronikaDevice = mikronikaDevice(sequenceNumber = deviceSequence)
-        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
-
-        subject.checkAndUpdateSequenceNumber(mikronikaDevice, receivedSequence)
-
-        assertThat(mikronikaDevice.sequenceNumber).isEqualTo(receivedSequence)
-
-        val mikronikaDeviceSlot = slot<MikronikaDevice>()
-        verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
-
-        val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
-        assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(receivedSequence)
-    }
-
-    @Test
-    fun `handle should update the sequence number when random numbers match`() {
-        val deviceSequence = 41
-        val receivedSequence = 42
-
-        val mikronikaDevice = mikronikaDevice(sequenceNumber = deviceSequence)
-        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
-
-        subject.checkAndUpdateSequenceNumber(mikronikaDevice, receivedSequence)
-
-        assertThat(mikronikaDevice.sequenceNumber).isEqualTo(receivedSequence)
-
-        val mikronikaDeviceSlot = slot<MikronikaDevice>()
-        verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
-
-        val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
-        assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(receivedSequence)
+    @ParameterizedTest
+    @MethodSource("provideSequence")
+    fun `test validation passes for values`(
+        receivedSequence: Int,
+        deviceSequence: Int,
+    ) {
+        subject.checkSequenceNumber(deviceSequence, receivedSequence)
     }
 
     private val sequenceNumber =
@@ -90,4 +59,25 @@ class SequenceValidationServiceTest {
             max = 65535
             window = 6
         }
+
+    companion object {
+        @JvmStatic
+        fun provideSequence(): Stream<Arguments> =
+            Stream.of(
+                of(65529, 65534),
+                of(65530, 65535),
+                of(65531, 0),
+                of(65532, 1),
+                of(65533, 2),
+                of(65534, 3),
+                of(65535, 4),
+                of(65534, 65529),
+                of(65535, 65530),
+                of(0, 65531),
+                of(1, 65532),
+                of(2, 65533),
+                of(3, 65534),
+                of(4, 65535),
+            )
+    }
 }

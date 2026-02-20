@@ -25,8 +25,8 @@ import java.time.format.DateTimeFormatter
 class EventNotificationRequestStrategy(
     private val eventPublisher: ApplicationEventPublisher,
     private val sequenceValidationService: SequenceValidationService,
-    signingService: SigningService,
     mikronikaDeviceService: MikronikaDeviceService,
+    signingService: SigningService,
     auditLoggingService: AuditLoggingService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
@@ -35,8 +35,12 @@ class EventNotificationRequestStrategy(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
     ) {
-        sequenceValidationService.checkAndUpdateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
-        mikronikaDevice.sequenceNumber = requestEnvelope.sequenceNumber
+        sequenceValidationService.checkSequenceNumber(
+            mikronikaDevice.sequenceNumber,
+            requestEnvelope.sequenceNumber,
+        )
+
+        updateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
         publishEvent(requestEnvelope, mikronikaDevice)
     }
 
