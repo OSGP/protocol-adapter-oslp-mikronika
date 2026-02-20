@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ValidationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 
 @ExtendWith(MockKExtension::class)
 class SequenceValidationServiceTest {
@@ -36,11 +35,38 @@ class SequenceValidationServiceTest {
         val receivedSequenceNumber = 50
         val storedSequence = 1
 
-        val mikronikaDevice = mikronikaDevice(storedSequence)
-
-        assertThatThrownBy { subject.checkSequenceNumber(mikronikaDevice.sequenceNumber, receivedSequenceNumber) }
+        assertThatThrownBy { subject.checkSequenceNumber(storedSequence, receivedSequenceNumber) }
             .isInstanceOf(InvalidRequestException::class.java)
             .hasMessageContaining("Sequence number incorrect")
+    }
+
+    @Test
+    fun `should throw InvalidRequestException when current sequence number is null`() {
+        val receivedSequenceNumber = 50
+
+        assertThatThrownBy { subject.checkSequenceNumber(null, receivedSequenceNumber) }
+            .isInstanceOf(InvalidRequestException::class.java)
+            .hasMessageContaining("No current sequence number found for device")
+    }
+
+    @Test
+    fun `should throw InvalidRequestException when received sequence is less than zero`() {
+        val receivedSequenceNumber = -10
+        val storedSequence = 1
+
+        assertThatThrownBy { subject.checkSequenceNumber(storedSequence, receivedSequenceNumber) }
+            .isInstanceOf(InvalidRequestException::class.java)
+            .hasMessageContaining("Received sequence number is not in valid range of 0 - 65535")
+    }
+
+    @Test
+    fun `should throw InvalidRequestException when received sequence is greater than max`() {
+        val receivedSequenceNumber = 70000
+        val storedSequence = 1
+
+        assertThatThrownBy { subject.checkSequenceNumber(storedSequence, receivedSequenceNumber) }
+            .isInstanceOf(InvalidRequestException::class.java)
+            .hasMessageContaining("Received sequence number is not in valid range of 0 - 65535")
     }
 
     @ParameterizedTest
