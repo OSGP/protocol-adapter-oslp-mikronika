@@ -33,12 +33,12 @@ class SequenceValidationServiceTest {
 
     @Test
     fun `should throw InvalidRequestException when sequence number is out of window`() {
-        val deviceSequence = 50
+        val receivedSequenceNumber = 50
         val storedSequence = 1
 
         val mikronikaDevice = mikronikaDevice(storedSequence)
 
-        assertThatThrownBy { subject.checkSequenceNumber(mikronikaDevice.sequenceNumber, deviceSequence) }
+        assertThatThrownBy { subject.checkSequenceNumber(mikronikaDevice.sequenceNumber, receivedSequenceNumber) }
             .isInstanceOf(InvalidRequestException::class.java)
             .hasMessageContaining("Sequence number incorrect")
     }
@@ -47,9 +47,9 @@ class SequenceValidationServiceTest {
     @MethodSource("provideSequence")
     fun `test validation passes for values`(
         receivedSequence: Int,
-        deviceSequence: Int,
+        currentSequence: Int,
     ) {
-        subject.checkSequenceNumber(deviceSequence, receivedSequence)
+        subject.checkSequenceNumber(currentSequence, receivedSequence)
     }
 
     private val sequenceNumber =
