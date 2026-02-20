@@ -12,13 +12,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ValidationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
-import java.util.stream.Stream
 
 @ExtendWith(MockKExtension::class)
 class SequenceValidationServiceTest {
@@ -62,8 +60,8 @@ class SequenceValidationServiceTest {
 
     companion object {
         @JvmStatic
-        fun provideSequence(): Stream<Arguments> =
-            Stream.of(
+        fun provideSequence() =
+            listOf(
                 of(65529, 65534),
                 of(65530, 65535),
                 of(65531, 0),
