@@ -12,12 +12,14 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.SequenceValidationService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.EventNotificationRequestStrategy
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.events.DeviceNotificationReceivedEvent
@@ -40,8 +42,16 @@ class EventNotificationRequestStrategyTest {
     @MockK
     private lateinit var eventPublisher: ApplicationEventPublisher
 
+    @MockK
+    private lateinit var sequenceValidationService: SequenceValidationService
+
     @InjectMockKs
     private lateinit var eventNotificationRequestStrategy: EventNotificationRequestStrategy
+
+    @BeforeEach
+    fun setup() {
+        every { sequenceValidationService.checkAndUpdateSequenceNumber(any(), any()) } just runs
+    }
 
     @Test
     fun `handle should set the sequence number from the request envelope to the mikronika device`() {

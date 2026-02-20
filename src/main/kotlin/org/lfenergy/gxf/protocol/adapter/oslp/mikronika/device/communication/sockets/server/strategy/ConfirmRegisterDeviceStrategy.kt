@@ -9,6 +9,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.con
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.SequenceValidationService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
@@ -16,12 +17,12 @@ import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.Oslp.Message
 import org.opensmartgridplatform.oslp.Oslp.Status
 import org.springframework.stereotype.Component
-import kotlin.math.abs
 
 @Component(CONFIRM_REGISTER_DEVICE_STRATEGY)
 class ConfirmRegisterDeviceStrategy(
-    private val mikronikaDeviceService: MikronikaDeviceService,
+    private val sequenceValidationService: SequenceValidationService,
     private val validationConfigurationProperties: ValidationConfigurationProperties,
+    mikronikaDeviceService: MikronikaDeviceService,
     signingService: SigningService,
     auditLoggingService: AuditLoggingService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
@@ -39,7 +40,7 @@ class ConfirmRegisterDeviceStrategy(
                 throw InvalidRequestException("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $randomPlatform")
             }
 
-            checkAndUpdateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
+            sequenceValidationService.checkAndUpdateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
         }
     }
 
@@ -60,37 +61,5 @@ class ConfirmRegisterDeviceStrategy(
                         .build(),
                 ).build()
         return response
-    }
-
-    private fun checkAndUpdateSequenceNumber(
-        mikronikaDevice: MikronikaDevice,
-        receivedSequenceNumber: Int,
-    ) {
-        checkSequenceNumber(mikronikaDevice.sequenceNumber, receivedSequenceNumber)
-
-        mikronikaDevice.sequenceNumber = receivedSequenceNumber
-        mikronikaDeviceService.saveDevice(mikronikaDevice)
-    }
-
-    private fun checkSequenceNumber(
-        currentSequenceNumber: Int?,
-        receivedSequenceNumber: Int,
-    ) {
-        val maxSequence = validationConfigurationProperties.sequenceNumber.max
-        val sequenceWindow = validationConfigurationProperties.sequenceNumber.window
-
-        if (currentSequenceNumber == null) {
-            logger.warn { "No current sequence number found for device" }
-            throw InvalidRequestException("No current sequence number found for device")
-        }
-        val expectedSequenceNumber = (currentSequenceNumber + 1) % maxSequence
-
-        val delta = abs(expectedSequenceNumber - receivedSequenceNumber)
-        val valid = ((delta <= sequenceWindow) || (delta > (maxSequence - sequenceWindow)))
-
-        if (!valid) {
-            logger.warn { "Sequence number incorrect" }
-            throw InvalidRequestException("Sequence number incorrect")
-        }
     }
 }

@@ -7,9 +7,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.runs
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -21,9 +21,9 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.dom
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.mikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.SequenceValidationService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.ConfirmRegisterDeviceStrategy
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.opensmartgridplatform.oslp.Oslp
 
 @ExtendWith(MockKExtension::class)
@@ -38,6 +38,9 @@ class ConfirmRegisterDeviceStrategyTest {
     private lateinit var auditLoggingService: AuditLoggingService
 
     @MockK
+    private lateinit var sequenceValidationService: SequenceValidationService
+
+    @MockK
     private lateinit var validationConfigurationProperties: ValidationConfigurationProperties
 
     @InjectMockKs
@@ -46,6 +49,7 @@ class ConfirmRegisterDeviceStrategyTest {
     @BeforeEach
     fun setup() {
         every { validationConfigurationProperties.sequenceNumber } returns sequenceNumber
+        every { sequenceValidationService.checkAndUpdateSequenceNumber(any(), any()) } just runs
     }
 
     @Test
@@ -70,76 +74,6 @@ class ConfirmRegisterDeviceStrategyTest {
         assertThatThrownBy { confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice) }
             .isInstanceOf(InvalidRequestException::class.java)
             .hasMessageContaining("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $unknownNumber")
-    }
-
-    @Test
-    fun `handle should throw InvalidRequestException when sequence number is out of window`() {
-        val deviceSequence = 50
-        val storedSequence = 1
-
-        val mikronikaDevice = mikronikaDevice(storedSequence)
-
-        val envelopeMock =
-            mockEnvelope(
-                sequenceNumber = deviceSequence,
-                randomDevice = 1,
-                randomPlatform = 1,
-            )
-
-        assertThatThrownBy { confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice) }
-            .isInstanceOf(InvalidRequestException::class.java)
-            .hasMessageContaining("Sequence number incorrect")
-    }
-
-    @Test
-    fun `handle should correctly handle sequence number rollover from max to small value`() {
-        val initialSequenceNumber = 65535
-        val receivedSequenceNumber = 3
-
-        val mikronikaDevice = mikronikaDevice(sequenceNumber = initialSequenceNumber)
-        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
-
-        val envelopeMock =
-            mockEnvelope(
-                sequenceNumber = receivedSequenceNumber,
-                randomDevice = mikronikaDevice.randomDevice,
-                randomPlatform = mikronikaDevice.randomPlatform,
-            )
-
-        confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice)
-
-        assertThat(mikronikaDevice.sequenceNumber).isEqualTo(receivedSequenceNumber)
-
-        val mikronikaDeviceSlot = slot<MikronikaDevice>()
-        verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
-
-        val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
-        assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(receivedSequenceNumber)
-    }
-
-    @Test
-    fun `handle should update the sequence number when random numbers match`() {
-        val mikronikaDevice = mikronikaDevice(sequenceNumber = 41)
-        every { mikronikaDeviceService.saveDevice(mikronikaDevice) } returns mikronikaDevice
-
-        val envelopeMock =
-            mockEnvelope(
-                randomDevice = mikronikaDevice.randomDevice,
-                randomPlatform = mikronikaDevice.randomPlatform,
-            )
-
-        val expectedSequenceNumber = 42
-        every { envelopeMock.sequenceNumber } returns expectedSequenceNumber
-
-        confirmRegisterDeviceStrategy.handle(envelopeMock, mikronikaDevice)
-
-        assertThat(mikronikaDevice.sequenceNumber).isEqualTo(expectedSequenceNumber)
-
-        val mikronikaDeviceSlot = slot<MikronikaDevice>()
-        verify { mikronikaDeviceService.saveDevice(capture(mikronikaDeviceSlot)) }
-
-        val mikronikaDeviceCapture = mikronikaDeviceSlot.captured
-        assertThat(mikronikaDeviceCapture.sequenceNumber).isEqualTo(expectedSequenceNumber)
     }
 
     @Test
