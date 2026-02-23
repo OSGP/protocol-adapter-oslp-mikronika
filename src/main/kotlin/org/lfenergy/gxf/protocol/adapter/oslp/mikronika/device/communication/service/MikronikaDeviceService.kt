@@ -22,5 +22,5 @@ class MikronikaDeviceService(
             ?: throw EntityNotFoundException("Device with identification $deviceUid not found")
 
     @Transactional
-    fun saveDevice(device: MikronikaDevice) = mikronikaDeviceRepository.save(device)
+    fun saveDevice(device: MikronikaDevice): MikronikaDevice = mikronikaDeviceRepository.save(device)
 }

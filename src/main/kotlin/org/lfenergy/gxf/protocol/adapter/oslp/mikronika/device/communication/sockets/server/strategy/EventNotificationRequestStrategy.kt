@@ -6,6 +6,7 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.SequenceValidationService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory.Companion.EVENT_NOTIFICATION_STRATEGY
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
@@ -22,10 +23,11 @@ import java.time.format.DateTimeFormatter
 
 @Component(EVENT_NOTIFICATION_STRATEGY)
 class EventNotificationRequestStrategy(
-    signingService: SigningService,
-    mikronikaDeviceService: MikronikaDeviceService,
-    auditLoggingService: AuditLoggingService,
     private val eventPublisher: ApplicationEventPublisher,
+    private val sequenceValidationService: SequenceValidationService,
+    mikronikaDeviceService: MikronikaDeviceService,
+    signingService: SigningService,
+    auditLoggingService: AuditLoggingService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
 
@@ -33,7 +35,12 @@ class EventNotificationRequestStrategy(
         requestEnvelope: Envelope,
         mikronikaDevice: MikronikaDevice,
     ) {
-        mikronikaDevice.sequenceNumber = requestEnvelope.sequenceNumber
+        sequenceValidationService.checkSequenceNumber(
+            mikronikaDevice.sequenceNumber,
+            requestEnvelope.sequenceNumber,
+        )
+
+        updateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
         publishEvent(requestEnvelope, mikronikaDevice)
     }
 
