@@ -39,7 +39,8 @@ jobs:
           TAG=$(echo "$REF_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Build Docker image
-        run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }} .
+        if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
+        run: docker build -f Dockerfile -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }} build/libs
       - name: Log in to GitHub Container Registry
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
