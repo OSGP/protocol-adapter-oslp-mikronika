@@ -6,7 +6,15 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      all:
+      minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
+      major:
+        update-types:
+          - "major"
         patterns:
           - "*"
   - package-ecosystem: "github-actions"
@@ -19,5 +27,10 @@ updates:
           - "*"
   - package-ecosystem: "docker"
     directory: "/"
+    open-pull-requests-limit: 10
     schedule:
       interval: "daily"
+    groups:
+      all:
+        patterns:
+          - "*"
