@@ -7,7 +7,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions: write-all
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
@@ -40,9 +42,13 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Build Docker image
         run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }} .
-      - name: Log in to GitHub Container Registry
+      - name: Login to GitHub Container Registry
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Docker image
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         run: docker push ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }}
