@@ -17,7 +17,7 @@ mockk = "1.14.7"
 mockkSpring = "4.0.2"
 sonarqube = "7.2.2.6593"
 spotless = "8.1.0"
-springBoot = "3.5.7"
+springBoot = "4.0.3"
 testcontainers = "2.0.3"
 protoDefinitions = "0.6.1-kotlin"
 
