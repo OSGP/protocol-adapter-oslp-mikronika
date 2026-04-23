@@ -27,7 +27,7 @@ class DeviceRequestListener(
         val deviceId = bytesMessage.getStringProperty(JMS_PROPERTY_DEVICE_IDENTIFICATION)
         val messageType = bytesMessage.jmsType
 
-        logger.info { "Received event for device $deviceId of type $messageType with correlation uid $correlationId." }
+        logger.info { "Received request for device $deviceId of type $messageType with correlation uid $correlationId." }
 
         try {
             val deviceRequestMessage = bytesMessage.parseToDeviceRequestMessage()
@@ -40,7 +40,7 @@ class DeviceRequestListener(
             }
         } catch (e: IllegalArgumentException) {
             logger.error(e) {
-                "Received invalid event for device $deviceId in message with correlation uid $correlationId."
+                "Received invalid request for device $deviceId in message with correlation uid $correlationId."
             }
         }
     }
