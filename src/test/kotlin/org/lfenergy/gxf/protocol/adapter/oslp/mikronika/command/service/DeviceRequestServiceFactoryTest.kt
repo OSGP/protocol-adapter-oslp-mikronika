@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request.GenericDeviceRequestService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request.SetLightRequestService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request.SetScheduleRequestService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request.UpdateKeyRequestService
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
@@ -29,6 +30,9 @@ class DeviceRequestServiceFactoryTest {
 
     @MockK
     private lateinit var setScheduleRequestService: SetScheduleRequestService
+
+    @MockK
+    private lateinit var updateKeyRequestService: UpdateKeyRequestService
 
     @InjectMockKs
     private lateinit var subject: DeviceRequestServiceFactory
@@ -61,6 +65,7 @@ class DeviceRequestServiceFactoryTest {
                 Arguments.of(RequestType.GET_STATUS_REQUEST, GenericDeviceRequestService::class),
                 Arguments.of(RequestType.SET_LIGHT_REQUEST, SetLightRequestService::class),
                 Arguments.of(RequestType.SET_SCHEDULE_REQUEST, SetScheduleRequestService::class),
+                Arguments.of(RequestType.UPDATE_KEY_REQUEST, UpdateKeyRequestService::class),
             )
     }
 }

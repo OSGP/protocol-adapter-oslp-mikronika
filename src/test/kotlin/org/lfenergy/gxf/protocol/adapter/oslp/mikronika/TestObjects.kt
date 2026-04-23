@@ -22,6 +22,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.lightV
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setLightRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setScheduleRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.updateKeyRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
@@ -238,6 +239,22 @@ object TestObjects {
                 responseHeader {
                     deviceIdentification = DEVICE_IDENTIFICATION
                     responseType = ResponseType.SET_LIGHT_RESPONSE
+                }
+        }
+
+    val deviceUpdateKeyRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.UPDATE_KEY_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+            updateKeyRequest =
+                updateKeyRequest {
+                    publicKey = "i_am_a_public_key"
                 }
         }
 }
