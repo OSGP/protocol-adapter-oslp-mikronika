@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.service.request
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.persistence.EntityNotFoundException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.sender.DeviceResponseSender
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.command.util.HeaderUtil.buildResponseHeader
@@ -20,26 +21,34 @@ class UpdateKeyRequestService(
     private val mikronikaDeviceService: MikronikaDeviceService,
     private val deviceResponseSender: DeviceResponseSender,
 ) : RequestService(deviceClientService) {
+    private val logger = KotlinLogging.logger {}
+
     override fun handleRequestMessage(requestMessage: DeviceRequestMessage) {
         val deviceIdentification = requestMessage.header.deviceIdentification
 
-        val mikronikaDevice =
-            try {
-                mikronikaDeviceService.findByDeviceIdentification(deviceIdentification)
-            } catch (_: EntityNotFoundException) {
-                MikronikaDevice(deviceIdentification = deviceIdentification)
-            }
+        try {
+            val mikronikaDevice =
+                try {
+                    mikronikaDeviceService.findByDeviceIdentification(deviceIdentification)
+                } catch (_: EntityNotFoundException) {
+                    MikronikaDevice(deviceIdentification = deviceIdentification)
+                }
 
-        mikronikaDevice.publicKey = requestMessage.updateKeyRequest.publicKey
+            mikronikaDevice.publicKey = requestMessage.updateKeyRequest.publicKey
 
-        mikronikaDeviceService.saveDevice(mikronikaDevice)
+            mikronikaDeviceService.saveDevice(mikronikaDevice)
 
-        val responseMessage =
-            deviceResponseMessage {
-                header = buildResponseHeader(requestMessage.header)
-                result = Result.OK
-            }
+            val responseMessage =
+                deviceResponseMessage {
+                    header = buildResponseHeader(requestMessage.header)
+                    result = Result.OK
+                }
 
-        deviceResponseSender.send(responseMessage)
+            deviceResponseSender.send(responseMessage)
+        } catch (e: Exception) {
+            logger.error(e) { "Exception occurred while updating key" }
+
+            deviceResponseSender.send(createErrorMessage(requestMessage.header, e))
+        }
     }
 }

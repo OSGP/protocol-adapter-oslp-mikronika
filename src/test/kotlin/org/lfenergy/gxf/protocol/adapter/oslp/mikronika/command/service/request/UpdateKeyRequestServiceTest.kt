@@ -93,6 +93,26 @@ class UpdateKeyRequestServiceTest {
         assertThat(deviceResponse.result).isEqualTo(Result.OK)
     }
 
+    @Test
+    fun `should send error response when updating key fails`() {
+        every { mikronikaDeviceService.findByDeviceIdentification(any()) } returns existingDevice
+        every { mikronikaDeviceService.saveDevice(any()) } throws (Exception())
+        every { deviceResponseSender.send(any()) } just Runs
+
+        updateKeyRequestService.handleRequestMessage(deviceUpdateKeyRequestMessage)
+
+        val deviceResponseSlot = slot<DeviceResponseMessage>()
+
+        verify { mikronikaDeviceService.findByDeviceIdentification(DEVICE_IDENTIFICATION) }
+        verify { mikronikaDeviceService.saveDevice(any()) }
+        verify { deviceResponseSender.send(capture(deviceResponseSlot)) }
+
+        val deviceResponse = deviceResponseSlot.captured
+
+        assertThat(deviceResponse).isNotNull
+        assertThat(deviceResponse.result).isEqualTo(Result.NOT_OK)
+    }
+
     private val existingDevice =
         MikronikaDevice(
             deviceIdentification = "existingDevice",
