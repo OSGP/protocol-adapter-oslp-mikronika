@@ -37,6 +37,7 @@ object HeaderUtil {
             RequestType.SET_CONFIGURATION_REQUEST -> ResponseType.SET_CONFIGURATION_RESPONSE
             RequestType.GET_FIRMWARE_VERSION_REQUEST -> ResponseType.GET_FIRMWARE_VERSION_RESPONSE
             RequestType.GET_LIGHT_STATUS_REQUEST -> ResponseType.GET_LIGHT_STATUS_RESPONSE
+            RequestType.UPDATE_KEY_REQUEST -> ResponseType.UPDATE_KEY_RESPONSE
             RequestType.UNRECOGNIZED -> ResponseType.UNRECOGNIZED
         }
 }

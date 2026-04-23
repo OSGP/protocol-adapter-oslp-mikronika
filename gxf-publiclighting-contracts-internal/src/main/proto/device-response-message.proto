@@ -18,7 +18,6 @@ message DeviceResponseMessage {
     GetStatusResponse get_status_response = 3;
     GetConfigurationResponse get_configuration_response = 4;
     GetFirmwareVersionResponse get_firmware_version_response = 5;
-
     ErrorResponse error_response = 99;
   }
 }
@@ -49,6 +48,7 @@ enum ResponseType {
   SET_CONFIGURATION_RESPONSE = 10;
   GET_FIRMWARE_VERSION_RESPONSE = 11;
   GET_LIGHT_STATUS_RESPONSE = 12;
+  UPDATE_KEY_RESPONSE = 13;
 }
 
 message ErrorResponse {
