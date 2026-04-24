@@ -32,7 +32,7 @@ class GenericCommandIntegrationTest : CommandIntegrationTest() {
         filterNot {
             it in
                 listOf(
-                    RequestType.UPDATE_KEY_REQUEST, // Update key has uses UpdateKeyRequestService, which does not use any mapper.
+                    RequestType.UPDATE_KEY_REQUEST, // Update key uses UpdateKeyRequestService, which does not use any mapper.
                     RequestType.UNRECOGNIZED,
                 )
         }

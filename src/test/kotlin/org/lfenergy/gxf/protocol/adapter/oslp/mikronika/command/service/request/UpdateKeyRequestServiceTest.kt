@@ -84,7 +84,7 @@ class UpdateKeyRequestServiceTest {
         val savedDevice = savedDeviceSlot.captured
 
         assertThat(savedDevice).isNotNull
-        assertThat(savedDevice.deviceIdentification).isEqualTo("existingDevice")
+        assertThat(savedDevice.deviceIdentification).isEqualTo(DEVICE_IDENTIFICATION)
         assertThat(savedDevice.publicKey).isEqualTo("i_am_a_public_key")
 
         val deviceResponse = deviceResponseSlot.captured
@@ -115,7 +115,7 @@ class UpdateKeyRequestServiceTest {
 
     private val existingDevice =
         MikronikaDevice(
-            deviceIdentification = "existingDevice",
+            deviceIdentification = DEVICE_IDENTIFICATION,
             publicKey = "this_is_saved_public_key",
         )
 }
