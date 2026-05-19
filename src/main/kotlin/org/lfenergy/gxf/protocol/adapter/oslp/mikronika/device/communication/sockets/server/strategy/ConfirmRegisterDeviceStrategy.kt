@@ -4,9 +4,11 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ValidationConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidRequestException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.MikronikaDeviceService
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.service.SequenceValidationService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.strategy.StrategyFactory.Companion.CONFIRM_REGISTER_DEVICE_STRATEGY
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
@@ -17,8 +19,10 @@ import org.springframework.stereotype.Component
 
 @Component(CONFIRM_REGISTER_DEVICE_STRATEGY)
 class ConfirmRegisterDeviceStrategy(
-    signingService: SigningService,
+    private val sequenceValidationService: SequenceValidationService,
+    private val validationConfigurationProperties: ValidationConfigurationProperties,
     mikronikaDeviceService: MikronikaDeviceService,
+    signingService: SigningService,
     auditLoggingService: AuditLoggingService,
 ) : ReceiveStrategy(signingService, mikronikaDeviceService, auditLoggingService) {
     override fun handle(
@@ -32,9 +36,14 @@ class ConfirmRegisterDeviceStrategy(
             if (randomPlatform != mikronikaDevice.randomPlatform) {
                 throw InvalidRequestException("Invalid randomPlatform! Expected: ${mikronikaDevice.randomPlatform} - Got: $randomPlatform")
             }
-        }
 
-        mikronikaDevice.sequenceNumber = requestEnvelope.sequenceNumber
+            sequenceValidationService.checkSequenceNumber(
+                mikronikaDevice.sequenceNumber,
+                requestEnvelope.sequenceNumber,
+            )
+
+            updateSequenceNumber(mikronikaDevice, requestEnvelope.sequenceNumber)
+        }
     }
 
     override fun buildResponsePayload(
@@ -49,14 +58,10 @@ class ConfirmRegisterDeviceStrategy(
                         .newBuilder()
                         .setRandomDevice(mikronikaDevice.randomDevice)
                         .setRandomPlatform(mikronikaDevice.randomPlatform)
-                        .setSequenceWindow(SEQUENCE_WINDOW)
+                        .setSequenceWindow(validationConfigurationProperties.sequenceNumber.window)
                         .setStatusValue(Status.OK_VALUE)
                         .build(),
                 ).build()
         return response
-    }
-
-    companion object {
-        const val SEQUENCE_WINDOW = 6
     }
 }

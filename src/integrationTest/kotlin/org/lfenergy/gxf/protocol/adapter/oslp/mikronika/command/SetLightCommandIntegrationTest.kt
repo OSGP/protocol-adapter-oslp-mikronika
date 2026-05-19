@@ -20,6 +20,7 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Respo
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.Result
 import org.opensmartgridplatform.oslp.Oslp
 import org.opensmartgridplatform.oslp.message
+import org.opensmartgridplatform.oslp.resumeScheduleResponse
 import org.opensmartgridplatform.oslp.setLightResponse
 
 class SetLightCommandIntegrationTest : CommandIntegrationTest() {
@@ -45,7 +46,8 @@ class SetLightCommandIntegrationTest : CommandIntegrationTest() {
                     }
             }
 
-        deviceSimulator.addMock(okMock)
+        deviceSimulator.addMock(okResumeScheduleMock)
+        deviceSimulator.addMock(okSetLightMock)
         messageBroker.sendDeviceRequestMessage(input)
 
         val result =
@@ -54,9 +56,12 @@ class SetLightCommandIntegrationTest : CommandIntegrationTest() {
                 ResponseType.SET_LIGHT_RESPONSE,
             )
 
-        val receivedRequest = okMock.capturedRequest.get()
-        assertTrue(receivedRequest.message.hasSetLightRequest())
-        assertEquals(DEVICE_UID, String(receivedRequest.deviceUid))
+        val receivedSetLightRequest = okSetLightMock.capturedRequest.get()
+        assertTrue(receivedSetLightRequest.message.hasSetLightRequest())
+        assertEquals(DEVICE_UID, String(receivedSetLightRequest.deviceUid))
+
+        val receivedResumeScheduleRequest = okResumeScheduleMock.capturedRequest.get()
+        assertTrue(receivedResumeScheduleRequest.message.hasResumeScheduleRequest())
 
         assertNotNull(result)
         assertEquals(Result.OK, result.result)
@@ -103,11 +108,21 @@ class SetLightCommandIntegrationTest : CommandIntegrationTest() {
         assertEquals(ResponseType.SET_LIGHT_RESPONSE, result.header.responseType)
     }
 
-    val okMock =
+    val okSetLightMock =
         DeviceSimulator.DeviceCallMock {
             message {
                 setLightResponse =
                     setLightResponse {
+                        status = Oslp.Status.OK
+                    }
+            }
+        }
+
+    val okResumeScheduleMock =
+        DeviceSimulator.DeviceCallMock {
+            message {
+                resumeScheduleResponse =
+                    resumeScheduleResponse {
                         status = Oslp.Status.OK
                     }
             }

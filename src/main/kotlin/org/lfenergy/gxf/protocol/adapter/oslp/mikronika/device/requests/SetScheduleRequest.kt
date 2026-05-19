@@ -50,11 +50,11 @@ class SetScheduleRequest(
     private fun List<ScheduleEntry>.toSchedules() =
         map { entry ->
             schedule {
-                weekday = Oslp.Weekday.forNumber(entry.weekday.number)
-                startDay = entry.startDay
-                endDay = entry.endDay
-                actionTime = Oslp.ActionTime.forNumber(entry.actionTime.number)
-                time = entry.time
+                weekday = Oslp.Weekday.forNumber(entry.weekday.number) // Required field for OSLP
+                actionTime = Oslp.ActionTime.forNumber(entry.actionTime.number) // Required field for OSLP
+                if (entry.hasStartDay()) startDay = entry.startDay
+                if (entry.hasEndDay()) endDay = entry.endDay
+                if (entry.hasTime()) time = entry.time
 
                 if (entry.hasWindow()) {
                     window =
@@ -66,9 +66,9 @@ class SetScheduleRequest(
 
                 value.addAll(entry.valueList.toOslpLightValues())
 
-                triggerType = Oslp.TriggerType.forNumber(entry.triggerType.number)
-                minimumLightsOn = entry.minimumLightsOn
-                index = entry.index
+                if (entry.hasTriggerType()) triggerType = Oslp.TriggerType.forNumber(entry.triggerType.number)
+                if (entry.hasMinimumLightsOn()) minimumLightsOn = entry.minimumLightsOn
+                if (entry.hasIndex()) index = entry.index
             }
         }
 

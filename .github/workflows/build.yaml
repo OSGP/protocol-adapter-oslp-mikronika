@@ -7,7 +7,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions: write-all
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
@@ -24,7 +26,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Setup Gradle to generate and submit dependency graphs
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           dependency-graph: generate-and-submit
       - name: Build with Gradle
@@ -40,9 +42,13 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Build Docker image
         run: docker build -t ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }} .
-      - name: Log in to GitHub Container Registry
+      - name: Login to GitHub Container Registry
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Docker image
         if: github.ref == 'refs/heads/main' || github.ref_type == 'tag'
         run: docker push ghcr.io/osgp/protocol-adapter-oslp-mikronika:${{ steps.tag.outputs.tag }}

@@ -45,6 +45,11 @@ default-location:
   latitude: 52.132633
   longitude: 5.291266
 
+validation:
+  sequence-number:
+    max: 65535
+    window: 6
+
 device-events:
   producer:
     outbound-queue: gxf.publiclighting.oslp-mikronika.device-events

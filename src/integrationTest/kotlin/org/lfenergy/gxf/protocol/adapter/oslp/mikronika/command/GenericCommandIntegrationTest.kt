@@ -28,5 +28,12 @@ class GenericCommandIntegrationTest : CommandIntegrationTest() {
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
-    private fun List<RequestType>.onlyDefinedTypes(): List<RequestType> = filter { it != RequestType.UNRECOGNIZED }
+    private fun List<RequestType>.onlyDefinedTypes(): List<RequestType> =
+        filterNot {
+            it in
+                listOf(
+                    RequestType.UPDATE_KEY_REQUEST, // Update key uses UpdateKeyRequestService, which does not use any mapper.
+                    RequestType.UNRECOGNIZED,
+                )
+        }
 }

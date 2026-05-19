@@ -36,8 +36,6 @@ abstract class ReceiveStrategy(
         val deviceUid = String(requestEnvelope.deviceUid)
         val mikronikaDevice: MikronikaDevice = mikronikaDeviceService.findByDeviceUid(deviceUid)
 
-        // TODO: [FDP-3625] Check sequence number for validity
-
         if (!validateSignature(requestEnvelope, MikronikaDevicePublicKey(mikronikaDevice.publicKey))) return null
 
         auditLoggingService.logMessageFromDevice(
@@ -61,6 +59,13 @@ abstract class ReceiveStrategy(
         )
 
         return finalizeInvocation(requestEnvelope, mikronikaDevice, responsePayload.toByteArray())
+    }
+
+    protected fun updateSequenceNumber(
+        mikronikaDevice: MikronikaDevice,
+        newSequenceNumber: Int,
+    ) {
+        mikronikaDevice.sequenceNumber = newSequenceNumber
     }
 
     private fun finalizeInvocation(

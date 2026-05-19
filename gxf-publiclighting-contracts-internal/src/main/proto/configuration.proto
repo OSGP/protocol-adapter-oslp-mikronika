@@ -15,7 +15,7 @@ message Configuration {
   AstronomicalOffsetsConfiguration astronomical_offsets_configuration = 6;
 
   LightType light_type = 7;
-  // Is the test button enabled for this device?
+  // Flag indicating whether the test button is enabled on the device
   bool test_button_enabled = 8 [default = true];
   // Time synchronization frequency (seconds)
   uint32 time_sync_frequency = 9 [default = 86400];
@@ -43,7 +43,7 @@ message CommunicationConfiguration {
 }
 
 message DaylightSavingsTimeConfiguration{
-  // Is the automatic summer timing enabled for this device?
+  // Flag indicating whether automatic summer timing is enabled on the device
   bool automatic_summer_timing_enabled = 1 [default = true];
   // The time point for DST for Europe is not identical in every country.
   // It should be added as parameters the weekday, month and time point for DST/summer and winter.
@@ -62,7 +62,7 @@ message DeviceAddressConfiguration {
   bytes net_mask = 2;
   // Gateway address for fixed IP address (4 bytes)
   bytes gateway = 3;
-  // Is DHCP enabled for this device?
+  // Flag indicating whether DHCP is enabled on the device
   bool dhcp_enabled = 4 [default = true];
 }
 
@@ -80,7 +80,7 @@ message RelayConfiguration {
   // Example, if relay 1 is linked with relay 3, if relay 1 will be switched (by OSGP or local by internal scheduler),
   // the relay 3 will switch automatically (on or off, as it set) without new command
   RelayLinking relay_linking = 2;
-  // Is relay refreshing enabled for this device?
+  // Flag indicating whether relay refreshing is enabled on the device
   // Set minutely the nominal relay state and status according to active schedule
   // after power outage and missed switching or anti manipulation.
   bool relay_refreshing_enabled = 3 [default = true];

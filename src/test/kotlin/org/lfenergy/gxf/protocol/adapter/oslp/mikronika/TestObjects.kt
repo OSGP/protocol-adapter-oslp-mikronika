@@ -15,10 +15,14 @@ import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.EventTyp
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.Header
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_events.NotificationType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.DeviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RelayIndex
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.RequestType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.deviceRequestMessage
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.lightValue
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.requestHeader
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setLightRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.setScheduleRequest
+import org.lfenergy.gxf.publiclighting.contracts.internal.device_requests.updateKeyRequest
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.DeviceResponseMessage
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.ResponseType
 import org.lfenergy.gxf.publiclighting.contracts.internal.device_responses.deviceResponseMessage
@@ -205,6 +209,52 @@ object TestObjects {
                 responseHeader {
                     deviceIdentification = DEVICE_IDENTIFICATION
                     responseType = ResponseType.GET_STATUS_RESPONSE
+                }
+        }
+
+    val deviceSetLightRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.SET_LIGHT_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+            setLightRequest =
+                setLightRequest {
+                    lightValues.add(
+                        lightValue {
+                            index = RelayIndex.RELAY_ONE
+                            lightOn = true
+                        },
+                    )
+                }
+        }
+
+    val deviceSetLightResponseMessage: DeviceResponseMessage =
+        deviceResponseMessage {
+            header =
+                responseHeader {
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    responseType = ResponseType.SET_LIGHT_RESPONSE
+                }
+        }
+
+    val deviceUpdateKeyRequestMessage: DeviceRequestMessage =
+        deviceRequestMessage {
+            header =
+                requestHeader {
+                    correlationUid = "correlationUid"
+                    deviceIdentification = DEVICE_IDENTIFICATION
+                    deviceType = "deviceType"
+                    requestType = RequestType.UPDATE_KEY_REQUEST
+                    organizationIdentification = "organizationIdentification"
+                }
+            updateKeyRequest =
+                updateKeyRequest {
+                    publicKey = "i_am_a_public_key"
                 }
         }
 }
