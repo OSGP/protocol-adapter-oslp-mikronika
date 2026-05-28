@@ -3,45 +3,88 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client
 
-import io.ktor.network.selector.ActorSelectorManager
-import io.ktor.network.sockets.InetSocketAddress
-import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
-import io.ktor.network.sockets.openReadChannel
-import io.ktor.network.sockets.openWriteChannel
-import io.ktor.utils.io.readAvailable
-import io.ktor.utils.io.writeFully
-import kotlinx.coroutines.Dispatchers
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.ClientSocketException
-
-class ClientSocket(
-    val clientAddress: String,
-    val clientPort: Int,
+abstract class ClientSocket(
+    configuration: ClientSocketConfigurationBuilder.() -> Unit,
 ) {
-    suspend fun sendAndReceive(envelope: Envelope): Envelope {
-        val clientSocket: Socket =
-            aSocket(ActorSelectorManager(Dispatchers.IO))
-                .tcp()
-                .connect(InetSocketAddress(clientAddress, clientPort))
+    internal val configuration = ClientSocketConfigurationBuilder().apply { configuration() }.build()
 
-        clientSocket.use {
-            val output = it.openWriteChannel(autoFlush = true)
-            val input = it.openReadChannel()
-
-            val requestEnvelope: ByteArray = envelope.getBytes()
-
-            output.writeFully(requestEnvelope, 0, requestEnvelope.size)
-
-            val buffer = ByteArray(1024)
-            val bytesRead = input.readAvailable(buffer)
-
-            when {
-                bytesRead < 0 -> throw ClientSocketException("Connection was closed prematurely!")
-                bytesRead == 0 -> throw ClientSocketException("No bytes received!")
-            }
-
-            return Envelope.parseFrom(buffer.copyOf(bytesRead))
-        }
-    }
+    abstract suspend fun send(bytes: ByteArray): ByteArray
 }
+
+data class ClientSocketConfiguration(
+    val target: DestinationConfiguration,
+    val proxy: DestinationConfiguration?,
+    val ssl: SslConfiguration?,
+)
+
+data class DestinationConfiguration(
+    val host: String,
+    val port: Int,
+)
+
+data class SslConfiguration(
+    val keyStorePath: String,
+    val keyStorePassword: String,
+    val trustStorePath: String,
+    val trustStorePassword: String,
+)
+
+@DslMarker
+annotation class ClientSocketConfigurationDsl
+
+@ClientSocketConfigurationDsl
+class ClientSocketConfigurationBuilder {
+    var target: DestinationConfiguration? = null
+    var proxy: DestinationConfiguration? = null
+    var ssl: SslConfiguration? = null
+
+    fun target(block: DestinationConfigurationBuilder.() -> Unit) {
+        target = DestinationConfigurationBuilder().apply(block).build()
+    }
+
+    fun proxy(block: DestinationConfigurationBuilder.() -> Unit) {
+        proxy = DestinationConfigurationBuilder().apply(block).build()
+    }
+
+    fun ssl(block: SslConfigurationBuilder.() -> Unit) {
+        ssl = SslConfigurationBuilder().apply(block).build()
+    }
+
+    fun build(): ClientSocketConfiguration =
+        ClientSocketConfiguration(
+            target = requireNotNull(target) { "target needs to be specified for the socket" },
+            proxy = proxy,
+            ssl = ssl,
+        )
+}
+
+@ClientSocketConfigurationDsl
+class DestinationConfigurationBuilder {
+    var host: String? = null
+    var port: Int? = null
+
+    fun build(): DestinationConfiguration =
+        DestinationConfiguration(
+            host = requireNotNull(host) { "destination host must be set" },
+            port = requireNotNull(port) { "destination port must be set" },
+        )
+}
+
+@ClientSocketConfigurationDsl
+class SslConfigurationBuilder {
+    var keyStorePath: String? = null
+    var keyStorePassword: String? = null
+    var trustStorePath: String? = null
+    var trustStorePassword: String? = null
+
+    fun build(): SslConfiguration =
+        SslConfiguration(
+            keyStorePath = requireNotNull(keyStorePath) { "ssl.keyStorePath must be set" },
+            keyStorePassword = requireNotNull(keyStorePassword) { "ssl.keyStorePassword must be set" },
+            trustStorePath = requireNotNull(trustStorePath) { "ssl.trustStorePath must be set" },
+            trustStorePassword = requireNotNull(trustStorePassword) { "ssl.trustStorePassword must be set" },
+        )
+}
+
+fun clientSocketConfiguration(block: ClientSocketConfigurationBuilder.() -> Unit): ClientSocketConfiguration =
+    ClientSocketConfigurationBuilder().apply(block).build()
