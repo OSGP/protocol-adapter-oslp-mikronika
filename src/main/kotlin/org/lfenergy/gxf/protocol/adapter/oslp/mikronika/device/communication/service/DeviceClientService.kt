@@ -14,7 +14,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exc
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.ClientSocket
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.KtorClientSocket
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.opensmartgridplatform.oslp.Oslp
@@ -35,7 +35,13 @@ class DeviceClientService(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val sock = ClientSocket(deviceRequest.device.networkAddress, socketProperties.devicePort)
+                val sock =
+                    KtorClientSocket {
+                        target {
+                            host = deviceRequest.device.networkAddress
+                            port = socketProperties.devicePort
+                        }
+                    }
                 val device =
                     mikronikaDeviceService.findByDeviceIdentification(deviceRequest.device.deviceIdentification)
                 val oslpMessage = deviceRequest.toOslpMessage()
@@ -48,7 +54,7 @@ class DeviceClientService(
                     oslpMessage.toString(),
                 )
 
-                val responseEnvelope = sock.sendAndReceive(requestEnvelope)
+                val responseEnvelope = Envelope.parseFrom(sock.send(requestEnvelope.getBytes()))
 
                 if (!validateSignature(responseEnvelope, MikronikaDevicePublicKey(device.publicKey))) {
                     throw InvalidSignatureException("Signature validation failed for message! DeviceUid: ${responseEnvelope.deviceUid}")
