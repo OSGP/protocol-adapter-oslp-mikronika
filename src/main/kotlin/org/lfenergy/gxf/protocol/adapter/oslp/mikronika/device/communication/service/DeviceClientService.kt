@@ -8,13 +8,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.DeviceTcpClientConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidSignatureException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.KtorClientSocket
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.KtorTcpClient
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.opensmartgridplatform.oslp.Oslp
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 class DeviceClientService(
     private val mikronikaDeviceService: MikronikaDeviceService,
     private val signingService: SigningService,
-    private val socketProperties: ClientSocketConfigurationProperties,
+    private val deviceClientProperties: DeviceTcpClientConfigurationProperties,
     private val auditLoggingService: AuditLoggingService,
 ) {
     private val logger = KotlinLogging.logger {}
@@ -36,12 +36,10 @@ class DeviceClientService(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val sock =
-                    KtorClientSocket {
-                        target {
-                            host = deviceRequest.device.networkAddress
-                            port = socketProperties.devicePort
-                        }
-                    }
+                    KtorTcpClient(
+                        host = deviceRequest.device.networkAddress,
+                        port = deviceClientProperties.devicePort,
+                    )
                 val device =
                     mikronikaDeviceService.findByDeviceIdentification(deviceRequest.device.deviceIdentification)
                 val oslpMessage = deviceRequest.toOslpMessage()

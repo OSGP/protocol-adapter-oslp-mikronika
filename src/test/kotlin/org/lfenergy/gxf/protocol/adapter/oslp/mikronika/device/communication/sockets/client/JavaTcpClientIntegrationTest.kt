@@ -1,8 +1,6 @@
-/*
- * SPDX-FileCopyrightText: Copyright Contributors to the GXF project
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client
 
 import kotlinx.coroutines.runBlocking
@@ -21,12 +19,14 @@ import kotlin.test.assertEquals
  * - SSL/TLS socket communication
  * - Proxied socket communication (with SSL)
  */
-class JavaClientSocketIT {
-    @TempDir private lateinit var tempDir: File
+class JavaTcpClientIntegrationTest {
+    @TempDir
+    private lateinit var tempDir: File
 
     private lateinit var sslFixture: SocketTestFixture
     private val testMessage = "Hello from client".toByteArray()
     private val testResponse = "Hello from server".toByteArray()
+
     @BeforeEach
     fun setUp() {
         sslFixture = SocketTestFixture(tempDir)
@@ -46,13 +46,8 @@ class JavaClientSocketIT {
                 testResponse
             }
 
-            val socket =
-                JavaClientSocket {
-                    target {
-                        host = "127.0.0.1"
-                        port = normalPort
-                    }
-                }
+            val tcpClientFactory = TcpClientFactory {}
+            val socket = tcpClientFactory.createTcpClient("127.0.0.1", normalPort)
 
             // Act
             val result = socket.send(testMessage)
@@ -71,12 +66,8 @@ class JavaClientSocketIT {
                 ("Response: " + message.decodeToString()).toByteArray()
             }
 
-            val socket =
-                JavaClientSocket {
-                    target {
-                        host = "127.0.0.1"
-                        port = sslPort
-                    }
+            val tcpClientFactory =
+                TcpClientFactory {
                     ssl {
                         keyStorePath = sslFixture.getSslConfiguration().keyStorePath
                         keyStorePassword = sslFixture.getSslConfiguration().keyStorePassword
@@ -84,6 +75,7 @@ class JavaClientSocketIT {
                         trustStorePassword = sslFixture.getSslConfiguration().trustStorePassword
                     }
                 }
+            val socket = tcpClientFactory.createTcpClient("127.0.0.1", sslPort)
 
             // Act
             val result = socket.send(testMessage)
@@ -99,12 +91,8 @@ class JavaClientSocketIT {
             // Arrange - start SSL server that echoes the exact message back
             sslFixture.startSslServer(sslPort) { message -> message }
 
-            val socket =
-                JavaClientSocket {
-                    target {
-                        host = "127.0.0.1"
-                        port = sslPort
-                    }
+            val tcpClientFactory =
+                TcpClientFactory {
                     ssl {
                         keyStorePath = sslFixture.getSslConfiguration().keyStorePath
                         keyStorePassword = sslFixture.getSslConfiguration().keyStorePassword
@@ -112,6 +100,7 @@ class JavaClientSocketIT {
                         trustStorePassword = sslFixture.getSslConfiguration().trustStorePassword
                     }
                 }
+            val socket = tcpClientFactory.createTcpClient("127.0.0.1", sslPort)
 
             // Act
             val result = socket.send(testMessage)
@@ -129,12 +118,8 @@ class JavaClientSocketIT {
                 message.reversedArray()
             }
 
-            val socket =
-                JavaClientSocket {
-                    target {
-                        host = "127.0.0.1"
-                        port = sslPort
-                    }
+            val tcpClientFactory =
+                TcpClientFactory {
                     ssl {
                         keyStorePath = sslFixture.getSslConfiguration().keyStorePath
                         keyStorePassword = sslFixture.getSslConfiguration().keyStorePassword
@@ -142,6 +127,7 @@ class JavaClientSocketIT {
                         trustStorePassword = sslFixture.getSslConfiguration().trustStorePassword
                     }
                 }
+            val socket = tcpClientFactory.createTcpClient("127.0.0.1", sslPort)
 
             // Act - send multiple messages
             val result1 = socket.send("Message 1".toByteArray())
@@ -165,12 +151,8 @@ class JavaClientSocketIT {
             }
 
             val binaryMessage = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05)
-            val socket =
-                JavaClientSocket {
-                    target {
-                        host = "127.0.0.1"
-                        port = sslPort
-                    }
+            val tcpClientFactory =
+                TcpClientFactory {
                     ssl {
                         keyStorePath = sslFixture.getSslConfiguration().keyStorePath
                         keyStorePassword = sslFixture.getSslConfiguration().keyStorePassword
@@ -178,6 +160,7 @@ class JavaClientSocketIT {
                         trustStorePassword = sslFixture.getSslConfiguration().trustStorePassword
                     }
                 }
+            val socket = tcpClientFactory.createTcpClient("127.0.0.1", sslPort)
 
             // Act
             val result = socket.send(binaryMessage)
@@ -197,16 +180,13 @@ class JavaClientSocketIT {
                 message
             }
 
-            val largeMessage = ByteArray(10000) { i ->
-                (i % 256).toByte()
-            }
+            val largeMessage =
+                ByteArray(10000) { i ->
+                    (i % 256).toByte()
+                }
 
-            val socket =
-                JavaClientSocket {
-                    target {
-                        host = "127.0.0.1"
-                        port = sslPort
-                    }
+            val tcpClientFactory =
+                TcpClientFactory {
                     ssl {
                         keyStorePath = sslFixture.getSslConfiguration().keyStorePath
                         keyStorePassword = sslFixture.getSslConfiguration().keyStorePassword
@@ -214,6 +194,7 @@ class JavaClientSocketIT {
                         trustStorePassword = sslFixture.getSslConfiguration().trustStorePassword
                     }
                 }
+            val socket = tcpClientFactory.createTcpClient("127.0.0.1", sslPort)
 
             // Act
             val result = socket.send(largeMessage)
@@ -254,6 +235,5 @@ class JavaClientSocketIT {
         Thread.sleep(100)
     }
 
-    private fun findFreePort(): Int =
-        ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { it.localPort }
+    private fun findFreePort(): Int = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { it.localPort }
 }

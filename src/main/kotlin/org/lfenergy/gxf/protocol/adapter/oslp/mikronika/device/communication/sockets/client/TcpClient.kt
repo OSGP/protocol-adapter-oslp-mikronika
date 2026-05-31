@@ -3,16 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client
 
-abstract class ClientSocket(
-    configuration: ClientSocketConfigurationBuilder.() -> Unit,
+abstract class TcpClient(
+    configuration: TcpClientConfigurationBuilder.() -> Unit,
 ) {
-    internal val configuration = ClientSocketConfigurationBuilder().apply { configuration() }.build()
+    internal val configuration = TcpClientConfigurationBuilder().apply { configuration() }.build()
 
     abstract suspend fun send(bytes: ByteArray): ByteArray
 }
 
 data class ClientSocketConfiguration(
-    val target: DestinationConfiguration,
     val proxy: DestinationConfiguration?,
     val ssl: SslConfiguration?,
 )
@@ -33,14 +32,9 @@ data class SslConfiguration(
 annotation class ClientSocketConfigurationDsl
 
 @ClientSocketConfigurationDsl
-class ClientSocketConfigurationBuilder {
-    var target: DestinationConfiguration? = null
+class TcpClientConfigurationBuilder {
     var proxy: DestinationConfiguration? = null
     var ssl: SslConfiguration? = null
-
-    fun target(block: DestinationConfigurationBuilder.() -> Unit) {
-        target = DestinationConfigurationBuilder().apply(block).build()
-    }
 
     fun proxy(block: DestinationConfigurationBuilder.() -> Unit) {
         proxy = DestinationConfigurationBuilder().apply(block).build()
@@ -52,7 +46,6 @@ class ClientSocketConfigurationBuilder {
 
     fun build(): ClientSocketConfiguration =
         ClientSocketConfiguration(
-            target = requireNotNull(target) { "target needs to be specified for the socket" },
             proxy = proxy,
             ssl = ssl,
         )
@@ -86,5 +79,5 @@ class SslConfigurationBuilder {
         )
 }
 
-fun clientSocketConfiguration(block: ClientSocketConfigurationBuilder.() -> Unit): ClientSocketConfiguration =
-    ClientSocketConfigurationBuilder().apply(block).build()
+fun clientSocketConfiguration(block: TcpClientConfigurationBuilder.() -> Unit): ClientSocketConfiguration =
+    TcpClientConfigurationBuilder().apply(block).build()

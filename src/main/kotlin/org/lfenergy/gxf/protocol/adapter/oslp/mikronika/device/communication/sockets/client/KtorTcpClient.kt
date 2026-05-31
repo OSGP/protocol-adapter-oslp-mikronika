@@ -14,14 +14,16 @@ import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.Dispatchers
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.ClientSocketException
 
-class KtorClientSocket(
-    configuration: ClientSocketConfigurationBuilder.() -> Unit,
-) : ClientSocket(configuration) {
+class KtorTcpClient(
+    val host: String,
+    val port: Int,
+    configuration: TcpClientConfigurationBuilder.() -> Unit = {},
+) : TcpClient(configuration) {
     override suspend fun send(bytes: ByteArray): ByteArray {
         val clientSocket: Socket =
             aSocket(ActorSelectorManager(Dispatchers.IO))
                 .tcp()
-                .connect(InetSocketAddress(configuration.target.host, configuration.target.port))
+                .connect(InetSocketAddress(host, port))
 
         clientSocket.use {
             val output = it.openWriteChannel(autoFlush = true)

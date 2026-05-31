@@ -1,8 +1,6 @@
-/*
- * SPDX-FileCopyrightText: Copyright Contributors to the GXF project
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: Copyright Contributors to the GXF project
+//
+// SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client
 
 import java.io.ByteArrayOutputStream
@@ -95,43 +93,51 @@ class SocketTestFixture(
         ).start().waitFor()
     }
 
-    fun startSslServer(port: Int, messageHandler: (ByteArray) -> ByteArray) {
+    fun startSslServer(
+        port: Int,
+        messageHandler: (ByteArray) -> ByteArray,
+    ) {
         require(!isRunning) { "Server is already running" }
 
-        val keyStore = KeyStore.getInstance("PKCS12").apply {
-            Files.newInputStream(File(keyStorePath).toPath()).use { input ->
-                load(input, keyStorePassword.toCharArray())
+        val keyStore =
+            KeyStore.getInstance("PKCS12").apply {
+                Files.newInputStream(File(keyStorePath).toPath()).use { input ->
+                    load(input, keyStorePassword.toCharArray())
+                }
             }
-        }
 
-        val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
-            init(keyStore, keyStorePassword.toCharArray())
-        }
+        val kmf =
+            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
+                init(keyStore, keyStorePassword.toCharArray())
+            }
 
-        val sslContext = SSLContext.getInstance("TLS").apply {
-            init(kmf.keyManagers, null, java.security.SecureRandom())
-        }
+        val sslContext =
+            SSLContext.getInstance("TLS").apply {
+                init(kmf.keyManagers, null, java.security.SecureRandom())
+            }
 
-        sslServerSocket = (sslContext.serverSocketFactory.createServerSocket(port) as SSLServerSocket).apply {
-            needClientAuth = false
-            enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
-        }
+        sslServerSocket =
+            (sslContext.serverSocketFactory.createServerSocket(port) as SSLServerSocket).apply {
+                needClientAuth = false
+                enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
+            }
 
         isRunning = true
-        serverThread = Thread {
-            try {
-                while (isRunning) {
-                    val clientSocket = sslServerSocket?.accept() ?: return@Thread
-                    Thread {
-                        handleClient(clientSocket, messageHandler)
-                    }.start()
-                }
-            } catch (e: Exception) {
-                if (isRunning) {
-                    e.printStackTrace()
+        serverThread =
+            Thread {
+                try {
+                    while (isRunning) {
+                        val clientSocket = sslServerSocket?.accept() ?: return@Thread
+                        Thread {
+                            handleClient(clientSocket, messageHandler)
+                        }.start()
+                    }
+                } catch (e: Exception) {
+                    if (isRunning) {
+                        e.printStackTrace()
+                    }
                 }
             }
-        }
         serverThread?.start()
 
         // Wait for server to be ready
@@ -165,11 +171,12 @@ class SocketTestFixture(
         val buffer = ByteArray(4096)
 
         while (true) {
-            val read = try {
-                socket.inputStream.read(buffer)
-            } catch (_: SocketTimeoutException) {
-                break
-            }
+            val read =
+                try {
+                    socket.inputStream.read(buffer)
+                } catch (_: SocketTimeoutException) {
+                    break
+                }
 
             if (read == -1) break
             if (read > 0) result.write(buffer, 0, read)

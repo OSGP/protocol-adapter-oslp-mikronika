@@ -19,9 +19,11 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManagerFactory
 
-class JavaClientSocket(
-    configuration: ClientSocketConfigurationBuilder.() -> Unit,
-) : ClientSocket(configuration) {
+class JavaTcpClient(
+    val host: String,
+    val port: Int,
+    configuration: TcpClientConfigurationBuilder.() -> Unit,
+) : TcpClient(configuration) {
     override suspend fun send(bytes: ByteArray): ByteArray =
         withContext(Dispatchers.IO) {
             val sslContext =
@@ -39,14 +41,14 @@ class JavaClientSocket(
 
             Socket(proxy).use { rawSocket ->
                 rawSocket.soTimeout = 2_000
-                rawSocket.connect(InetSocketAddress(configuration.target.host, configuration.target.port), 5_000)
+                rawSocket.connect(InetSocketAddress(host, port), 5_000)
 
                 if (sslContext != null) {
                     val sslSocket =
                         sslContext.socketFactory.createSocket(
                             rawSocket,
-                            configuration.target.host,
-                            configuration.target.port,
+                            host,
+                            port,
                             true,
                         ) as SSLSocket
 
