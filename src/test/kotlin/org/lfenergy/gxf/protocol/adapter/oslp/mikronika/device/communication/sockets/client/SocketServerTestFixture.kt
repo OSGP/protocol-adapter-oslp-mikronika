@@ -5,6 +5,8 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.InetAddress
+import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketTimeoutException
 import java.nio.file.Files
@@ -18,16 +20,21 @@ import javax.net.ssl.SSLServerSocket
  * - Generated test certificates
  * - SSL Socket Server for testing
  */
-class SocketTestFixture(
+class SocketServerTestFixture(
     private val tempDir: File,
 ) {
     private val keyStorePath: String
     private val keyStorePassword = "keystorePassword"
     private val trustStorePath: String
     private val trustStorePassword = "truststorePassword"
-    private var sslServerSocket: SSLServerSocket? = null
-    private var serverThread: Thread? = null
-    private var isRunning = false
+
+    private var tlsServerSocket: ServerSocket? = null
+    private var tlsServerThread: Thread? = null
+    private var tlsServerIsRunning = false
+
+    private var normalServerSocket: ServerSocket? = null
+    private var normalServerThread: Thread? = null
+    private var normalServerIsRunning = false
 
     init {
         keyStorePath = tempDir.resolve("keystore.jks").absolutePath
@@ -93,11 +100,28 @@ class SocketTestFixture(
         ).start().waitFor()
     }
 
-    fun startSslServer(
+    fun startNormalSocketServer(
         port: Int,
         messageHandler: (ByteArray) -> ByteArray,
     ) {
-        require(!isRunning) { "Server is already running" }
+        require(!normalServerIsRunning) { "Normal server is already running" }
+        normalServerIsRunning = true
+
+        normalServerSocket = ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"))
+
+        normalServerThread = startSocketServer(
+            normalServerSocket ?: error("Normal Server Socket should be configured"),
+            messageHandler,
+            { normalServerIsRunning }
+        )
+    }
+
+    fun startTlsSocketServer(
+        port: Int,
+        messageHandler: (ByteArray) -> ByteArray,
+    ) {
+        require(!tlsServerIsRunning) { "TLS server is already running" }
+        tlsServerIsRunning = true
 
         val keyStore =
             KeyStore.getInstance("PKCS12").apply {
@@ -116,35 +140,48 @@ class SocketTestFixture(
                 init(kmf.keyManagers, null, java.security.SecureRandom())
             }
 
-        sslServerSocket =
+        tlsServerSocket =
             (sslContext.serverSocketFactory.createServerSocket(port) as SSLServerSocket).apply {
                 needClientAuth = false
                 enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
             }
 
-        isRunning = true
-        serverThread =
-            Thread {
-                try {
-                    while (isRunning) {
-                        val clientSocket = sslServerSocket?.accept() ?: return@Thread
-                        Thread {
-                            handleClient(clientSocket, messageHandler)
-                        }.start()
-                    }
-                } catch (e: Exception) {
-                    if (isRunning) {
-                        e.printStackTrace()
-                    }
-                }
-            }
-        serverThread?.start()
-
-        // Wait for server to be ready
-        Thread.sleep(100)
+        tlsServerThread = startSocketServer(
+            tlsServerSocket ?: error("TLS Server Socket should be configured"),
+            messageHandler,
+            { tlsServerIsRunning }
+        )
     }
 
-    private fun handleClient(
+    private fun startSocketServer(
+        serverSocket: ServerSocket,
+        messageHandler: (ByteArray) -> ByteArray,
+        isRunning: () -> Boolean,
+    ): Thread {
+        return Thread {
+            try {
+                serverSocket.use { serverSocket ->
+                    while (isRunning()) {
+                        val clientSocket = serverSocket?.accept() ?: return@Thread
+                        Thread {
+                            handleRequest(clientSocket, messageHandler)
+                        }.start()
+                    }
+                }
+            } catch (e: Exception) {
+                if (isRunning()) {
+                    e.printStackTrace()
+                }
+            }
+        }.also {
+            it.start()
+
+            // Wait for server to start
+            Thread.sleep(100)
+        }
+    }
+
+    private fun handleRequest(
         clientSocket: Socket,
         messageHandler: (ByteArray) -> ByteArray,
     ) {
@@ -154,9 +191,9 @@ class SocketTestFixture(
 
                 val outputStream = socket.outputStream
 
-                val receivedMessage = readUntilIdle(socket)
-                if (receivedMessage.isNotEmpty()) {
-                    val response = messageHandler(receivedMessage)
+                val receivedBytes = socket.readUntilIdle()
+                if (receivedBytes.isNotEmpty()) {
+                    val response = messageHandler(receivedBytes)
                     outputStream.write(response)
                     outputStream.flush()
                 }
@@ -166,14 +203,14 @@ class SocketTestFixture(
         }
     }
 
-    private fun readUntilIdle(socket: Socket): ByteArray {
+    private fun Socket.readUntilIdle(): ByteArray {
         val result = ByteArrayOutputStream()
         val buffer = ByteArray(4096)
 
         while (true) {
             val read =
                 try {
-                    socket.inputStream.read(buffer)
+                    inputStream.read(buffer)
                 } catch (_: SocketTimeoutException) {
                     break
                 }
@@ -185,10 +222,16 @@ class SocketTestFixture(
         return result.toByteArray()
     }
 
-    fun stopServer() {
-        isRunning = false
-        sslServerSocket?.close()
-        serverThread?.join(5000)
+    fun stopNormalServer() {
+        normalServerIsRunning = false
+        normalServerSocket?.close() // This is the only way to stop the clientSocket.accept to stop listening for new connections
+        normalServerThread?.join(5000)
+    }
+
+    fun stopTlsServer() {
+        tlsServerIsRunning = false
+        tlsServerSocket?.close() // This is the only way to stop the clientSocket.accept to stop listening for new connections
+        tlsServerThread?.join(5000)
     }
 
     fun getSslConfiguration(): SslConfiguration =
@@ -199,3 +242,5 @@ class SocketTestFixture(
             trustStorePassword = trustStorePassword,
         )
 }
+
+fun findFreePort(): Int = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { it.localPort }
