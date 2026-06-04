@@ -4,7 +4,8 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client
 
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -18,29 +19,43 @@ import kotlin.test.assertEquals
  * - Proxied socket communication (with SSL)
  */
 class JavaTcpClientIntegrationTest {
-    @TempDir
-    private lateinit var tempDir: File
-
     private val testMessage = "Hello from client".toByteArray()
     private val testResponse = testMessage.reversedArray()
-    private var normalPort: Int = findFreePort()
-    private var tlsPort: Int = findFreePort()
 
-    private lateinit var socketServerTestFixture: SocketServerTestFixture
     private lateinit var tlsTcpClientFactory: TcpClientFactory
     private lateinit var sslTcpClient: TcpClient
 
+    companion object {
+        @TempDir
+        private lateinit var tempDir: File
+
+        private var normalPort: Int = findFreePort()
+        private var tlsPort: Int = findFreePort()
+        private lateinit var socketServerTestFixture: SocketServerTestFixture
+
+        @JvmStatic
+        @BeforeAll
+        fun setUpAll() {
+            socketServerTestFixture = SocketServerTestFixture(tempDir)
+
+            socketServerTestFixture.startTlsSocketServer(tlsPort) { message ->
+                message.reversedArray()
+            }
+            socketServerTestFixture.startNormalSocketServer(normalPort) { message ->
+                message.reversedArray()
+            }
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun tearDownAll() {
+            socketServerTestFixture.stopNormalServer()
+            socketServerTestFixture.stopTlsServer()
+        }
+    }
+
     @BeforeEach
     fun setUp() {
-        socketServerTestFixture = SocketServerTestFixture(tempDir)
-
-        socketServerTestFixture.startTlsSocketServer(tlsPort) { message ->
-            message.reversedArray()
-        }
-        socketServerTestFixture.startNormalSocketServer(normalPort) { message ->
-            message.reversedArray()
-        }
-
         tlsTcpClientFactory =
             TcpClientFactory {
                 ssl {
@@ -48,12 +63,6 @@ class JavaTcpClientIntegrationTest {
                 }
             }
         sslTcpClient = tlsTcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
-    }
-
-    @AfterEach
-    fun tearDown() {
-        socketServerTestFixture.stopNormalServer()
-        socketServerTestFixture.stopTlsServer()
     }
 
     @Test
