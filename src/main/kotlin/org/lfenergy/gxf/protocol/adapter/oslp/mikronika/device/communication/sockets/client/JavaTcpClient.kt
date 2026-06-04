@@ -52,6 +52,7 @@ class JavaTcpClient(
                             true,
                         ) as SSLSocket
 
+                    sslSocket.enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
                     sslSocket.use { socket ->
                         socket.startHandshake()
 
@@ -102,7 +103,7 @@ class JavaTcpClient(
             }
 
         val sslContext =
-            SSLContext.getInstance("TLS").apply {
+            SSLContext.getInstance("TLSv1.3").apply {
                 init(kmf.keyManagers, tmf.trustManagers, SecureRandom())
             }
 
