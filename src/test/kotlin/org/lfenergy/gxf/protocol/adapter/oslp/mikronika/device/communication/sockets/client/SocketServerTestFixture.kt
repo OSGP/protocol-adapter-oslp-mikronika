@@ -9,6 +9,8 @@ import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketTimeoutException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLServerSocket
 
@@ -78,10 +80,13 @@ class SocketServerTestFixture(
         serverSocket: ServerSocket,
         messageHandler: (ByteArray) -> ByteArray,
         isRunning: () -> Boolean,
-    ): Thread =
-        Thread {
+    ): Thread {
+        val serverReady = CountDownLatch(1)
+
+        return Thread {
             try {
                 serverSocket.use { serverSocket ->
+                    serverReady.countDown()
                     while (isRunning()) {
                         val clientSocket = serverSocket.accept()
                         Thread {
@@ -97,9 +102,11 @@ class SocketServerTestFixture(
         }.also {
             it.start()
 
-            // Wait for server to start
-            Thread.sleep(100)
+            if(!serverReady.await(2, TimeUnit.SECONDS)) {
+                error("Server socket did not bind within 2s")
+            }
         }
+    }
 
     private fun handleRequest(
         clientSocket: Socket,
