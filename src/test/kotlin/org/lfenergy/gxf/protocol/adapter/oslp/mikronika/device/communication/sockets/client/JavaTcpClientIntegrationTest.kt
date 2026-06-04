@@ -31,8 +31,8 @@ class JavaTcpClientIntegrationTest {
         @TempDir
         private lateinit var tempDir: File
 
-        private var normalPort: Int = findFreePort()
-        private var tlsPort: Int = findFreePort()
+        private var normalPort: Int = 0
+        private var tlsPort: Int = 0
         private lateinit var socketServerTestFixture: SocketServerTestFixture
 
         @JvmStatic
@@ -40,12 +40,14 @@ class JavaTcpClientIntegrationTest {
         fun setUpAll() {
             socketServerTestFixture = SocketServerTestFixture(tempDir)
 
-            socketServerTestFixture.startTlsSocketServer(tlsPort, requireClientAuth = true) { message ->
-                message.reversedArray()
-            }
-            socketServerTestFixture.startNormalSocketServer(normalPort) { message ->
-                message.reversedArray()
-            }
+            tlsPort =
+                socketServerTestFixture.startTlsSocketServer(requireClientAuth = true) { message ->
+                    message.reversedArray()
+                }
+            normalPort =
+                socketServerTestFixture.startNormalSocketServer { message ->
+                    message.reversedArray()
+                }
         }
 
         @JvmStatic

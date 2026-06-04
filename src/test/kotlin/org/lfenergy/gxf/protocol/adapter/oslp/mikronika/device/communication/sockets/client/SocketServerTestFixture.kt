@@ -31,14 +31,11 @@ class SocketServerTestFixture(
     private var normalServerThread: Thread? = null
     private var normalServerIsRunning = false
 
-    fun startNormalSocketServer(
-        port: Int,
-        messageHandler: (ByteArray) -> ByteArray,
-    ) {
+    fun startNormalSocketServer(messageHandler: (ByteArray) -> ByteArray): Int {
         require(!normalServerIsRunning) { "Normal server is already running" }
         normalServerIsRunning = true
 
-        normalServerSocket = ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"))
+        normalServerSocket = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
 
         normalServerThread =
             startSocketServer(
@@ -46,13 +43,13 @@ class SocketServerTestFixture(
                 messageHandler,
                 { normalServerIsRunning },
             )
+        return normalServerSocket!!.localPort
     }
 
     fun startTlsSocketServer(
-        port: Int,
         requireClientAuth: Boolean = false,
         messageHandler: (ByteArray) -> ByteArray,
-    ) {
+    ): Int {
         require(!tlsServerIsRunning) { "TLS server is already running" }
         tlsServerIsRunning = true
 
@@ -63,7 +60,7 @@ class SocketServerTestFixture(
             }
 
         tlsServerSocket =
-            (sslContext.serverSocketFactory.createServerSocket(port) as SSLServerSocket).apply {
+            (sslContext.serverSocketFactory.createServerSocket(0) as SSLServerSocket).apply {
                 needClientAuth = requireClientAuth
                 enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
             }
@@ -74,6 +71,8 @@ class SocketServerTestFixture(
                 messageHandler,
                 { tlsServerIsRunning },
             )
+
+        return tlsServerSocket!!.localPort
     }
 
     private fun startSocketServer(
@@ -161,5 +160,3 @@ class SocketServerTestFixture(
         tlsServerThread?.join(5000)
     }
 }
-
-fun findFreePort(): Int = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { it.localPort }
