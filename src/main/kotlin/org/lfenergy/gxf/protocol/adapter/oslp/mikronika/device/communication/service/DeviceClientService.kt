@@ -14,7 +14,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exc
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.KtorTcpClient
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.TcpClientFactory
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.opensmartgridplatform.oslp.Oslp
@@ -26,6 +26,7 @@ class DeviceClientService(
     private val signingService: SigningService,
     private val deviceClientProperties: DeviceTcpClientConfigurationProperties,
     private val auditLoggingService: AuditLoggingService,
+    private val tcpClientFactory: TcpClientFactory,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -36,8 +37,8 @@ class DeviceClientService(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val sock =
-                    KtorTcpClient(
-                        host = deviceRequest.device.networkAddress,
+                    tcpClientFactory.createTcpClient(
+                        destinationHost = deviceRequest.device.networkAddress,
                         port = deviceClientProperties.devicePort,
                     )
                 val device =
