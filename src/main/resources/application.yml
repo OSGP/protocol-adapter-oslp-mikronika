@@ -64,9 +64,11 @@ device-tcp-client:
   proxy:
     host: localhost
     port: 1234
-  ssl:
-    keyStorePath: String,
-    trustStorePath: String,
+#  ssl:
+#    keyStorePath: ${DEVICE_TCP_CLIENT_KEY_STORE_PATH}
+#    keyStorePassword: ${DEVICE_TCP_CLIENT_KEY_STORE_PASSWORD}
+#    trustStorePath: ${DEVICE_TCP_CLIENT_TRUST_STORE_PATH}
+#    trustStorePassword: ${DEVICE_TCP_CLIENT_TRUST_STORE_PASSWORD}
 
 commands:
   consumer:

@@ -103,7 +103,7 @@ class JavaTcpClient(
             }
 
         val sslContext =
-            SSLContext.getInstance("TLSv1.3").apply {
+            SSLContext.getInstance("TLS").apply {
                 init(kmf.keyManagers, tmf.trustManagers, SecureRandom())
             }
 

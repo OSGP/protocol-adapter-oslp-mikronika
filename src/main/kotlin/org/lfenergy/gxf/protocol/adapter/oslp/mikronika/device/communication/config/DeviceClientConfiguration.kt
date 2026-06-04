@@ -23,7 +23,9 @@ class DeviceClientConfiguration {
             configuration.ssl?.also { config ->
                 ssl {
                     keyStorePath = config.keyStorePath
+                    keyStorePassword = config.keyStorePassword
                     trustStorePath = config.trustStorePath
+                    trustStorePassword = config.trustStorePassword
                 }
             }
         }

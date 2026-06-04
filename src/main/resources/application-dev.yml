@@ -24,8 +24,13 @@ spring:
     show-sql: false
 
 server-socket:
-  port: 12125
+  port: 12126
   hostName: localhost
 
-client-socket:
-  device-port: 12126
+device-tcp-client:
+  device-port: 12125
+  ssl:
+    keyStorePath: ./certs/local/adapter-keystore.jks
+    keyStorePassword: changeit
+    trustStorePath: ./certs/local/adapter-truststore.jks
+    trustStorePassword: changeit

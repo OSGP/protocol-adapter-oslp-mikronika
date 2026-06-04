@@ -18,6 +18,8 @@ class DeviceTcpClientConfigurationProperties {
 
     class SslConfigurationProperties {
         var keyStorePath: String = ""
+        var keyStorePassword: String = ""
         var trustStorePath: String = ""
+        var trustStorePassword: String = ""
     }
 }

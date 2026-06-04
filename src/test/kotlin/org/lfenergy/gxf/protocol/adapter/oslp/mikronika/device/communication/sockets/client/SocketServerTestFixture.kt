@@ -102,7 +102,7 @@ class SocketServerTestFixture(
         }.also {
             it.start()
 
-            if(!serverReady.await(2, TimeUnit.SECONDS)) {
+            if (!serverReady.await(2, TimeUnit.SECONDS)) {
                 error("Server socket did not bind within 2s")
             }
         }
