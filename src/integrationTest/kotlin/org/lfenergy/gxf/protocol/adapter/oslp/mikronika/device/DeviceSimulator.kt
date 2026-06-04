@@ -26,7 +26,7 @@ import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RAN
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.RANDOM_PLATFORM
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.TestConstants.SEQUENCE_NUMBER
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.config.encodedAsBase64
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.DeviceTcpClientConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.ServerSocketConfiguration
@@ -43,7 +43,7 @@ class DeviceSimulator(
     private val signingUtil: SigningUtil,
     private val deviceKeyPair: KeyPair,
     private val serverSocketConfiguration: ServerSocketConfiguration,
-    private val clientSocketConfiguration: ClientSocketConfigurationProperties,
+    private val tcpClientConfigurationProperties: DeviceTcpClientConfigurationProperties,
 ) {
     val publicKey = deviceKeyPair.public.encodedAsBase64()
 
@@ -154,7 +154,7 @@ class DeviceSimulator(
             val serverSocket =
                 aSocket(ActorSelectorManager(Dispatchers.IO))
                     .tcp()
-                    .bind(InetSocketAddress("localhost", clientSocketConfiguration.devicePort))
+                    .bind(InetSocketAddress("localhost", tcpClientConfigurationProperties.devicePort))
 
             while (true) {
                 val socket = serverSocket.accept()

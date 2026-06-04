@@ -8,13 +8,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.auditlogging.AuditLoggingService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.ClientSocketConfigurationProperties
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config.DeviceTcpClientConfigurationProperties
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.domain.Envelope
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.exception.InvalidSignatureException
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.helpers.toByteArray
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.models.MikronikaDevicePublicKey
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.signing.SigningService
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.ClientSocket
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.TcpClientFactory
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.database.adapter.MikronikaDevice
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.requests.DeviceRequest
 import org.opensmartgridplatform.oslp.Oslp
@@ -24,8 +24,9 @@ import org.springframework.stereotype.Component
 class DeviceClientService(
     private val mikronikaDeviceService: MikronikaDeviceService,
     private val signingService: SigningService,
-    private val socketProperties: ClientSocketConfigurationProperties,
+    private val deviceClientProperties: DeviceTcpClientConfigurationProperties,
     private val auditLoggingService: AuditLoggingService,
+    private val tcpClientFactory: TcpClientFactory,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -35,7 +36,11 @@ class DeviceClientService(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val sock = ClientSocket(deviceRequest.device.networkAddress, socketProperties.devicePort)
+                val sock =
+                    tcpClientFactory.createTcpClient(
+                        host = deviceRequest.device.networkAddress,
+                        port = deviceClientProperties.devicePort,
+                    )
                 val device =
                     mikronikaDeviceService.findByDeviceIdentification(deviceRequest.device.deviceIdentification)
                 val oslpMessage = deviceRequest.toOslpMessage()
@@ -48,7 +53,7 @@ class DeviceClientService(
                     oslpMessage.toString(),
                 )
 
-                val responseEnvelope = sock.sendAndReceive(requestEnvelope)
+                val responseEnvelope = Envelope.parseFrom(sock.send(requestEnvelope.getBytes()))
 
                 if (!validateSignature(responseEnvelope, MikronikaDevicePublicKey(device.publicKey))) {
                     throw InvalidSignatureException("Signature validation failed for message! DeviceUid: ${responseEnvelope.deviceUid}")

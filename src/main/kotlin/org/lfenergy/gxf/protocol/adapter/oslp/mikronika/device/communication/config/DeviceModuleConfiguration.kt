@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @EnableConfigurationProperties(
-    ClientSocketConfigurationProperties::class,
     DefaultLocationConfigurationProperties::class,
     ValidationConfigurationProperties::class,
 )

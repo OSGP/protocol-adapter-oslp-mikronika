@@ -59,8 +59,16 @@ device-events:
       priority: 4
       time-to-live: 0
 
-client-socket:
+device-tcp-client:
   device-port: 12125
+#  proxy:
+#    host: localhost
+#    port: 1234
+#  ssl:
+#    keyStorePath: ${DEVICE_TCP_CLIENT_KEY_STORE_PATH}
+#    keyStorePassword: ${DEVICE_TCP_CLIENT_KEY_STORE_PASSWORD}
+#    trustStorePath: ${DEVICE_TCP_CLIENT_TRUST_STORE_PATH}
+#    trustStorePassword: ${DEVICE_TCP_CLIENT_TRUST_STORE_PASSWORD}
 
 commands:
   consumer:
