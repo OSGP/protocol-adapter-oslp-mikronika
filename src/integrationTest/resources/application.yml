@@ -76,4 +76,4 @@ server-socket:
   hostName: localhost
 
 client-socket:
-  device-port: 12122
+  device-port: 12125
