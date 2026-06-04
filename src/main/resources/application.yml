@@ -61,9 +61,9 @@ device-events:
 
 device-tcp-client:
   device-port: 12125
-  proxy:
-    host: localhost
-    port: 1234
+#  proxy:
+#    host: localhost
+#    port: 1234
 #  ssl:
 #    keyStorePath: ${DEVICE_TCP_CLIENT_KEY_STORE_PATH}
 #    keyStorePassword: ${DEVICE_TCP_CLIENT_KEY_STORE_PASSWORD}

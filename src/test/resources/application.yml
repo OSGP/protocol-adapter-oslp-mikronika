@@ -41,7 +41,7 @@ device-events:
       priority: 4
       time-to-live: 0
 
-client-socket:
+device-tcp-client:
   device-port: 12125
 
 commands:
