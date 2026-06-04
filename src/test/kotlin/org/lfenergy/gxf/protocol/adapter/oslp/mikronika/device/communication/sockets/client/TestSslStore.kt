@@ -81,8 +81,16 @@ class TestSslStore(
     }
 
     private fun runKeytool(vararg arguments: String) {
-        val exitCode = ProcessBuilder("keytool", *arguments).start().waitFor()
-        check(exitCode == 0) { "Failed to run keytool command: ${arguments.joinToString(" ")}" }
+        val keytool = File(System.getProperty("java.home"), "bin/keytool").absolutePath
+        val process =
+            ProcessBuilder(keytool, *arguments)
+                .redirectErrorStream(true)
+                .start()
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+        check(exitCode == 0) {
+            "Failed to run keytool command: ${arguments.joinToString(" ")}\n$output"
+        }
     }
 
     private fun loadKeyManagers(): Array<KeyManager> {
