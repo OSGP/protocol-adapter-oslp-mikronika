@@ -9,9 +9,6 @@ import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketTimeoutException
-import java.nio.file.Files
-import java.security.KeyStore
-import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLServerSocket
 
@@ -21,13 +18,9 @@ import javax.net.ssl.SSLServerSocket
  * - SSL Socket Server for testing
  */
 class SocketServerTestFixture(
-    private val tempDir: File,
+    tempDir: File,
+    val testSslStore: TestSslStore = TestSslStore(tempDir),
 ) {
-    private val keyStorePath: String
-    private val keyStorePassword = "keystorePassword"
-    private val trustStorePath: String
-    private val trustStorePassword = "truststorePassword"
-
     private var tlsServerSocket: ServerSocket? = null
     private var tlsServerThread: Thread? = null
     private var tlsServerIsRunning = false
@@ -35,70 +28,6 @@ class SocketServerTestFixture(
     private var normalServerSocket: ServerSocket? = null
     private var normalServerThread: Thread? = null
     private var normalServerIsRunning = false
-
-    init {
-        keyStorePath = tempDir.resolve("keystore.jks").absolutePath
-        trustStorePath = tempDir.resolve("truststore.jks").absolutePath
-        generateTestCertificates()
-    }
-
-    private fun generateTestCertificates() {
-        // Create a self-signed certificate using Java's keytool
-        val keystoreFile = File(keyStorePath)
-        val truststoreFile = File(trustStorePath)
-
-        // Generate keystore with self-signed certificate
-        ProcessBuilder(
-            "keytool",
-            "-genkey",
-            "-alias",
-            "testkey",
-            "-keyalg",
-            "RSA",
-            "-keysize",
-            "2048",
-            "-keystore",
-            keystoreFile.absolutePath,
-            "-storepass",
-            keyStorePassword,
-            "-keypass",
-            keyStorePassword,
-            "-dname",
-            "CN=localhost,OU=Test,O=GXF,C=NL",
-            "-validity",
-            "365",
-        ).start().waitFor()
-
-        // Export certificate from keystore
-        val certFile = File(tempDir, "test.cer")
-        ProcessBuilder(
-            "keytool",
-            "-export",
-            "-alias",
-            "testkey",
-            "-keystore",
-            keystoreFile.absolutePath,
-            "-storepass",
-            keyStorePassword,
-            "-file",
-            certFile.absolutePath,
-        ).start().waitFor()
-
-        // Import certificate into truststore
-        ProcessBuilder(
-            "keytool",
-            "-import",
-            "-alias",
-            "testkey",
-            "-file",
-            certFile.absolutePath,
-            "-keystore",
-            truststoreFile.absolutePath,
-            "-storepass",
-            trustStorePassword,
-            "-noprompt",
-        ).start().waitFor()
-    }
 
     fun startNormalSocketServer(
         port: Int,
@@ -109,11 +38,12 @@ class SocketServerTestFixture(
 
         normalServerSocket = ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"))
 
-        normalServerThread = startSocketServer(
-            normalServerSocket ?: error("Normal Server Socket should be configured"),
-            messageHandler,
-            { normalServerIsRunning }
-        )
+        normalServerThread =
+            startSocketServer(
+                normalServerSocket ?: error("Normal Server Socket should be configured"),
+                messageHandler,
+                { normalServerIsRunning },
+            )
     }
 
     fun startTlsSocketServer(
@@ -123,21 +53,9 @@ class SocketServerTestFixture(
         require(!tlsServerIsRunning) { "TLS server is already running" }
         tlsServerIsRunning = true
 
-        val keyStore =
-            KeyStore.getInstance("PKCS12").apply {
-                Files.newInputStream(File(keyStorePath).toPath()).use { input ->
-                    load(input, keyStorePassword.toCharArray())
-                }
-            }
-
-        val kmf =
-            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
-                init(keyStore, keyStorePassword.toCharArray())
-            }
-
         val sslContext =
             SSLContext.getInstance("TLS").apply {
-                init(kmf.keyManagers, null, java.security.SecureRandom())
+                init(testSslStore.keyManagers, null, java.security.SecureRandom())
             }
 
         tlsServerSocket =
@@ -146,23 +64,24 @@ class SocketServerTestFixture(
                 enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
             }
 
-        tlsServerThread = startSocketServer(
-            tlsServerSocket ?: error("TLS Server Socket should be configured"),
-            messageHandler,
-            { tlsServerIsRunning }
-        )
+        tlsServerThread =
+            startSocketServer(
+                tlsServerSocket ?: error("TLS Server Socket should be configured"),
+                messageHandler,
+                { tlsServerIsRunning },
+            )
     }
 
     private fun startSocketServer(
         serverSocket: ServerSocket,
         messageHandler: (ByteArray) -> ByteArray,
         isRunning: () -> Boolean,
-    ): Thread {
-        return Thread {
+    ): Thread =
+        Thread {
             try {
                 serverSocket.use { serverSocket ->
                     while (isRunning()) {
-                        val clientSocket = serverSocket?.accept() ?: return@Thread
+                        val clientSocket = serverSocket.accept()
                         Thread {
                             handleRequest(clientSocket, messageHandler)
                         }.start()
@@ -179,7 +98,6 @@ class SocketServerTestFixture(
             // Wait for server to start
             Thread.sleep(100)
         }
-    }
 
     private fun handleRequest(
         clientSocket: Socket,
@@ -233,14 +151,6 @@ class SocketServerTestFixture(
         tlsServerSocket?.close() // This is the only way to stop the clientSocket.accept to stop listening for new connections
         tlsServerThread?.join(5000)
     }
-
-    fun getSslConfiguration(): SslConfiguration =
-        SslConfiguration(
-            keyStorePath = keyStorePath,
-            keyStorePassword = keyStorePassword,
-            trustStorePath = trustStorePath,
-            trustStorePassword = trustStorePassword,
-        )
 }
 
 fun findFreePort(): Int = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { it.localPort }

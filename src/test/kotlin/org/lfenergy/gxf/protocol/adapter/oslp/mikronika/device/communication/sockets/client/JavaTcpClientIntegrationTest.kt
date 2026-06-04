@@ -21,24 +21,33 @@ class JavaTcpClientIntegrationTest {
     @TempDir
     private lateinit var tempDir: File
 
-    private lateinit var socketServerTestFixture: SocketServerTestFixture
     private val testMessage = "Hello from client".toByteArray()
     private val testResponse = testMessage.reversedArray()
-    private var normalPort: Int = 0
-    private var tlsPort: Int = 0
+    private var normalPort: Int = findFreePort()
+    private var tlsPort: Int = findFreePort()
+
+    private lateinit var socketServerTestFixture: SocketServerTestFixture
+    private lateinit var tlsTcpClientFactory: TcpClientFactory
+    private lateinit var sslTcpClient: TcpClient
 
     @BeforeEach
     fun setUp() {
-        normalPort = findFreePort()
-        tlsPort = findFreePort()
         socketServerTestFixture = SocketServerTestFixture(tempDir)
-        
+
         socketServerTestFixture.startTlsSocketServer(tlsPort) { message ->
             message.reversedArray()
         }
         socketServerTestFixture.startNormalSocketServer(normalPort) { message ->
             message.reversedArray()
         }
+
+        tlsTcpClientFactory =
+            TcpClientFactory {
+                ssl {
+                    initUsing(socketServerTestFixture.testSslStore)
+                }
+            }
+        sslTcpClient = tlsTcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
     }
 
     @AfterEach
@@ -60,22 +69,18 @@ class JavaTcpClientIntegrationTest {
             assertEquals(testResponse.decodeToString(), result.decodeToString())
         }
 
+    fun SslConfigurationBuilder.initUsing(testSslStore: TestSslStore) {
+        keyStorePath = testSslStore.keyStoreFile.absolutePath
+        keyStorePassword = testSslStore.keyStorePassword
+        trustStorePath = testSslStore.trustStoreFile.absolutePath
+        trustStorePassword = testSslStore.trustStorePassword
+    }
+
     @Test
     fun `should communicate via tls socket`() =
         runBlocking {
-            val tcpClientFactory =
-                TcpClientFactory {
-                    ssl {
-                        keyStorePath = socketServerTestFixture.getSslConfiguration().keyStorePath
-                        keyStorePassword = socketServerTestFixture.getSslConfiguration().keyStorePassword
-                        trustStorePath = socketServerTestFixture.getSslConfiguration().trustStorePath
-                        trustStorePassword = socketServerTestFixture.getSslConfiguration().trustStorePassword
-                    }
-                }
-            val socket = tcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
-
             // Act
-            val result = socket.send(testMessage)
+            val result = sslTcpClient.send(testMessage)
 
             // Assert
             assertEquals(testResponse.decodeToString(), result.decodeToString())
@@ -84,19 +89,8 @@ class JavaTcpClientIntegrationTest {
     @Test
     fun `should echo back complete message via tls socket`() =
         runBlocking {
-            val tcpClientFactory =
-                TcpClientFactory {
-                    ssl {
-                        keyStorePath = socketServerTestFixture.getSslConfiguration().keyStorePath
-                        keyStorePassword = socketServerTestFixture.getSslConfiguration().keyStorePassword
-                        trustStorePath = socketServerTestFixture.getSslConfiguration().trustStorePath
-                        trustStorePassword = socketServerTestFixture.getSslConfiguration().trustStorePassword
-                    }
-                }
-            val socket = tcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
-
             // Act
-            val result = socket.send(testMessage)
+            val result = sslTcpClient.send(testMessage)
 
             // Assert
             assertEquals(testResponse.decodeToString(), result.decodeToString())
@@ -105,21 +99,10 @@ class JavaTcpClientIntegrationTest {
     @Test
     fun `should handle multiple sequential tls connections`() =
         runBlocking {
-            val tcpClientFactory =
-                TcpClientFactory {
-                    ssl {
-                        keyStorePath = socketServerTestFixture.getSslConfiguration().keyStorePath
-                        keyStorePassword = socketServerTestFixture.getSslConfiguration().keyStorePassword
-                        trustStorePath = socketServerTestFixture.getSslConfiguration().trustStorePath
-                        trustStorePassword = socketServerTestFixture.getSslConfiguration().trustStorePassword
-                    }
-                }
-            val socket = tcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
-
             // Act - send multiple messages
-            val result1 = socket.send("Message 1".toByteArray())
-            val result2 = socket.send("Message 2".toByteArray())
-            val result3 = socket.send("Message 3".toByteArray())
+            val result1 = sslTcpClient.send("Message 1".toByteArray())
+            val result2 = sslTcpClient.send("Message 2".toByteArray())
+            val result3 = sslTcpClient.send("Message 3".toByteArray())
 
             // Assert
             assertEquals("1 egasseM", result1.decodeToString())
@@ -130,20 +113,9 @@ class JavaTcpClientIntegrationTest {
     @Test
     fun `should handle binary data over tls socket`() =
         runBlocking {
-            val binaryMessage = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05)
-            val tcpClientFactory =
-                TcpClientFactory {
-                    ssl {
-                        keyStorePath = socketServerTestFixture.getSslConfiguration().keyStorePath
-                        keyStorePassword = socketServerTestFixture.getSslConfiguration().keyStorePassword
-                        trustStorePath = socketServerTestFixture.getSslConfiguration().trustStorePath
-                        trustStorePassword = socketServerTestFixture.getSslConfiguration().trustStorePassword
-                    }
-                }
-            val socket = tcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
-
             // Act
-            val result = socket.send(binaryMessage)
+            val binaryMessage = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05)
+            val result = sslTcpClient.send(binaryMessage)
 
             // Assert
             val inverted = byteArrayOf(0x05, 0x04, 0x03, 0x02, 0x01)
@@ -153,24 +125,13 @@ class JavaTcpClientIntegrationTest {
     @Test
     fun `should handle large messages over tls socket`() =
         runBlocking {
+            // Act
             val largeMessage =
                 ByteArray(10000) { i ->
                     (i % 256).toByte()
                 }
 
-            val tcpClientFactory =
-                TcpClientFactory {
-                    ssl {
-                        keyStorePath = socketServerTestFixture.getSslConfiguration().keyStorePath
-                        keyStorePassword = socketServerTestFixture.getSslConfiguration().keyStorePassword
-                        trustStorePath = socketServerTestFixture.getSslConfiguration().trustStorePath
-                        trustStorePassword = socketServerTestFixture.getSslConfiguration().trustStorePassword
-                    }
-                }
-            val socket = tcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
-
-            // Act
-            val result = socket.send(largeMessage)
+            val result = sslTcpClient.send(largeMessage)
 
             // Assert
             assertEquals(largeMessage.reversedArray().contentToString(), result.contentToString())
