@@ -38,7 +38,7 @@ class DeviceClientService(
             try {
                 val sock =
                     tcpClientFactory.createTcpClient(
-                        destinationHost = deviceRequest.device.networkAddress,
+                        host = deviceRequest.device.networkAddress,
                         port = deviceClientProperties.devicePort,
                     )
                 val device =

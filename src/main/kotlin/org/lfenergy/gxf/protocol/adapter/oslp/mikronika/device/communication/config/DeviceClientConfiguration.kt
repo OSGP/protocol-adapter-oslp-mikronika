@@ -4,6 +4,7 @@
 package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.config
 
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.TcpClientFactory
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.client.tcpClientConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,20 +14,22 @@ import org.springframework.context.annotation.Configuration
 class DeviceClientConfiguration {
     @Bean
     fun tcpClientFactory(configuration: DeviceTcpClientConfigurationProperties): TcpClientFactory =
-        TcpClientFactory {
-            configuration.proxy?.also { proxyConfig ->
-                proxy {
-                    host = proxyConfig.host
-                    port = proxyConfig.port
+        TcpClientFactory(
+            tcpClientConfiguration {
+                configuration.proxy?.also { proxyConfig ->
+                    proxy {
+                        host = proxyConfig.host
+                        port = proxyConfig.port
+                    }
                 }
-            }
-            configuration.ssl?.also { config ->
-                ssl {
-                    keyStorePath = config.keyStorePath
-                    keyStorePassword = config.keyStorePassword
-                    trustStorePath = config.trustStorePath
-                    trustStorePassword = config.trustStorePassword
+                configuration.ssl?.also { config ->
+                    ssl {
+                        keyStorePath = config.keyStorePath
+                        keyStorePassword = config.keyStorePassword
+                        trustStorePath = config.trustStorePath
+                        trustStorePassword = config.trustStorePassword
+                    }
                 }
-            }
-        }
+            },
+        )
 }

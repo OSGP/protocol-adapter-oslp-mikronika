@@ -59,18 +59,20 @@ class JavaTcpClientIntegrationTest {
     @BeforeEach
     fun setUp() {
         tlsTcpClientFactory =
-            TcpClientFactory {
-                ssl {
-                    initUsing(socketServerTestFixture.testSslStore)
-                }
-            }
+            TcpClientFactory(
+                tcpClientConfiguration {
+                    ssl {
+                        initUsing(socketServerTestFixture.testSslStore)
+                    }
+                },
+            )
         sslTcpClient = tlsTcpClientFactory.createTcpClient("127.0.0.1", tlsPort)
     }
 
     @Test
-    fun `should communicate via normal socket without tls`() =
+    fun `should communicate via normal socket without tls`() {
         runBlocking {
-            val tcpClientFactory = TcpClientFactory {}
+            val tcpClientFactory = TcpClientFactory(tcpClientConfiguration { })
             val socket = tcpClientFactory.createTcpClient("127.0.0.1", normalPort)
 
             // Act
@@ -79,6 +81,7 @@ class JavaTcpClientIntegrationTest {
             // Assert
             assertEquals(testResponse.decodeToString(), result.decodeToString())
         }
+    }
 
     fun SslConfigurationBuilder.initUsing(testSslStore: TestSslStore) {
         keyStorePath = testSslStore.keyStoreFile.absolutePath
@@ -98,7 +101,7 @@ class JavaTcpClientIntegrationTest {
     }
 
     @Test
-    fun `should communicate via tls socket`() =
+    fun `should communicate via tls socket`() {
         runBlocking {
             // Act
             val result = sslTcpClient.send(testMessage)
@@ -106,9 +109,10 @@ class JavaTcpClientIntegrationTest {
             // Assert
             assertEquals(testResponse.decodeToString(), result.decodeToString())
         }
+    }
 
     @Test
-    fun `should echo back complete message via tls socket`() =
+    fun `should echo back complete message via tls socket`() {
         runBlocking {
             // Act
             val result = sslTcpClient.send(testMessage)
@@ -116,9 +120,10 @@ class JavaTcpClientIntegrationTest {
             // Assert
             assertEquals(testResponse.decodeToString(), result.decodeToString())
         }
+    }
 
     @Test
-    fun `should handle multiple sequential tls connections`() =
+    fun `should handle multiple sequential tls connections`() {
         runBlocking {
             // Act - send multiple messages
             val result1 = sslTcpClient.send("Message 1".toByteArray())
@@ -130,9 +135,10 @@ class JavaTcpClientIntegrationTest {
             assertEquals("2 egasseM", result2.decodeToString())
             assertEquals("3 egasseM", result3.decodeToString())
         }
+    }
 
     @Test
-    fun `should handle binary data over tls socket`() =
+    fun `should handle binary data over tls socket`() {
         runBlocking {
             // Act
             val binaryMessage = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05)
@@ -142,9 +148,10 @@ class JavaTcpClientIntegrationTest {
             val inverted = byteArrayOf(0x05, 0x04, 0x03, 0x02, 0x01)
             assertEquals(inverted.contentToString(), result.contentToString())
         }
+    }
 
     @Test
-    fun `should handle large messages over tls socket`() =
+    fun `should handle large messages over tls socket`() {
         runBlocking {
             // Act
             val largeMessage =
@@ -157,17 +164,20 @@ class JavaTcpClientIntegrationTest {
             // Assert
             assertEquals(largeMessage.reversedArray().contentToString(), result.contentToString())
         }
+    }
 
     @Test
     fun `should fail tls handshake when client does not trust server certificate`() =
         runBlocking {
             val untrustedStore = TestSslStore(tempDir.resolve("untrusted-client-${System.nanoTime()}"))
             val untrustedClientFactory =
-                TcpClientFactory {
-                    ssl {
-                        initUsing(untrustedStore)
-                    }
-                }
+                TcpClientFactory(
+                    tcpClientConfiguration {
+                        ssl {
+                            initUsing(untrustedStore)
+                        }
+                    },
+                )
             val untrustedClient = untrustedClientFactory.createTcpClient("127.0.0.1", tlsPort)
 
             assertFailsWith<SSLHandshakeException> {
@@ -180,15 +190,17 @@ class JavaTcpClientIntegrationTest {
         runBlocking {
             val untrustedClientKeyStore = TestSslStore(tempDir.resolve("untrusted-client-key-${System.nanoTime()}"))
             val clientFactoryWithUntrustedCertificate =
-                TcpClientFactory {
-                    ssl {
-                        // Client trusts the server, but presents a certificate unknown to the server.
-                        initUsing(
-                            keyStore = untrustedClientKeyStore,
-                            trustStore = socketServerTestFixture.testSslStore,
-                        )
-                    }
-                }
+                TcpClientFactory(
+                    tcpClientConfiguration {
+                        ssl {
+                            // Client trusts the server, but presents a certificate unknown to the server.
+                            initUsing(
+                                keyStore = untrustedClientKeyStore,
+                                trustStore = socketServerTestFixture.testSslStore,
+                            )
+                        }
+                    },
+                )
             val clientWithUntrustedCertificate =
                 clientFactoryWithUntrustedCertificate.createTcpClient("127.0.0.1", tlsPort)
 

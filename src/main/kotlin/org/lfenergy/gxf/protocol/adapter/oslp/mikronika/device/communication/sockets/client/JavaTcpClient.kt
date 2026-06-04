@@ -6,49 +6,39 @@ package org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.so
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import java.io.FileInputStream
 import java.io.InputStream
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.Socket
 import java.net.SocketTimeoutException
-import java.security.KeyStore
-import java.security.SecureRandom
-import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
-import javax.net.ssl.TrustManagerFactory
 
 class JavaTcpClient(
-    val host: String,
-    val port: Int,
-    configuration: TcpClientConfigurationBuilder.() -> Unit,
-) : TcpClient(configuration) {
+    destination: InetSocketAddress,
+    private val sslContext: SSLContext? = null,
+    private val proxyConfig: InetSocketAddress? = null,
+) : TcpClient(destination) {
     override suspend fun send(bytes: ByteArray): ByteArray =
         withContext(Dispatchers.IO) {
-            val sslContext =
-                configuration.ssl?.let {
-                    getSslContext(configuration.ssl)
-                }
-
             val proxy =
-                configuration.proxy?.let {
+                proxyConfig?.let {
                     Proxy(
                         Proxy.Type.HTTP,
-                        InetSocketAddress(it.host, it.port),
+                        it,
                     )
                 } ?: Proxy.NO_PROXY
 
             Socket(proxy).use { rawSocket ->
                 rawSocket.soTimeout = 2_000
-                rawSocket.connect(InetSocketAddress(host, port), 5_000)
+                rawSocket.connect(destination, 5_000)
 
                 if (sslContext != null) {
                     val sslSocket =
-                        sslContext.socketFactory.createSocket(
+                        sslContext!!.socketFactory.createSocket(
                             rawSocket,
-                            host,
-                            port,
+                            destination.hostName,
+                            destination.port,
                             true,
                         ) as SSLSocket
 
@@ -88,35 +78,4 @@ class JavaTcpClient(
 
         return result.toByteArray()
     }
-
-    fun getSslContext(configuration: SslConfiguration): SSLContext {
-        val keyStore = getKeyStore(configuration.keyStorePath, configuration.keyStorePassword.toCharArray())
-        val trustStore = getKeyStore(configuration.trustStorePath, configuration.trustStorePassword.toCharArray())
-
-        val kmf =
-            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
-                init(keyStore, configuration.keyStorePassword.toCharArray())
-            }
-        val tmf =
-            TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
-                init(trustStore)
-            }
-
-        val sslContext =
-            SSLContext.getInstance("TLS").apply {
-                init(kmf.keyManagers, tmf.trustManagers, SecureRandom())
-            }
-
-        return sslContext
-    }
-
-    fun getKeyStore(
-        path: String,
-        password: CharArray,
-    ): KeyStore =
-        KeyStore.getInstance("PKCS12").apply {
-            FileInputStream(path).use { input ->
-                load(input, password)
-            }
-        }
 }

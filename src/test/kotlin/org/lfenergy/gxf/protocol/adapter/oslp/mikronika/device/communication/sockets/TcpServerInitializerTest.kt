@@ -11,9 +11,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.ServerSocket
-import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.ServerSocketConfiguration
 import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.ServerSocketInitializer
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.TcpServer
+import org.lfenergy.gxf.protocol.adapter.oslp.mikronika.device.communication.sockets.server.TcpServerConfiguration
 
 @ExtendWith(MockKExtension::class)
 class ServerSocketInitializerTest {
