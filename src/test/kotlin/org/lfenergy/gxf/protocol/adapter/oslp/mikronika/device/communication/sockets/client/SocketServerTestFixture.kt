@@ -48,6 +48,7 @@ class SocketServerTestFixture(
 
     fun startTlsSocketServer(
         port: Int,
+        requireClientAuth: Boolean = false,
         messageHandler: (ByteArray) -> ByteArray,
     ) {
         require(!tlsServerIsRunning) { "TLS server is already running" }
@@ -55,12 +56,13 @@ class SocketServerTestFixture(
 
         val sslContext =
             SSLContext.getInstance("TLS").apply {
-                init(testSslStore.keyManagers, null, java.security.SecureRandom())
+                val trustManagers = if (requireClientAuth) testSslStore.trustManagers else null
+                init(testSslStore.keyManagers, trustManagers, java.security.SecureRandom())
             }
 
         tlsServerSocket =
             (sslContext.serverSocketFactory.createServerSocket(port) as SSLServerSocket).apply {
-                needClientAuth = false
+                needClientAuth = requireClientAuth
                 enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3")
             }
 

@@ -8,6 +8,8 @@ import java.nio.file.Files
 import java.security.KeyStore
 import javax.net.ssl.KeyManager
 import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
 
 /**
  * Generates a keystore/truststore pair for TLS tests.
@@ -21,6 +23,7 @@ class TestSslStore(
     val trustStoreFile = storeDir.resolve("truststore.jks")
 
     val keyManagers by lazy { loadKeyManagers() }
+    val trustManagers by lazy { loadTrustManagers() }
 
     init {
         storeDir.mkdirs()
@@ -96,5 +99,21 @@ class TestSslStore(
             }
 
         return keyManagerFactory.keyManagers
+    }
+
+    private fun loadTrustManagers(): Array<TrustManager> {
+        val trustStore =
+            KeyStore.getInstance("PKCS12").apply {
+                Files.newInputStream(trustStoreFile.toPath()).use { input ->
+                    load(input, trustStorePassword.toCharArray())
+                }
+            }
+
+        val trustManagerFactory =
+            TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
+                init(trustStore)
+            }
+
+        return trustManagerFactory.trustManagers
     }
 }

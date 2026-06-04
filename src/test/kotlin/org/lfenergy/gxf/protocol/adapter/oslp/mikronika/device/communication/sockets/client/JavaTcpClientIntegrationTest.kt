@@ -10,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import javax.net.ssl.SSLHandshakeException
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /**
  * Integration tests for JavaClientSocket that verify:
@@ -38,7 +40,7 @@ class JavaTcpClientIntegrationTest {
         fun setUpAll() {
             socketServerTestFixture = SocketServerTestFixture(tempDir)
 
-            socketServerTestFixture.startTlsSocketServer(tlsPort) { message ->
+            socketServerTestFixture.startTlsSocketServer(tlsPort, requireClientAuth = true) { message ->
                 message.reversedArray()
             }
             socketServerTestFixture.startNormalSocketServer(normalPort) { message ->
@@ -83,6 +85,16 @@ class JavaTcpClientIntegrationTest {
         keyStorePassword = testSslStore.keyStorePassword
         trustStorePath = testSslStore.trustStoreFile.absolutePath
         trustStorePassword = testSslStore.trustStorePassword
+    }
+
+    fun SslConfigurationBuilder.initUsing(
+        keyStore: TestSslStore,
+        trustStore: TestSslStore,
+    ) {
+        keyStorePath = keyStore.keyStoreFile.absolutePath
+        keyStorePassword = keyStore.keyStorePassword
+        trustStorePath = trustStore.trustStoreFile.absolutePath
+        trustStorePassword = trustStore.trustStorePassword
     }
 
     @Test
@@ -144,5 +156,44 @@ class JavaTcpClientIntegrationTest {
 
             // Assert
             assertEquals(largeMessage.reversedArray().contentToString(), result.contentToString())
+        }
+
+    @Test
+    fun `should fail tls handshake when client does not trust server certificate`() =
+        runBlocking {
+            val untrustedStore = TestSslStore(tempDir.resolve("untrusted-client-${System.nanoTime()}"))
+            val untrustedClientFactory =
+                TcpClientFactory {
+                    ssl {
+                        initUsing(untrustedStore)
+                    }
+                }
+            val untrustedClient = untrustedClientFactory.createTcpClient("127.0.0.1", tlsPort)
+
+            assertFailsWith<SSLHandshakeException> {
+                untrustedClient.send(testMessage)
+            }
+        }
+
+    @Test
+    fun `should fail tls handshake when server does not trust client certificate`() =
+        runBlocking {
+            val untrustedClientKeyStore = TestSslStore(tempDir.resolve("untrusted-client-key-${System.nanoTime()}"))
+            val clientFactoryWithUntrustedCertificate =
+                TcpClientFactory {
+                    ssl {
+                        // Client trusts the server, but presents a certificate unknown to the server.
+                        initUsing(
+                            keyStore = untrustedClientKeyStore,
+                            trustStore = socketServerTestFixture.testSslStore,
+                        )
+                    }
+                }
+            val clientWithUntrustedCertificate =
+                clientFactoryWithUntrustedCertificate.createTcpClient("127.0.0.1", tlsPort)
+
+            assertFailsWith<SSLHandshakeException> {
+                clientWithUntrustedCertificate.send(testMessage)
+            }
         }
 }
